@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -19,15 +18,15 @@ import javax.swing.UIManager;
 
 public class AddBookingWindow extends JFrame implements ActionListener {
 
-    private MainWindow mw;
-    private JTextField custIdText = new JTextField();
-    private JTextField flightIdText = new JTextField();
-    private JTextField seatNumberText = new JTextField();
+    private final MainWindow mw;
+    private final JTextField custIdText = new JTextField();
+    private final JTextField flightIdText = new JTextField();
+    private final JTextField seatNumberText = new JTextField();
     private JComboBox<String> bookingClassCombo;
-    private JTextField specialRequestsText = new JTextField();
+    private final JTextField specialRequestsText = new JTextField();
 
-    private JButton addBtn = new JButton("Issue");
-    private JButton cancelBtn = new JButton("Cancel");
+    private final JButton addBtn = new JButton("Issue");
+    private final JButton cancelBtn = new JButton("Cancel");
 
     public AddBookingWindow(MainWindow mw) {
         this.mw = mw;

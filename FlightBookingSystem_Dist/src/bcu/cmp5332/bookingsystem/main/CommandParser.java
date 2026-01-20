@@ -20,57 +20,74 @@ import java.time.format.DateTimeParseException;
 public class CommandParser {
 
     public static Command parse(String line) throws IOException, FlightBookingSystemException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
             String[] parts = line.split(" ", 3);
             String cmd = parts[0];
 
-            if (cmd.equals("addflight")) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                System.out.print("Flight Number: ");
-                String flighNumber = reader.readLine();
-                System.out.print("Origin: ");
-                String origin = reader.readLine();
-                System.out.print("Destination: ");
-                String destination = reader.readLine();
-
-                LocalDate departureDate = parseDateWithAttempts(reader);
-
-                return new AddFlight(flighNumber, origin, destination, departureDate);
-            } else if (cmd.equals("addcustomer")) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                System.out.print("Name: ");
-                String name = reader.readLine();
-                System.out.print("Phone: ");
-                String phone = reader.readLine();
-                System.out.print("Email: ");
-                String email = reader.readLine();
-                System.out.print("Address: ");
-                String address = reader.readLine();
-                return new AddCustomer(name, phone, email, address);
-            } else if (cmd.equals("loadgui")) {
-                return new LoadGUI();
-            } else if (parts.length == 1) {
-                if (line.equals("listflights")) {
+            switch (cmd) {
+                case "addflight": {
+                    System.out.print("Flight Number: ");
+                    String flighNumber = reader.readLine();
+                    System.out.print("Origin: ");
+                    String origin = reader.readLine();
+                    System.out.print("Destination: ");
+                    String destination = reader.readLine();
+                    LocalDate departureDate = parseDateWithAttempts(reader);
+                    return new AddFlight(flighNumber, origin, destination, departureDate);
+                }
+                case "addcustomer": {
+                    System.out.print("Name: ");
+                    String name = reader.readLine();
+                    System.out.print("Phone: ");
+                    String phone = reader.readLine();
+                    System.out.print("Email: ");
+                    String email = reader.readLine();
+                    System.out.print("Address: ");
+                    String address = reader.readLine();
+                    return new AddCustomer(name, phone, email, address);
+                }
+                case "loadgui": {
+                    return new LoadGUI();
+                }
+                case "listflights": {
+                    if (parts.length != 1) {
+                        throw new FlightBookingSystemException("Invalid command.");
+                    }
                     return new ListFlights();
-                } else if (line.equals("listcustomers")) {
+                }
+                case "listcustomers": {
+                    if (parts.length != 1) {
+                        throw new FlightBookingSystemException("Invalid command.");
+                    }
                     return new ListCustomers();
-                } else if (line.equals("help")) {
+                }
+                case "help": {
+                    if (parts.length != 1) {
+                        throw new FlightBookingSystemException("Invalid command.");
+                    }
                     return new Help();
                 }
-            } else if (parts.length == 2) {
-                int id = Integer.parseInt(parts[1]);
-
-                if (cmd.equals("showflight")) {
-                    return new ShowFlight(id);
-                } else if (cmd.equals("showcustomer")) {
-                    return new ShowCustomer(id);
+                case "showflight": {
+                    if (parts.length != 2) {
+                        throw new FlightBookingSystemException("Invalid command.");
+                    }
+                    int flightId = Integer.parseInt(parts[1]);
+                    return new ShowFlight(flightId);
                 }
-            } else if (parts.length == 3) {
-                int id1 = Integer.parseInt(parts[1]);
-                int id2 = Integer.parseInt(parts[2]);
-
-                if (cmd.equals("addbooking")) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                case "showcustomer": {
+                    if (parts.length != 2) {
+                        throw new FlightBookingSystemException("Invalid command.");
+                    }
+                    int customerId = Integer.parseInt(parts[1]);
+                    return new ShowCustomer(customerId);
+                }
+                case "addbooking": {
+                    if (parts.length != 3) {
+                        throw new FlightBookingSystemException("Invalid command.");
+                    }
+                    int id1 = Integer.parseInt(parts[1]);
+                    int id2 = Integer.parseInt(parts[2]);
                     System.out.print("Seat Number: ");
                     String seatNumber = reader.readLine();
                     System.out.print("Booking Class (Economy/Premium Economy/Business/First Class): ");
@@ -78,10 +95,23 @@ public class CommandParser {
                     System.out.print("Special Requests: ");
                     String specialRequests = reader.readLine();
                     return new AddBooking(id1, id2, seatNumber, bookingClass, specialRequests);
-                } else if (cmd.equals("editbooking")) {
-
-                } else if (cmd.equals("cancelbooking")) {
+                }
+                case "editbooking": {
+                    if (parts.length != 3) {
+                        throw new FlightBookingSystemException("Invalid command.");
+                    }
+                    break;
+                }
+                case "cancelbooking": {
+                    if (parts.length != 3) {
+                        throw new FlightBookingSystemException("Invalid command.");
+                    }
+                    int id1 = Integer.parseInt(parts[1]);
+                    int id2 = Integer.parseInt(parts[2]);
                     return new CancelBooking(id1, id2);
+                }
+                default: {
+                    throw new FlightBookingSystemException("Invalid command.");
                 }
             }
         } catch (NumberFormatException ex) {

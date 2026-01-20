@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,12 +17,12 @@ import javax.swing.UIManager;
 
 public class CancelBookingWindow extends JFrame implements ActionListener {
 
-    private MainWindow mw;
-    private JTextField custIdText = new JTextField();
-    private JTextField flightIdText = new JTextField();
+    private final MainWindow mw;
+    private final JTextField custIdText = new JTextField();
+    private final JTextField flightIdText = new JTextField();
 
-    private JButton cancelBtn = new JButton("Cancel Booking");
-    private JButton closeBtn = new JButton("Close");
+    private final JButton cancelBtn = new JButton("Cancel Booking");
+    private final JButton closeBtn = new JButton("Close");
 
     public CancelBookingWindow(MainWindow mw) {
         this.mw = mw;

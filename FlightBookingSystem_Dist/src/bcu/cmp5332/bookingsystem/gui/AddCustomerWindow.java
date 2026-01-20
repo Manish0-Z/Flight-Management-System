@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,14 +17,13 @@ import javax.swing.UIManager;
 
 public class AddCustomerWindow extends JFrame implements ActionListener {
 
-    private MainWindow mw;
-    private JTextField nameText = new JTextField();
-    private JTextField phoneText = new JTextField();
-    private JTextField emailText = new JTextField();
-    private JTextField addressText = new JTextField();
-
-    private JButton addBtn = new JButton("Add");
-    private JButton cancelBtn = new JButton("Cancel");
+    private final MainWindow mw;
+    private final JTextField nameText = new JTextField();
+    private final JTextField phoneText = new JTextField();
+    private final JTextField emailText = new JTextField();
+    private final JTextField addressText = new JTextField();
+    private final JButton addBtn = new JButton("Add");
+    private final JButton cancelBtn = new JButton("Cancel");
 
     public AddCustomerWindow(MainWindow mw) {
         this.mw = mw;

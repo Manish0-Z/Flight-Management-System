@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,14 +19,14 @@ import javax.swing.UIManager;
 
 public class AddFlightWindow extends JFrame implements ActionListener {
 
-    private MainWindow mw;
-    private JTextField flightNoText = new JTextField();
-    private JTextField originText = new JTextField();
-    private JTextField destinationText = new JTextField();
-    private JTextField depDateText = new JTextField();
+    private final MainWindow mw;
+    private final JTextField flightNoText = new JTextField();
+    private final JTextField originText = new JTextField();
+    private final JTextField destinationText = new JTextField();
+    private final JTextField depDateText = new JTextField();
 
-    private JButton addBtn = new JButton("Add");
-    private JButton cancelBtn = new JButton("Cancel");
+    private final JButton addBtn = new JButton("Add");
+    private final JButton cancelBtn = new JButton("Cancel");
 
     public AddFlightWindow(MainWindow mw) {
         this.mw = mw;
