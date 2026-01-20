@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Flight Booking System",
+            "request": "launch",
+            "mainClass": "bcu.cmp5332.bookingsystem.main.Main",
+            "projectName": "FlightBookingSystem_Dist",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
