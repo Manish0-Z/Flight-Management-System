@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class AddBookingWindow extends JFrame implements ActionListener {
 
@@ -37,7 +38,8 @@ public class AddBookingWindow extends JFrame implements ActionListener {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | InstantiationException | 
+                    IllegalAccessException | UnsupportedLookAndFeelException ex) {
 
         }
 

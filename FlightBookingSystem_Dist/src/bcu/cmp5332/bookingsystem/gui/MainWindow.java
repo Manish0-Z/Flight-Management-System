@@ -179,7 +179,8 @@ public class MainWindow extends JFrame implements ActionListener {
     private void initialize() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | InstantiationException | 
+                 IllegalAccessException | UnsupportedLookAndFeelException ex) {
             // Log or ignore
         }
 
@@ -899,8 +900,10 @@ public class MainWindow extends JFrame implements ActionListener {
         styleButton(refreshBtn);
 
         addBtn.addActionListener(e -> {
-            ToastNotification.showToast(this, "Add Booking feature coming soon!", ToastNotification.ToastType.INFO);
+            AddBookingWindow addBookingWindow = new AddBookingWindow(this);
+            addBookingWindow.setVisible(true);
         });
+
         cancelBtn.addActionListener(e -> {
             ToastNotification.showToast(this, "Cancel Booking feature coming soon!", ToastNotification.ToastType.INFO);
         });
