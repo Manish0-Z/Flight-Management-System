@@ -23,7 +23,7 @@ public class Main {
             }
 
             try {
-                Command command = CommandParser.parse(line);
+                Command command = CommandParser.parse(line, fbs);
                 command.execute(fbs);
             } catch (FlightBookingSystemException ex) {
                 System.out.println(ex.getMessage());

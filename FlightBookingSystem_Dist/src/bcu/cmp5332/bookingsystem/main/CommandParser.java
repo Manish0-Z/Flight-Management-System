@@ -4,10 +4,15 @@ import bcu.cmp5332.bookingsystem.commands.AddBooking;
 import bcu.cmp5332.bookingsystem.commands.AddCustomer;
 import bcu.cmp5332.bookingsystem.commands.AddFlight;
 import bcu.cmp5332.bookingsystem.commands.CancelBooking;
+import bcu.cmp5332.bookingsystem.commands.EditBooking;
+import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.commands.Command;
 import bcu.cmp5332.bookingsystem.commands.Help;
-import bcu.cmp5332.bookingsystem.commands.ListCustomers;
 import bcu.cmp5332.bookingsystem.commands.ListFlights;
+import bcu.cmp5332.bookingsystem.commands.ListCustomers;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import bcu.cmp5332.bookingsystem.commands.LoadGUI;
 import bcu.cmp5332.bookingsystem.commands.ShowCustomer;
 import bcu.cmp5332.bookingsystem.commands.ShowFlight;
@@ -19,7 +24,7 @@ import java.time.format.DateTimeParseException;
 
 public class CommandParser {
 
-    public static Command parse(String line) throws IOException, FlightBookingSystemException {
+    public static Command parse(String line, FlightBookingSystem fbs) throws IOException, FlightBookingSystemException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
             String[] parts = line.split(" ", 3);
@@ -69,18 +74,38 @@ public class CommandParser {
                     return new Help();
                 }
                 case "showflight": {
-                    if (parts.length != 2) {
+                    if (parts.length == 1) {
+                        System.out.println("Available flights:");
+                        for (Flight f : fbs.getFlights()) {
+                            System.out.println(f.getId() + " - " + f.getFlightNumber() + " (" + f.getOrigin() + " to " + f.getDestination() + ")");
+                        }
+                        System.out.print("Enter flight ID: ");
+                        String idStr = reader.readLine();
+                        int flightId = Integer.parseInt(idStr);
+                        return new ShowFlight(flightId);
+                    } else if (parts.length == 2) {
+                        int flightId = Integer.parseInt(parts[1]);
+                        return new ShowFlight(flightId);
+                    } else {
                         throw new FlightBookingSystemException("Invalid command.");
                     }
-                    int flightId = Integer.parseInt(parts[1]);
-                    return new ShowFlight(flightId);
                 }
                 case "showcustomer": {
-                    if (parts.length != 2) {
+                    if (parts.length == 1) {
+                        System.out.println("Available customers:");
+                        for (Customer c : fbs.getCustomers()) {
+                            System.out.println(c.getId() + " - " + c.getName());
+                        }
+                        System.out.print("Enter customer ID: ");
+                        String idStr = reader.readLine();
+                        int customerId = Integer.parseInt(idStr);
+                        return new ShowCustomer(customerId);
+                    } else if (parts.length == 2) {
+                        int customerId = Integer.parseInt(parts[1]);
+                        return new ShowCustomer(customerId);
+                    } else {
                         throw new FlightBookingSystemException("Invalid command.");
                     }
-                    int customerId = Integer.parseInt(parts[1]);
-                    return new ShowCustomer(customerId);
                 }
                 case "addbooking": {
                     if (parts.length != 3) {
@@ -97,18 +122,68 @@ public class CommandParser {
                     return new AddBooking(id1, id2, seatNumber, bookingClass, specialRequests);
                 }
                 case "editbooking": {
-                    if (parts.length != 3) {
+                    if (parts.length == 1) {
+                        System.out.println("Available customers with bookings:");
+                        for (Customer c : fbs.getCustomers()) {
+                            if (!c.getBookings().isEmpty()) {
+                                System.out.println(c.getId() + " - " + c.getName() + " (has " + c.getBookings().size() + " booking(s))");
+                            }
+                        }
+                        System.out.print("Enter customer ID: ");
+                        String cidStr = reader.readLine();
+                        int cid = Integer.parseInt(cidStr);
+                        Customer customer = fbs.getCustomerByID(cid);
+                        System.out.println("Current bookings for " + customer.getName() + ":");
+                        for (Booking b : customer.getBookings()) {
+                            System.out.println("Flight " + b.getFlight().getId() + " - " + b.getFlight().getFlightNumber() + " (" + b.getFlight().getOrigin() + " to " + b.getFlight().getDestination() + ")");
+                        }
+                        System.out.print("Enter current flight ID: ");
+                        String oldFidStr = reader.readLine();
+                        int oldFid = Integer.parseInt(oldFidStr);
+                        System.out.println("Available flights:");
+                        for (Flight f : fbs.getFlights()) {
+                            System.out.println(f.getId() + " - " + f.getFlightNumber() + " (" + f.getOrigin() + " to " + f.getDestination() + ")");
+                        }
+                        System.out.print("Enter new flight ID: ");
+                        String newFidStr = reader.readLine();
+                        int newFid = Integer.parseInt(newFidStr);
+                        return new EditBooking(cid, oldFid, newFid);
+                    } else if (parts.length == 4) {
+                        int cid = Integer.parseInt(parts[1]);
+                        int oldFid = Integer.parseInt(parts[2]);
+                        int newFid = Integer.parseInt(parts[3]);
+                        return new EditBooking(cid, oldFid, newFid);
+                    } else {
                         throw new FlightBookingSystemException("Invalid command.");
                     }
-                    break;
                 }
                 case "cancelbooking": {
-                    if (parts.length != 3) {
+                    if (parts.length == 1) {
+                        System.out.println("Available customers with bookings:");
+                        for (Customer c : fbs.getCustomers()) {
+                            if (!c.getBookings().isEmpty()) {
+                                System.out.println(c.getId() + " - " + c.getName() + " (has " + c.getBookings().size() + " booking(s))");
+                            }
+                        }
+                        System.out.print("Enter customer ID: ");
+                        String cidStr = reader.readLine();
+                        int cid = Integer.parseInt(cidStr);
+                        Customer customer = fbs.getCustomerByID(cid);
+                        System.out.println("Bookings for " + customer.getName() + ":");
+                        for (Booking b : customer.getBookings()) {
+                            System.out.println("Flight " + b.getFlight().getId() + " - " + b.getFlight().getFlightNumber() + " (" + b.getFlight().getOrigin() + " to " + b.getFlight().getDestination() + ")");
+                        }
+                        System.out.print("Enter flight ID to cancel: ");
+                        String fidStr = reader.readLine();
+                        int fid = Integer.parseInt(fidStr);
+                        return new CancelBooking(cid, fid);
+                    } else if (parts.length == 3) {
+                        int id1 = Integer.parseInt(parts[1]);
+                        int id2 = Integer.parseInt(parts[2]);
+                        return new CancelBooking(id1, id2);
+                    } else {
                         throw new FlightBookingSystemException("Invalid command.");
                     }
-                    int id1 = Integer.parseInt(parts[1]);
-                    int id2 = Integer.parseInt(parts[2]);
-                    return new CancelBooking(id1, id2);
                 }
                 default: {
                     throw new FlightBookingSystemException("Invalid command.");
