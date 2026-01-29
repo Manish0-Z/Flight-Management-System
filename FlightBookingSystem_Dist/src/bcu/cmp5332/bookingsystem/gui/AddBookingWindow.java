@@ -94,8 +94,8 @@ public class AddBookingWindow extends JFrame implements ActionListener {
 
     private void addBooking() {
         try {
-            int custId = Integer.parseInt(custIdText.getText());
-            int flightId = Integer.parseInt(flightIdText.getText());
+            int custId = Integer.parseInt(custIdText.getText().trim());
+            int flightId = Integer.parseInt(flightIdText.getText().trim());
             String seatNumber = seatNumberText.getText();
             String bookingClass = (String) bookingClassCombo.getSelectedItem();
             String specialRequests = specialRequestsText.getText();
