@@ -10,6 +10,7 @@ public class FlightBookingSystem {
 
     private final Map<Integer, Customer> customers = new TreeMap<>();
     private final Map<Integer, Flight> flights = new TreeMap<>();
+    private final Map<String, User> users = new HashMap<>();
 
     public LocalDate getSystemDate() {
         return systemDate;
@@ -58,5 +59,20 @@ public class FlightBookingSystem {
             throw new IllegalArgumentException("Duplicate customer ID.");
         }
         customers.put(customer.getId(), customer);
+    }
+
+    public void addUser(User user) throws FlightBookingSystemException {
+        if (users.containsKey(user.getUsername())) {
+            throw new FlightBookingSystemException("Username already exists.");
+        }
+        users.put(user.getUsername(), user);
+    }
+
+    public List<User> getUsers() {
+        return new ArrayList<>(users.values());
+    }
+
+    public User getUser(String username) {
+        return users.get(username);
     }
 }

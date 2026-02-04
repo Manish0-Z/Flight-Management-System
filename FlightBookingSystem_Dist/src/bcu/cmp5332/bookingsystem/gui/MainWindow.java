@@ -167,8 +167,11 @@ public class MainWindow extends JFrame implements ActionListener {
     private static final Color HOVER_BTN_COLOR = new Color(69, 90, 171);
     private static final Color AIRLINE_ACCENT = new Color(255, 193, 7);
 
-    public MainWindow(FlightBookingSystem fbs) {
+    private boolean isAdmin;
+
+    public MainWindow(FlightBookingSystem fbs, boolean isAdmin) {
         this.fbs = fbs;
+        this.isAdmin = isAdmin;
         initialize();
     }
 
@@ -184,7 +187,7 @@ public class MainWindow extends JFrame implements ActionListener {
             // Log or ignore
         }
 
-        setTitle("Flight Booking System - Admin Dashboard");
+        setTitle(isAdmin ? "Flight Booking System - Admin Dashboard" : "Flight Booking System - Customer Dashboard");
         setSize(1000, 600);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -520,14 +523,19 @@ public class MainWindow extends JFrame implements ActionListener {
         styleButton(addBtn);
         styleButton(refreshBtn);
 
-        addBtn.addActionListener(e -> {
-            AddFlightWindow addFlightWindow = new AddFlightWindow(this);
-            addFlightWindow.setVisible(true);
-        });
+        if (isAdmin) {
+            addBtn.addActionListener(e -> {
+                AddFlightWindow addFlightWindow = new AddFlightWindow(this);
+                addFlightWindow.setVisible(true);
+            });
+            toolbar.add(addBtn);
+        }
         refreshBtn.addActionListener(e -> {
             refreshFlightsTable(panel);
             ToastNotification.showToast(this, "Flights refreshed successfully!", ToastNotification.ToastType.SUCCESS);
         });
+        toolbar.add(refreshBtn);
+        toolbar.add(Box.createHorizontalStrut(20));
 
         // Search field
         JTextField searchField = new JTextField(20);
@@ -535,9 +543,6 @@ public class MainWindow extends JFrame implements ActionListener {
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        toolbar.add(addBtn);
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
         toolbar.add(searchLabel);
         toolbar.add(searchField);
 
@@ -705,14 +710,19 @@ public class MainWindow extends JFrame implements ActionListener {
         styleButton(addBtn);
         styleButton(refreshBtn);
 
-        addBtn.addActionListener(e -> {
-            AddCustomerWindow addCustomerWindow = new AddCustomerWindow(this);
-            addCustomerWindow.setVisible(true);
-        });
+        if (isAdmin) {
+            addBtn.addActionListener(e -> {
+                AddCustomerWindow addCustomerWindow = new AddCustomerWindow(this);
+                addCustomerWindow.setVisible(true);
+            });
+            toolbar.add(addBtn);
+        }
         refreshBtn.addActionListener(e -> {
             refreshCustomersTable(panel);
             ToastNotification.showToast(this, "Customers refreshed successfully!", ToastNotification.ToastType.SUCCESS);
         });
+        toolbar.add(refreshBtn);
+        toolbar.add(Box.createHorizontalStrut(20));
 
         // Search field
         JTextField searchField = new JTextField(20);
@@ -720,9 +730,8 @@ public class MainWindow extends JFrame implements ActionListener {
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        toolbar.add(addBtn);
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
+        toolbar.add(searchLabel);
+        toolbar.add(searchField);
         toolbar.add(searchLabel);
         toolbar.add(searchField);
 
