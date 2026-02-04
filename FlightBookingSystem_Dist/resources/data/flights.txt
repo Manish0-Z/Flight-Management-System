@@ -1,2 +1,2 @@
-1::BA123::London::New York::2024-12-01
-2::LH456::Berlin::Tokyo::2024-12-15
+1::BA123::London::New York::2024-12-01::
+2::LH456::Berlin::Tokyo::2024-12-15::

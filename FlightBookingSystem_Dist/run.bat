@@ -1,7 +1,7 @@
 @echo off
 echo Compiling...
 if not exist bin mkdir bin
-javac -d bin -sourcepath src src/bcu/cmp5332/bookingsystem/main/Main.java
+javac -d bin -sourcepath "src" "src/bcu/cmp5332/bookingsystem/main/Main.java"
 if %errorlevel% neq 0 (
     echo Compilation failed.
     pause
@@ -9,5 +9,5 @@ if %errorlevel% neq 0 (
 )
 
 echo Running...
-java -cp bin bcu.cmp5332.bookingsystem.main.Main
+java -cp "bin;resources" bcu.cmp5332.bookingsystem.main.Main
 pause

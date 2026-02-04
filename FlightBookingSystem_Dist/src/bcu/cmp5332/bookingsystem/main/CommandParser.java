@@ -24,7 +24,7 @@ import java.time.format.DateTimeParseException;
 
 public class CommandParser {
 
-    public static Command parse(String line, FlightBookingSystem fbs) throws IOException, FlightBookingSystemException {
+    public static Command parse(String line, FlightBookingSystem fbs, boolean isAdmin) throws IOException, FlightBookingSystemException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
             String[] parts = line.split(" ", 3);
@@ -32,6 +32,9 @@ public class CommandParser {
 
             switch (cmd) {
                 case "addflight": {
+                    if (!isAdmin) {
+                        throw new FlightBookingSystemException("This command is only available for admins.");
+                    }
                     System.out.print("Flight Number: ");
                     String flighNumber = reader.readLine();
                     System.out.print("Origin: ");
@@ -42,6 +45,9 @@ public class CommandParser {
                     return new AddFlight(flighNumber, origin, destination, departureDate);
                 }
                 case "addcustomer": {
+                    if (!isAdmin) {
+                        throw new FlightBookingSystemException("This command is only available for admins.");
+                    }
                     System.out.print("Name: ");
                     String name = reader.readLine();
                     System.out.print("Phone: ");
@@ -71,7 +77,7 @@ public class CommandParser {
                     if (parts.length != 1) {
                         throw new FlightBookingSystemException("Invalid command.");
                     }
-                    return new Help();
+                    return new Help(isAdmin);
                 }
                 case "showflight": {
                     if (parts.length == 1) {

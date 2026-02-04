@@ -14,6 +14,14 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println("Flight Booking System");
+        System.out.print("Are you an admin or customer? (a/c): ");
+        String mode = br.readLine().trim().toLowerCase();
+        boolean isAdmin = mode.equals("a");
+        if (!isAdmin && !mode.equals("c")) {
+            System.out.println("Invalid choice. Exiting.");
+            return;
+        }
+
         System.out.println("Enter 'help' to see a list of available commands.");
         while (true) {
             System.out.print("> ");
@@ -23,7 +31,7 @@ public class Main {
             }
 
             try {
-                Command command = CommandParser.parse(line, fbs);
+                Command command = CommandParser.parse(line, fbs, isAdmin);
                 command.execute(fbs);
             } catch (FlightBookingSystemException ex) {
                 System.out.println(ex.getMessage());
