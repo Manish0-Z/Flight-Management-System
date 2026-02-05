@@ -35,9 +35,16 @@ public class AddBooking implements Command {
             }
         }
 
-        Booking booking = new Booking(customer, flight, flightBookingSystem.getSystemDate(), seatNumber, bookingClass,
+        int maxId = 0;
+        if (!flightBookingSystem.getBookings().isEmpty()) {
+            int lastIndex = flightBookingSystem.getBookings().size() - 1;
+            maxId = flightBookingSystem.getBookings().get(lastIndex).getId();
+        }
+
+        Booking booking = new Booking(++maxId, customer, flight, flightBookingSystem.getSystemDate(), seatNumber, bookingClass,
                 specialRequests);
         customer.addBooking(booking);
+        flightBookingSystem.addBooking(booking);
         flight.addPassenger(customer);
         System.out
                 .println("Booking created: Customer " + customer.getName() + " on Flight " + flight.getFlightNumber()

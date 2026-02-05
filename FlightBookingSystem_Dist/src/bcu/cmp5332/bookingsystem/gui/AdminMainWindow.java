@@ -1,0 +1,760 @@
+package bcu.cmp5332.bookingsystem.gui;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+
+
+public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow {
+    private static final Color SIDEBAR_COLOR = new Color(30, 58, 138);
+    private static final Color SIDEBAR_TEXT_COLOR = Color.WHITE;
+    private static final Color HOVER_BTN_COLOR = new Color(50, 78, 158);
+    private static final Color ACTIVE_BTN_COLOR = new Color(60, 98, 178);
+    private static final Color AIRLINE_ACCENT = new Color(255, 193, 7);
+
+    private final FlightBookingSystem fbs;
+
+    private CardLayout cardLayout;
+    private JPanel contentPanel;
+
+    private JButton homeBtn, flightsBtn, customersBtn, bookingsBtn, exitBtn;
+    private JPanel homePanel, flightsPanel, customersPanel, bookingsPanel;
+
+    public AdminMainWindow(FlightBookingSystem fbs) {
+        this.fbs = fbs;
+        initialize();
+    }
+
+    public FlightBookingSystem getFlightBookingSystem() {
+        return fbs;
+    }
+
+    private void initialize() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | 
+                 IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            // Log or ignore
+        }
+
+        setTitle("Flight Booking System - Admin Dashboard");
+        setSize(1000, 600);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // Create Sidebar
+        JPanel sidebar = createSidebar();
+        add(sidebar, BorderLayout.WEST);
+
+        // Create Content Area
+        cardLayout = new CardLayout();
+        contentPanel = new JPanel(cardLayout);
+        contentPanel.setBackground(Color.WHITE);
+
+        // Initialize Panels
+        homePanel = createHomePanel();
+        flightsPanel = createFlightsPanel();
+        customersPanel = createCustomersPanel();
+        bookingsPanel = createBookingsPanel();
+
+        contentPanel.add(homePanel, "Home");
+        contentPanel.add(flightsPanel, "Flights");
+        contentPanel.add(customersPanel, "Customers");
+        contentPanel.add(bookingsPanel, "Bookings");
+
+        add(contentPanel, BorderLayout.CENTER);
+
+        // Default view
+        setActiveButton(homeBtn);
+        cardLayout.show(contentPanel, "Home");
+
+        setVisible(true);
+    }
+
+    private JPanel createSidebar() {
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+        sidebar.setBackground(SIDEBAR_COLOR);
+        sidebar.setPreferredSize(new Dimension(240, getHeight()));
+        sidebar.setBorder(new EmptyBorder(20, 0, 0, 0));
+
+        // Header with logo and airplane icon
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+        headerPanel.setBackground(SIDEBAR_COLOR);
+        headerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Airline logo
+        AirlineLogo logo = new AirlineLogo(200, 80);
+        logo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(logo);
+        headerPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
+        // Airplane icon
+        AirplaneIcon planeIcon = new AirplaneIcon(60, 40);
+        planeIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(planeIcon);
+        headerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        // Subtitle
+        JLabel subtitleLabel = new JLabel("Management System");
+        subtitleLabel.setForeground(AIRLINE_ACCENT);
+        subtitleLabel.setFont(new Font("Segoe UI", Font.ITALIC, 14));
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(subtitleLabel);
+
+        sidebar.add(headerPanel);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        // Buttons
+        homeBtn = createSidebarButton("Dashboard", "🏠");
+        flightsBtn = createSidebarButton("Flights", "✈️");
+        customersBtn = createSidebarButton("Customers", "👥");
+        bookingsBtn = createSidebarButton("Bookings", "🎫");
+
+        sidebar.add(homeBtn);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(flightsBtn);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(customersBtn);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        bookingsBtn = createSidebarButton("Bookings", "🎫");
+        sidebar.add(bookingsBtn);
+
+        // Spacer to push exit button to bottom
+        sidebar.add(Box.createVerticalGlue());
+
+        exitBtn = createSidebarButton("Exit", "🚪");
+        exitBtn.setBackground(new Color(180, 50, 50));
+        sidebar.add(exitBtn);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        return sidebar;
+    }
+
+    private JButton createSidebarButton(String text, String icon) {
+        JButton btn = new JButton(icon + " " + text);
+        btn.setMaximumSize(new Dimension(240, 50));
+        btn.setPreferredSize(new Dimension(240, 50));
+        btn.setForeground(SIDEBAR_TEXT_COLOR);
+        btn.setBackground(SIDEBAR_COLOR);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        btn.setHorizontalAlignment(SwingConstants.LEFT);
+        btn.setBorder(new EmptyBorder(0, 20, 0, 0));
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn)
+                    btn.setBackground(HOVER_BTN_COLOR);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn)
+                    btn.setBackground(SIDEBAR_COLOR);
+            }
+        });
+
+        btn.addActionListener(this);
+        return btn;
+    }
+
+    private void setActiveButton(JButton active) {
+        JButton[] btns = { homeBtn, flightsBtn, customersBtn, bookingsBtn };
+        for (JButton btn : btns) {
+            btn.setBackground(SIDEBAR_COLOR);
+            btn.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        }
+        active.setBackground(ACTIVE_BTN_COLOR);
+        active.setFont(new Font("Segoe UI", Font.BOLD, 16));
+    }
+
+    // --- Content Panels ---
+
+    private JPanel createHomePanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+
+        // Welcome header
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(new Color(240, 248, 255)); // Light blue background
+        headerPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
+
+        JLabel welcomeLabel = new JLabel("Flight Management System");
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        welcomeLabel.setForeground(new Color(30, 58, 138)); // Airline blue
+
+        AirplaneIcon headerPlane = new AirplaneIcon(40, 30);
+        headerPanel.add(headerPlane);
+        headerPanel.add(Box.createHorizontalStrut(15));
+        headerPanel.add(welcomeLabel);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // Main content area with stats and chart
+        JPanel contentArea = new JPanel(new BorderLayout(0, 20));
+        contentArea.setBackground(Color.WHITE);
+        contentArea.setBorder(new EmptyBorder(20, 30, 20, 30));
+
+        // Stats Panel
+        JPanel statsPanel = new JPanel(new GridLayout(1, 4, 20, 0));
+        statsPanel.setBackground(Color.WHITE);
+
+        // Flights stat
+        JPanel flightsStat = createStatPanel("✈️ Total Flights", String.valueOf(fbs.getFlights().size()), new Color(33, 150, 243));
+        statsPanel.add(flightsStat);
+
+        // Customers stat
+        JPanel customersStat = createStatPanel("👥 Total Customers", String.valueOf(fbs.getCustomers().size()), new Color(76, 175, 80));
+        statsPanel.add(customersStat);
+
+        // Bookings stat
+        JPanel bookingsStat = createStatPanel("🎫 Total Bookings", String.valueOf(fbs.getBookings().size()), new Color(255, 152, 0));
+        statsPanel.add(bookingsStat);
+
+        // Revenue stat (placeholder)
+        JPanel revenueStat = createStatPanel("💰 Revenue", "$0.00", new Color(156, 39, 176));
+        statsPanel.add(revenueStat);
+
+        contentArea.add(statsPanel, BorderLayout.NORTH);
+
+        // Placeholder for chart or additional content
+        JPanel chartPanel = new JPanel();
+        chartPanel.setBackground(Color.WHITE);
+        chartPanel.setBorder(BorderFactory.createTitledBorder("System Overview"));
+        JLabel chartPlaceholder = new JLabel("Chart visualization would go here", SwingConstants.CENTER);
+        chartPlaceholder.setFont(new Font("Segoe UI", Font.ITALIC, 16));
+        chartPlaceholder.setForeground(Color.GRAY);
+        chartPanel.add(chartPlaceholder);
+
+        contentArea.add(chartPanel, BorderLayout.CENTER);
+
+        panel.add(contentArea, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private JPanel createStatPanel(String title, String value, Color color) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(color, 2),
+            new EmptyBorder(15, 15, 15, 15)
+        ));
+
+        JLabel valueLabel = new JLabel(value, SwingConstants.CENTER);
+        valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        valueLabel.setForeground(color);
+
+        JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        titleLabel.setForeground(Color.GRAY);
+
+        panel.add(valueLabel, BorderLayout.CENTER);
+        panel.add(titleLabel, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private JPanel createFlightsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+
+        // Header
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        headerPanel.setBackground(new Color(240, 248, 255));
+        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+
+        JLabel flightIcon = new JLabel("✈️");
+        flightIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
+        JLabel title = new JLabel("Flight Management");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        title.setForeground(new Color(30, 58, 138));
+
+        headerPanel.add(flightIcon);
+        headerPanel.add(Box.createHorizontalStrut(10));
+        headerPanel.add(title);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // Toolbar with search
+        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        toolbar.setBackground(Color.WHITE);
+        toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        JButton addBtn = new JButton("✈️ Add Flight");
+        JButton refreshBtn = new JButton("🔄 Refresh");
+
+        styleButton(addBtn);
+        styleButton(refreshBtn);
+
+        addBtn.addActionListener(e -> {
+            AddFlightWindow addFlightWindow = new AddFlightWindow(this);
+            addFlightWindow.setVisible(true);
+        });
+        refreshBtn.addActionListener(e -> {
+            refreshFlightsTable(panel);
+        });
+        toolbar.add(addBtn);
+        toolbar.add(refreshBtn);
+        toolbar.add(Box.createHorizontalStrut(20));
+
+        // Search field
+        JTextField searchField = new JTextField(20);
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        JLabel searchLabel = new JLabel("🔍 Search:");
+        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+        toolbar.add(searchLabel);
+        toolbar.add(searchField);
+
+        panel.add(toolbar, BorderLayout.SOUTH);
+
+        JPanel tableContainer = new JPanel(new BorderLayout());
+        panel.add(tableContainer, BorderLayout.CENTER);
+
+        panel.putClientProperty("tableContainer", tableContainer);
+        panel.putClientProperty("searchField", searchField);
+
+        refreshFlightsTable(panel);
+
+        return panel;
+    }
+
+    private JPanel createCustomersPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+
+        // Header
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        headerPanel.setBackground(new Color(240, 248, 255));
+        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+
+        JLabel customerIcon = new JLabel("👥");
+        customerIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
+        JLabel title = new JLabel("Customer Management");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        title.setForeground(new Color(30, 58, 138));
+
+        headerPanel.add(customerIcon);
+        headerPanel.add(Box.createHorizontalStrut(10));
+        headerPanel.add(title);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // Toolbar with search
+        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        toolbar.setBackground(Color.WHITE);
+        toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        JButton addBtn = new JButton("👤 Add Customer");
+        JButton refreshBtn = new JButton("🔄 Refresh");
+
+        styleButton(addBtn);
+        styleButton(refreshBtn);
+
+        addBtn.addActionListener(e -> {
+            AddCustomerWindow addCustomerWindow = new AddCustomerWindow(this);
+            addCustomerWindow.setVisible(true);
+        });
+        refreshBtn.addActionListener(e -> {
+            refreshCustomersTable(panel);
+        });
+        toolbar.add(addBtn);
+        toolbar.add(refreshBtn);
+        toolbar.add(Box.createHorizontalStrut(20));
+
+        // Search field
+        JTextField searchField = new JTextField(20);
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        JLabel searchLabel = new JLabel("🔍 Search:");
+        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+        toolbar.add(searchLabel);
+        toolbar.add(searchField);
+        toolbar.add(searchLabel);
+        toolbar.add(searchField);
+
+        panel.add(toolbar, BorderLayout.SOUTH);
+
+        JPanel tableContainer = new JPanel(new BorderLayout());
+        panel.add(tableContainer, BorderLayout.CENTER);
+
+        panel.putClientProperty("tableContainer", tableContainer);
+        panel.putClientProperty("searchField", searchField);
+        refreshCustomersTable(panel);
+
+        return panel;
+    }
+
+    private JPanel createBookingsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+
+        // Header
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        headerPanel.setBackground(new Color(240, 248, 255));
+        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+
+        JLabel bookingIcon = new JLabel("🎫");
+        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
+        JLabel title = new JLabel("Booking Management");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        title.setForeground(new Color(30, 58, 138));
+
+        headerPanel.add(bookingIcon);
+        headerPanel.add(Box.createHorizontalStrut(10));
+        headerPanel.add(title);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // Toolbar with search
+        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        toolbar.setBackground(Color.WHITE);
+        toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        JButton addBtn = new JButton("🎫 Add Booking");
+        JButton cancelBtn = new JButton("❌ Cancel Booking");
+        JButton refreshBtn = new JButton("🔄 Refresh");
+
+        styleButton(addBtn);
+        styleButton(cancelBtn);
+        styleButton(refreshBtn);
+
+        addBtn.addActionListener(e -> {
+            AddBookingWindow addBookingWindow = new AddBookingWindow(this);
+            addBookingWindow.setVisible(true);
+        });
+
+        cancelBtn.addActionListener(e -> {
+            // Cancel Booking feature coming soon!
+        });
+        refreshBtn.addActionListener(e -> {
+            refreshBookingsTable(panel);
+        });
+
+        // Search field
+        JTextField searchField = new JTextField(20);
+        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        JLabel searchLabel = new JLabel("🔍 Search:");
+        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+        toolbar.add(addBtn);
+        toolbar.add(cancelBtn);
+        toolbar.add(refreshBtn);
+        toolbar.add(Box.createHorizontalStrut(20));
+        toolbar.add(searchLabel);
+        toolbar.add(searchField);
+
+        panel.add(toolbar, BorderLayout.SOUTH);
+
+        JPanel tableContainer = new JPanel(new BorderLayout());
+        panel.add(tableContainer, BorderLayout.CENTER);
+
+        panel.putClientProperty("tableContainer", tableContainer);
+        panel.putClientProperty("searchField", searchField);
+        refreshBookingsTable(panel);
+
+        return panel;
+    }
+
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        button.setBackground(new Color(30, 58, 138));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(120, 35));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setBackground(new Color(50, 78, 158));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setBackground(new Color(30, 58, 138));
+            }
+        });
+    }
+
+    // --- Table Refresh Methods ---
+
+    private void refreshFlightsTable(JPanel panel) {
+        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
+        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
+
+        tableContainer.removeAll();
+
+        String[] columnNames = {"Flight No", "Origin", "Destination", "Departure Date", "Capacity", "Price"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        List<Flight> flights = fbs.getFlights();
+        for (Flight flight : flights) {
+            if (!flight.isDeleted()) {
+                Object[] row = {
+                    flight.getFlightNumber(),
+                    flight.getOrigin(),
+                    flight.getDestination(),
+                    flight.getDepartureDate(),
+                    flight.getCapacity(),
+                    "$" + flight.getPrice()
+                };
+                model.addRow(row);
+            }
+        }
+
+        JTable table = new JTable(model);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setRowHeight(25);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            private void filterTable() {
+                String text = searchField.getText();
+                if (text.trim().length() == 0) {
+                    sorter.setRowFilter(null);
+                } else {
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
+        tableContainer.revalidate();
+        tableContainer.repaint();
+    }
+
+    private void refreshCustomersTable(JPanel panel) {
+        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
+        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
+
+        tableContainer.removeAll();
+
+        String[] columnNames = {"ID", "Name", "Phone", "Email"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        List<Customer> customers = fbs.getCustomers();
+        for (Customer customer : customers) {
+            if (!customer.isDeleted()) {
+                Object[] row = {
+                    customer.getId(),
+                    customer.getName(),
+                    customer.getPhone(),
+                    customer.getEmail()
+                };
+                model.addRow(row);
+            }
+        }
+
+        JTable table = new JTable(model);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setRowHeight(25);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            private void filterTable() {
+                String text = searchField.getText();
+                if (text.trim().length() == 0) {
+                    sorter.setRowFilter(null);
+                } else {
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
+        tableContainer.revalidate();
+        tableContainer.repaint();
+    }
+
+    private void refreshBookingsTable(JPanel panel) {
+        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
+        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
+
+        tableContainer.removeAll();
+
+        String[] columnNames = {"Booking ID", "Customer", "Flight", "Date Booked", "Status"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        List<Booking> bookings = fbs.getBookings();
+        for (Booking booking : bookings) {
+            if (!booking.isDeleted()) {
+                Object[] row = {
+                    booking.getId(),
+                    booking.getCustomer().getName(),
+                    booking.getFlight().getFlightNumber(),
+                    booking.getBookingDate(),
+                    booking.getStatus()
+                };
+                model.addRow(row);
+            }
+        }
+
+        JTable table = new JTable(model);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setRowHeight(25);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            private void filterTable() {
+                String text = searchField.getText();
+                if (text.trim().length() == 0) {
+                    sorter.setRowFilter(null);
+                } else {
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
+        tableContainer.revalidate();
+        tableContainer.repaint();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == homeBtn) {
+            setActiveButton(homeBtn);
+            cardLayout.show(contentPanel, "Home");
+        } else if (e.getSource() == flightsBtn) {
+            setActiveButton(flightsBtn);
+            cardLayout.show(contentPanel, "Flights");
+        } else if (e.getSource() == customersBtn) {
+            setActiveButton(customersBtn);
+            cardLayout.show(contentPanel, "Customers");
+        } else if (e.getSource() == bookingsBtn) {
+            setActiveButton(bookingsBtn);
+            cardLayout.show(contentPanel, "Bookings");
+        } else if (e.getSource() == exitBtn) {
+            try {
+                FlightBookingSystemData.store(fbs);
+            } catch (IOException ex) {
+                // Error saving data: " + ex.getMessage()
+            }
+            System.exit(0);
+        }
+    }
+}

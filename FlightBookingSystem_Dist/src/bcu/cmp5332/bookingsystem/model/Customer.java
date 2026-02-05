@@ -11,6 +11,7 @@ public class Customer {
     private String email;
     private String address;
     private final List<Booking> bookings = new ArrayList<>();
+    private boolean deleted = false;
 
     public Customer(int id, String name, String phone, String email, String address) {
         this.id = id;
@@ -75,5 +76,13 @@ public class Customer {
                 return;
             }
         }
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

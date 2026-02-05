@@ -1,12 +1,11 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.commands.AddBooking;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -17,9 +16,13 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import bcu.cmp5332.bookingsystem.commands.AddBooking;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+
 public class AddBookingWindow extends JFrame implements ActionListener {
 
-    private final MainWindow mw;
+    private final GuiWindow mw;
     private final JTextField custIdText = new JTextField();
     private final JTextField flightIdText = new JTextField();
     private final JTextField seatNumberText = new JTextField();
@@ -29,7 +32,7 @@ public class AddBookingWindow extends JFrame implements ActionListener {
     private final JButton addBtn = new JButton("Issue");
     private final JButton cancelBtn = new JButton("Cancel");
 
-    public AddBookingWindow(MainWindow mw) {
+    public AddBookingWindow(GuiWindow mw) {
         this.mw = mw;
         initialize();
     }
@@ -77,7 +80,7 @@ public class AddBookingWindow extends JFrame implements ActionListener {
 
         this.getContentPane().add(topPanel, BorderLayout.CENTER);
         this.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
-        setLocationRelativeTo(mw);
+        setLocationRelativeTo((Component) mw);
 
         setVisible(true);
 

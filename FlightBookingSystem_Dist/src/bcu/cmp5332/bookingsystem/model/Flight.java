@@ -14,15 +14,19 @@ public class Flight {
     private String origin;
     private String destination;
     private LocalDate departureDate;
+    private int capacity;
+    private double price;
+    private boolean deleted = false;
+    private Set<Customer> passengers;
 
-    private final Set<Customer> passengers;
-
-    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate) {
+    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate, int capacity, double price) {
         this.id = id;
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
         this.departureDate = departureDate;
+        this.capacity = capacity;
+        this.price = price;
 
         passengers = new HashSet<>();
     }
@@ -87,5 +91,29 @@ public class Flight {
 
     public void removePassenger(Customer passenger) {
         passengers.remove(passenger);
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

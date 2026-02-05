@@ -1,12 +1,11 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.commands.CancelBooking;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,16 +14,20 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import bcu.cmp5332.bookingsystem.commands.CancelBooking;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+
 public class CancelBookingWindow extends JFrame implements ActionListener {
 
-    private final MainWindow mw;
+    private final GuiWindow mw;
     private final JTextField custIdText = new JTextField();
     private final JTextField flightIdText = new JTextField();
 
     private final JButton cancelBtn = new JButton("Cancel Booking");
     private final JButton closeBtn = new JButton("Close");
 
-    public CancelBookingWindow(MainWindow mw) {
+    public CancelBookingWindow(GuiWindow mw) {
         this.mw = mw;
         initialize();
     }
@@ -58,7 +61,7 @@ public class CancelBookingWindow extends JFrame implements ActionListener {
 
         this.getContentPane().add(topPanel, BorderLayout.CENTER);
         this.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
-        setLocationRelativeTo(mw);
+        setLocationRelativeTo((Component) mw);
 
         setVisible(true);
 

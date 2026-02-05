@@ -1,12 +1,14 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.commands.AddCustomer;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,9 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import bcu.cmp5332.bookingsystem.commands.AddCustomer;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+
 public class AddCustomerWindow extends JFrame implements ActionListener {
 
-    private final MainWindow mw;
+    private final GuiWindow mw;
     private final JTextField nameText = new JTextField();
     private final JTextField phoneText = new JTextField();
     private final JTextField emailText = new JTextField();
@@ -25,7 +31,7 @@ public class AddCustomerWindow extends JFrame implements ActionListener {
     private final JButton addBtn = new JButton("Add");
     private final JButton cancelBtn = new JButton("Cancel");
 
-    public AddCustomerWindow(MainWindow mw) {
+    public AddCustomerWindow(GuiWindow mw) {
         this.mw = mw;
         initialize();
     }
@@ -52,6 +58,12 @@ public class AddCustomerWindow extends JFrame implements ActionListener {
         topPanel.add(new JLabel("Address : "));
         topPanel.add(addressText);
 
+        // Add placeholders to the text fields
+        setPlaceholder(nameText, "Enter customer name");
+        setPlaceholder(phoneText, "Enter phone number");
+        setPlaceholder(emailText, "Enter email address");
+        setPlaceholder(addressText, "Enter address");
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(1, 3));
         bottomPanel.add(new JLabel("     "));
@@ -63,7 +75,7 @@ public class AddCustomerWindow extends JFrame implements ActionListener {
 
         this.getContentPane().add(topPanel, BorderLayout.CENTER);
         this.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
-        setLocationRelativeTo(mw);
+        setLocationRelativeTo((Component) mw);
 
         setVisible(true);
 
@@ -102,5 +114,28 @@ public class AddCustomerWindow extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, ex, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void setPlaceholder(JTextField field, String placeholder) {
+        field.setText(placeholder);
+        field.setForeground(Color.GRAY);
+        field.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (field.getText().equals(placeholder)) {
+                    field.setText("");
+                    field.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (field.getText().isEmpty()) {
+                    field.setText(placeholder);
+                    field.setForeground(Color.GRAY);
+                }
+            }
+        });
+    }
+
 
 }

@@ -1,26 +1,27 @@
 package bcu.cmp5332.bookingsystem.main;
 
-import bcu.cmp5332.bookingsystem.commands.AddBooking;
-import bcu.cmp5332.bookingsystem.commands.AddCustomer;
-import bcu.cmp5332.bookingsystem.commands.AddFlight;
-import bcu.cmp5332.bookingsystem.commands.CancelBooking;
-import bcu.cmp5332.bookingsystem.commands.EditBooking;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.commands.Help;
-import bcu.cmp5332.bookingsystem.commands.ListFlights;
-import bcu.cmp5332.bookingsystem.commands.ListCustomers;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import bcu.cmp5332.bookingsystem.commands.LoadGUI;
-import bcu.cmp5332.bookingsystem.commands.ShowCustomer;
-import bcu.cmp5332.bookingsystem.commands.ShowFlight;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import bcu.cmp5332.bookingsystem.commands.AddBooking;
+import bcu.cmp5332.bookingsystem.commands.AddCustomer;
+import bcu.cmp5332.bookingsystem.commands.AddFlight;
+import bcu.cmp5332.bookingsystem.commands.CancelBooking;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.commands.EditBooking;
+import bcu.cmp5332.bookingsystem.commands.Help;
+import bcu.cmp5332.bookingsystem.commands.ListCustomers;
+import bcu.cmp5332.bookingsystem.commands.ListFlights;
+import bcu.cmp5332.bookingsystem.commands.LoadGUI;
+import bcu.cmp5332.bookingsystem.commands.ShowCustomer;
+import bcu.cmp5332.bookingsystem.commands.ShowFlight;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 public class CommandParser {
 
@@ -42,7 +43,11 @@ public class CommandParser {
                     System.out.print("Destination: ");
                     String destination = reader.readLine();
                     LocalDate departureDate = parseDateWithAttempts(reader);
-                    return new AddFlight(flighNumber, origin, destination, departureDate);
+                    System.out.print("Capacity: ");
+                    int capacity = Integer.parseInt(reader.readLine());
+                    System.out.print("Price: ");
+                    double price = Double.parseDouble(reader.readLine());
+                    return new AddFlight(flighNumber, origin, destination, departureDate, capacity, price);
                 }
                 case "addcustomer": {
                     if (!isAdmin) {

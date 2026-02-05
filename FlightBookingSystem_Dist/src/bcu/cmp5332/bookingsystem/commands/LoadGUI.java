@@ -1,11 +1,13 @@
 package bcu.cmp5332.bookingsystem.commands;
 
+import javax.swing.JOptionPane;
+
+import bcu.cmp5332.bookingsystem.gui.AdminMainWindow;
+import bcu.cmp5332.bookingsystem.gui.CustomerMainWindow;
 import bcu.cmp5332.bookingsystem.gui.LoginDialog;
-import bcu.cmp5332.bookingsystem.gui.MainWindow;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-
-import javax.swing.JOptionPane;
+import bcu.cmp5332.bookingsystem.model.User;
 
 public class LoadGUI implements Command {
 
@@ -35,9 +37,14 @@ public class LoadGUI implements Command {
         loginDialog.setVisible(true);
 
         if (loginDialog.isLoggedIn()) {
-            boolean isAdmin = loginDialog.getLoggedInUser().isAdmin();
-            MainWindow mainWindow = new MainWindow(flightBookingSystem, isAdmin);
-            mainWindow.setVisible(true);
+            User loggedInUser = loginDialog.getLoggedInUser();
+            if (loggedInUser.isAdmin()) {
+                AdminMainWindow adminMainWindow = new AdminMainWindow(flightBookingSystem);
+                adminMainWindow.setVisible(true);
+            } else {
+                CustomerMainWindow customerMainWindow = new CustomerMainWindow(flightBookingSystem, loggedInUser);
+                customerMainWindow.setVisible(true);
+            }
         }
     }
     

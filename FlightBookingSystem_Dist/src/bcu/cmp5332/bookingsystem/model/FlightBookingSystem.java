@@ -1,8 +1,14 @@
 package bcu.cmp5332.bookingsystem.model;
 
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 
 public class FlightBookingSystem {
 
@@ -10,6 +16,7 @@ public class FlightBookingSystem {
 
     private final Map<Integer, Customer> customers = new TreeMap<>();
     private final Map<Integer, Flight> flights = new TreeMap<>();
+    private final Map<Integer, Booking> bookings = new TreeMap<>();
     private final Map<String, User> users = new HashMap<>();
 
     public LocalDate getSystemDate() {
@@ -23,6 +30,11 @@ public class FlightBookingSystem {
 
     public List<Customer> getCustomers() {
         List<Customer> out = new ArrayList<>(customers.values());
+        return Collections.unmodifiableList(out);
+    }
+
+    public List<Booking> getBookings() {
+        List<Booking> out = new ArrayList<>(bookings.values());
         return Collections.unmodifiableList(out);
     }
 
@@ -59,6 +71,13 @@ public class FlightBookingSystem {
             throw new IllegalArgumentException("Duplicate customer ID.");
         }
         customers.put(customer.getId(), customer);
+    }
+
+    public void addBooking(Booking booking) throws FlightBookingSystemException {
+        if (bookings.containsKey(booking.getId())) {
+            throw new IllegalArgumentException("Duplicate booking ID.");
+        }
+        bookings.put(booking.getId(), booking);
     }
 
     public void addUser(User user) throws FlightBookingSystemException {

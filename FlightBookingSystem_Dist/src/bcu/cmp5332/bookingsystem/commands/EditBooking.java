@@ -41,8 +41,9 @@ public class EditBooking implements Command {
         oldFlight.removePassenger(customer);
 
         // Add new booking with same details
-        Booking newBooking = new Booking(customer, newFlight, booking.getBookingDate(), booking.getSeatNumber(), booking.getBookingClass(), booking.getSpecialRequests());
+        Booking newBooking = new Booking(booking.getId(), customer, newFlight, booking.getBookingDate(), booking.getSeatNumber(), booking.getBookingClass(), booking.getSpecialRequests());
         customer.addBooking(newBooking);
+        flightBookingSystem.addBooking(newBooking);
         newFlight.addPassenger(customer);
 
         System.out.println("Booking updated: Customer " + customer.getName() + " changed from Flight " + oldFlight.getFlightNumber() + " to " + newFlight.getFlightNumber());

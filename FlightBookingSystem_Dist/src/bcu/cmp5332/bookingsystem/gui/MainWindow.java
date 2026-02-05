@@ -1,147 +1,99 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JWindow;
+import javax.swing.RowFilter;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-class AirplaneIcon extends JPanel {
-    private final Color planeColor = new Color(255, 193, 7);
-
-    public AirplaneIcon(int width, int height) {
-        setPreferredSize(new Dimension(width, height));
-        setOpaque(false);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        int width = getWidth();
-        int height = getHeight();
-
-        // Draw airplane body (fuselage)
-        g2d.setColor(planeColor);
-        g2d.fillRoundRect(width / 4, height / 2 - 8, width / 2, 16, 8, 8);
-
-        // Draw wings
-        g2d.fillRoundRect(width / 3, height / 2 - 20, width / 3, 8, 4, 4);
-        g2d.fillRoundRect(width / 3, height / 2 + 12, width / 3, 8, 4, 4);
-
-        // Draw tail
-        g2d.fillRoundRect(width - width / 4 - 6, height / 2 - 25, 8, 20, 4, 4);
-
-        // Draw windows
-        g2d.setColor(Color.WHITE);
-        for (int i = 0; i < 4; i++) {
-            g2d.fillOval(width / 3 + 15 + i * 12, height / 2 - 4, 6, 8);
-        }
-
-        g2d.dispose();
-    }
-}
-
-// Toast Notification Class
-class ToastNotification extends JWindow {
-    private static final int TOAST_WIDTH = 350;
-    private static final int TOAST_HEIGHT = 80;
-    private static final int DISPLAY_TIME = 3000; // 3 seconds
-
-    public enum ToastType {
-        SUCCESS, ERROR, INFO, WARNING
-    }
-
-    public ToastNotification(JFrame parent, String message, ToastType type) {
-        setSize(TOAST_WIDTH, TOAST_HEIGHT);
-        setAlwaysOnTop(true);
-
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(new EmptyBorder(15, 15, 15, 15));
-
-        // Set colors based on type
-        Color bgColor, textColor;
-        String icon;
-        switch (type) {
-            case SUCCESS:
-                bgColor = new Color(76, 175, 80);
-                textColor = Color.WHITE;
-                icon = "✓";
-                break;
-            case ERROR:
-                bgColor = new Color(244, 67, 54);
-                textColor = Color.WHITE;
-                icon = "✗";
-                break;
-            case WARNING:
-                bgColor = new Color(255, 152, 0);
-                textColor = Color.WHITE;
-                icon = "⚠";
-                break;
-            default: // INFO
-                bgColor = new Color(33, 150, 243);
-                textColor = Color.WHITE;
-                icon = "ℹ";
-        }
-
-        panel.setBackground(bgColor);
-
-        // Icon label
-        JLabel iconLabel = new JLabel(icon);
-        iconLabel.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        iconLabel.setForeground(textColor);
-        panel.add(iconLabel, BorderLayout.WEST);
-
-        // Message label
-        JLabel messageLabel = new JLabel("<html>" + message + "</html>");
-        messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        messageLabel.setForeground(textColor);
-        panel.add(messageLabel, BorderLayout.CENTER);
-
-        add(panel);
-
-        // Position at bottom-right of parent
-        if (parent != null) {
-            Point parentLocation = parent.getLocation();
-            Dimension parentSize = parent.getSize();
-            int x = parentLocation.x + parentSize.width - TOAST_WIDTH - 20;
-            int y = parentLocation.y + parentSize.height - TOAST_HEIGHT - 60;
-            setLocation(x, y);
-        }
-
-        setVisible(true);
-
-        // Auto-hide after delay
-        Timer timer = new Timer(DISPLAY_TIME, e -> {
-            setVisible(false);
-            dispose();
-        });
-        timer.setRepeats(false);
-        timer.start();
-    }
-
-    public static void showToast(JFrame parent, String message, ToastType type) {
-        SwingUtilities.invokeLater(() -> new ToastNotification(parent, message, type));
-    }
-}
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 public class MainWindow extends JFrame implements ActionListener {
+
+    static class ToastNotification extends JWindow {
+
+        enum ToastType {
+            SUCCESS, ERROR, INFO
+        }
+
+        public static void showToast(Component parent, String message, ToastType type) {
+            ToastNotification toast = new ToastNotification(message, type);
+            toast.setLocationRelativeTo(parent);
+            toast.setVisible(true);
+            Timer timer = new Timer(3000, e -> toast.setVisible(false));
+            timer.setRepeats(false);
+            timer.start();
+        }
+
+        private ToastNotification(String message, ToastType type) {
+            setSize(300, 50);
+            setLayout(new BorderLayout());
+            setAlwaysOnTop(true);
+
+            JPanel panel = new JPanel();
+            panel.setBackground(getColorForType(type));
+            panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+            JLabel label = new JLabel(message);
+            label.setForeground(Color.WHITE);
+            label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+            panel.add(label);
+            add(panel, BorderLayout.CENTER);
+        }
+
+        private Color getColorForType(ToastType type) {
+            switch (type) {
+                case SUCCESS: return new Color(34, 197, 94);
+                case ERROR: return new Color(239, 68, 68);
+                case INFO: return new Color(59, 130, 246);
+                default: return Color.GRAY;
+            }
+        }
+
+    }
 
     private final FlightBookingSystem fbs;
     private JPanel contentPanel;
@@ -1137,3 +1089,38 @@ public class MainWindow extends JFrame implements ActionListener {
         cardLayout.show(contentPanel, "Customers");
     }
 }
+
+class AddFlightWindow extends JFrame {
+    public AddFlightWindow(MainWindow mainWindow) {
+        // Basic constructor to resolve compilation error; implement window logic as needed
+        setTitle("Add Flight");
+        setSize(400, 300);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(mainWindow);
+        // Add components and functionality here
+    }
+}
+
+class AddCustomerWindow extends JFrame {
+    public AddCustomerWindow(MainWindow mainWindow) {
+        // Basic constructor to resolve compilation error; implement window logic as needed
+        setTitle("Add Customer");
+        setSize(400, 300);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(mainWindow);
+        // Add components and functionality here
+    }
+}
+
+class AddBookingWindow extends JFrame {
+    public AddBookingWindow(MainWindow mainWindow) {
+        // Basic constructor to resolve compilation error; implement window logic as needed
+        setTitle("Add Booking");
+        setSize(400, 300);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(mainWindow);
+        // Add components and functionality here
+    }
+}
+
+
