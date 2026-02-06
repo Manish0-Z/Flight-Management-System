@@ -20,7 +20,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -187,8 +186,8 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
     private CardLayout cardLayout;
     private JPanel contentPanel;
 
-    private JButton homeBtn, flightsBtn, bookingsBtn, profileBtn, exitBtn;
-    private JPanel homePanel, flightsPanel, bookingsPanel, profilePanel;
+    private JButton homeBtn, flightsBtn, bookingsBtn, exitBtn;
+    private JPanel homePanel, flightsPanel, bookingsPanel;
 
     public CustomerMainWindow(FlightBookingSystem fbs, User loggedInUser) {
         this.fbs = fbs;
@@ -231,12 +230,10 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         homePanel = createHomePanel();
         flightsPanel = createFlightsPanel();
         bookingsPanel = createBookingsPanel();
-        profilePanel = createProfilePanel();
 
         contentPanel.add(homePanel, "Home");
         contentPanel.add(flightsPanel, "Flights");
         contentPanel.add(bookingsPanel, "Bookings");
-        contentPanel.add(profilePanel, "Profile");
 
         add(contentPanel, BorderLayout.CENTER);
 
@@ -287,15 +284,12 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         homeBtn = createSidebarButton("Dashboard", "🏠");
         flightsBtn = createSidebarButton("Flights", "✈️");
         bookingsBtn = createSidebarButton("My Bookings", "🎫");
-        profileBtn = createSidebarButton("Profile", "👤");
 
         sidebar.add(homeBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
         sidebar.add(flightsBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
         sidebar.add(bookingsBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
-        sidebar.add(profileBtn);
 
         // Spacer to push exit button to bottom
         sidebar.add(Box.createVerticalGlue());
@@ -340,7 +334,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
     }
 
     private void setActiveButton(JButton active) {
-        JButton[] btns = { homeBtn, flightsBtn, bookingsBtn, profileBtn };
+        JButton[] btns = { homeBtn, flightsBtn, bookingsBtn };
         for (JButton btn : btns) {
             btn.setBackground(SIDEBAR_COLOR);
             btn.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -552,53 +546,6 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         return panel;
     }
 
-    private JPanel createProfilePanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
-
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
-        JLabel profileIcon = new JLabel("👤");
-        profileIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("My Profile");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
-
-        headerPanel.add(profileIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
-
-        // Profile content
-        JPanel contentPanel = new JPanel();
-        contentPanel.setBackground(Color.WHITE);
-        contentPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-
-        JPanel infoPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        infoPanel.setBackground(Color.WHITE);
-        infoPanel.setBorder(BorderFactory.createTitledBorder("User Information"));
-
-        infoPanel.add(new JLabel("Username:"));
-        infoPanel.add(new JLabel(loggedInUser.getUsername()));
-
-        infoPanel.add(new JLabel("Full Name:"));
-        infoPanel.add(new JLabel(loggedInUser.getFullName() != null ? loggedInUser.getFullName() : "N/A"));
-
-        infoPanel.add(new JLabel("Role:"));
-        infoPanel.add(new JLabel(loggedInUser.getRole()));
-
-        contentPanel.add(infoPanel);
-
-        panel.add(contentPanel, BorderLayout.CENTER);
-
-        return panel;
-    }
-
     private void styleButton(JButton button) {
         button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         button.setBackground(new Color(30, 58, 138));
@@ -708,8 +655,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         };
 
         try {
-            int customerId = Integer.parseInt(loggedInUser.getUsername());
-            Customer customer = fbs.getCustomerByID(customerId);
+            Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
             List<Booking> bookings = customer.getBookings();
             for (Booking booking : bookings) {
                 if (!booking.isDeleted()) {
@@ -778,9 +724,6 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         } else if (e.getSource() == bookingsBtn) {
             setActiveButton(bookingsBtn);
             cardLayout.show(contentPanel, "Bookings");
-        } else if (e.getSource() == profileBtn) {
-            setActiveButton(profileBtn);
-            cardLayout.show(contentPanel, "Profile");
         } else if (e.getSource() == exitBtn) {
             try {
                 FlightBookingSystemData.store(fbs);

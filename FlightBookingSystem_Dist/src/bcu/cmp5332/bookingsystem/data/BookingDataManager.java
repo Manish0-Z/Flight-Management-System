@@ -23,6 +23,9 @@ public class BookingDataManager implements DataManager {
             int line_idx = 1;
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
                 String[] properties = line.split(SEPARATOR, -1);
                 try {
                     int bookingId = Integer.parseInt(properties[0]);

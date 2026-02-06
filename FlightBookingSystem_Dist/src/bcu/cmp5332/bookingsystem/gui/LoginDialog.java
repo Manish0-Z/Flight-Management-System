@@ -18,6 +18,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import bcu.cmp5332.bookingsystem.model.User;
 
@@ -49,21 +50,47 @@ public class LoginDialog extends JDialog {
     }
 
     private void initialize() {
-        setSize(350, 300);
+        setSize(400, 350);
         setLocationRelativeTo(getParent());
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         add(mainPanel);
 
         if ("customer".equals(selectedRole)) {
+            createChoicePanel();
             createSignupPanel();
             createLoginPanel();
-            cardLayout.show(mainPanel, "signup");
+            cardLayout.show(mainPanel, "choice");
         } else {
             createLoginPanel();
+            cardLayout.show(mainPanel, "login");
         }
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    }
+
+    private void createChoicePanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        panel.add(new JLabel("Welcome to Flight Booking System"), gbc);
+
+        gbc.gridy = 1; gbc.gridwidth = 2;
+        panel.add(new JLabel("Please choose an option:"), gbc);
+
+        gbc.gridy = 2; gbc.gridwidth = 1; gbc.fill = GridBagConstraints.HORIZONTAL;
+        JButton loginBtn = new JButton("Login");
+        loginBtn.addActionListener(e -> cardLayout.show(mainPanel, "login"));
+        panel.add(loginBtn, gbc);
+
+        gbc.gridx = 1;
+        JButton signupBtn = new JButton("Sign Up");
+        signupBtn.addActionListener(e -> cardLayout.show(mainPanel, "signup"));
+        panel.add(signupBtn, gbc);
+
+        mainPanel.add(panel, "choice");
     }
 
     private void createSignupPanel() {
@@ -104,6 +131,11 @@ public class LoginDialog extends JDialog {
         signupButton.addActionListener(e -> signup());
         panel.add(signupButton, gbc);
 
+        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
+        JButton backFromSignupBtn = new JButton("Back");
+        backFromSignupBtn.addActionListener(e -> cardLayout.show(mainPanel, "choice"));
+        panel.add(backFromSignupBtn, gbc);
+
         mainPanel.add(panel, "signup");
     }
 
@@ -143,6 +175,13 @@ public class LoginDialog extends JDialog {
         loginButton.addActionListener(e -> login());
         panel.add(loginButton, gbc);
 
+        if ("customer".equals(selectedRole)) {
+            gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+            JButton backFromLoginBtn = new JButton("Back");
+            backFromLoginBtn.addActionListener(e -> cardLayout.show(mainPanel, "choice"));
+            panel.add(backFromLoginBtn, gbc);
+        }
+
         mainPanel.add(panel, "login");
     }
 
@@ -150,13 +189,25 @@ public class LoginDialog extends JDialog {
         String username = "customer".equals(selectedRole) ? emailFieldLogin.getText().trim() : usernameField.getText().trim();
         String password = "customer".equals(selectedRole) ? new String(passwordFieldLogin.getPassword()) : new String(passwordField.getPassword());
 
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter both username and password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         User user = fbs.getUser(username);
-        if (user != null && user.getPassword().equals(password) && user.getRole().equals(selectedRole)) {
+        if (user == null) {
+            JOptionPane.showMessageDialog(this, "User does not exist. Please sign up first.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+            if ("customer".equals(selectedRole)) {
+                cardLayout.show(mainPanel, "choice");
+            }
+        } else if (!user.getPassword().equals(password)) {
+            JOptionPane.showMessageDialog(this, "Incorrect password. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+        } else if (!user.getRole().equals(selectedRole)) {
+            JOptionPane.showMessageDialog(this, "Invalid role for this user.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+        } else {
             loggedInUser = user;
             loggedIn = true;
             dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Invalid credentials or role mismatch.", "Login Failed", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -178,9 +229,25 @@ public class LoginDialog extends JDialog {
                 return;
             }
 
+            // Validate email format
+            if (!isValidEmail(email)) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid email address (e.g., example@gmail.com).", "Signup Failed", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             try {
                 User newUser = new User(email, password, selectedRole, fullName);
                 fbs.addUser(newUser);
+                
+                // Also create a customer record for the new user
+                int maxId = 0;
+                if (!fbs.getCustomers().isEmpty()) {
+                    int lastIndex = fbs.getCustomers().size() - 1;
+                    maxId = fbs.getCustomers().get(lastIndex).getId();
+                }
+                Customer newCustomer = new Customer(++maxId, fullName, "", email, "");
+                fbs.addCustomer(newCustomer);
+                
                 JOptionPane.showMessageDialog(this, "Signup successful! Please login.", "Signup Success", JOptionPane.INFORMATION_MESSAGE);
                 cardLayout.show(mainPanel, "login");
                 setTitle("Login - " + selectedRole);
@@ -256,5 +323,10 @@ public class LoginDialog extends JDialog {
     private String getActualPassword(JPasswordField field, String placeholder) {
         String password = String.valueOf(field.getPassword());
         return password.equals(placeholder) ? "" : password;
+    }
+
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        return email.matches(emailRegex);
     }
 }

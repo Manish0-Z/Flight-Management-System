@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+import bcu.cmp5332.bookingsystem.model.User;
 
 public class RoleSelectionWindow extends JFrame {
     private FlightBookingSystem fbs;
@@ -43,16 +44,14 @@ public class RoleSelectionWindow extends JFrame {
         adminButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainWindow(fbs, true).setVisible(true);
-                dispose();
+                showLoginDialog("admin");
             }
         });
 
         customerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainWindow(fbs, false).setVisible(true);
-                dispose();
+                showLoginDialog("customer");
             }
         });
 
@@ -62,5 +61,20 @@ public class RoleSelectionWindow extends JFrame {
         add(buttonPanel, BorderLayout.CENTER);
 
         setVisible(true);
+    }
+
+    private void showLoginDialog(String role) {
+        LoginDialog loginDialog = new LoginDialog(this, fbs, role);
+        loginDialog.setVisible(true);
+
+        if (loginDialog.isLoggedIn()) {
+            User loggedInUser = loginDialog.getLoggedInUser();
+            if ("admin".equals(role)) {
+                new AdminMainWindow(fbs).setVisible(true);
+            } else if ("customer".equals(role)) {
+                new CustomerMainWindow(fbs, loggedInUser).setVisible(true);
+            }
+            dispose();
+        }
     }
 }

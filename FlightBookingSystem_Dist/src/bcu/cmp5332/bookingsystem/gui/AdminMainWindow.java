@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -22,6 +23,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -38,6 +40,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
@@ -328,19 +331,27 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         JButton addBtn = new JButton("✈️ Add Flight");
+        JButton updateBtn = new JButton("✏️ Update Flight");
+        JButton deleteBtn = new JButton("🗑️ Delete Flight");
         JButton refreshBtn = new JButton("🔄 Refresh");
 
         styleButton(addBtn);
+        styleButton(updateBtn);
+        styleButton(deleteBtn);
         styleButton(refreshBtn);
 
         addBtn.addActionListener(e -> {
             AddFlightWindow addFlightWindow = new AddFlightWindow(this);
             addFlightWindow.setVisible(true);
         });
+        updateBtn.addActionListener(e -> updateSelectedFlight(panel));
+        deleteBtn.addActionListener(e -> deleteSelectedFlight(panel));
         refreshBtn.addActionListener(e -> {
             refreshFlightsTable(panel);
         });
         toolbar.add(addBtn);
+        toolbar.add(updateBtn);
+        toolbar.add(deleteBtn);
         toolbar.add(refreshBtn);
         toolbar.add(Box.createHorizontalStrut(20));
 
@@ -392,20 +403,13 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton addBtn = new JButton("👤 Add Customer");
         JButton refreshBtn = new JButton("🔄 Refresh");
 
-        styleButton(addBtn);
         styleButton(refreshBtn);
 
-        addBtn.addActionListener(e -> {
-            AddCustomerWindow addCustomerWindow = new AddCustomerWindow(this);
-            addCustomerWindow.setVisible(true);
-        });
         refreshBtn.addActionListener(e -> {
             refreshCustomersTable(panel);
         });
-        toolbar.add(addBtn);
         toolbar.add(refreshBtn);
         toolbar.add(Box.createHorizontalStrut(20));
 
@@ -458,22 +462,10 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton addBtn = new JButton("🎫 Add Booking");
-        JButton cancelBtn = new JButton("❌ Cancel Booking");
         JButton refreshBtn = new JButton("🔄 Refresh");
 
-        styleButton(addBtn);
-        styleButton(cancelBtn);
         styleButton(refreshBtn);
 
-        addBtn.addActionListener(e -> {
-            AddBookingWindow addBookingWindow = new AddBookingWindow(this);
-            addBookingWindow.setVisible(true);
-        });
-
-        cancelBtn.addActionListener(e -> {
-            // Cancel Booking feature coming soon!
-        });
         refreshBtn.addActionListener(e -> {
             refreshBookingsTable(panel);
         });
@@ -484,8 +476,6 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        toolbar.add(addBtn);
-        toolbar.add(cancelBtn);
         toolbar.add(refreshBtn);
         toolbar.add(Box.createHorizontalStrut(20));
         toolbar.add(searchLabel);
@@ -595,6 +585,118 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         tableContainer.add(scrollPane, BorderLayout.CENTER);
         tableContainer.revalidate();
         tableContainer.repaint();
+    }
+
+    private void updateSelectedFlight(JPanel panel) {
+        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
+        JTable table = findTableInContainer(tableContainer);
+        
+        if (table == null) return;
+        
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a flight to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Get the flight number from the selected row
+        int modelRow = table.convertRowIndexToModel(selectedRow);
+        String flightNumber = (String) table.getModel().getValueAt(modelRow, 0);
+        
+        try {
+            Flight flight = null;
+            for (Flight f : fbs.getFlights()) {
+                if (f.getFlightNumber().equals(flightNumber)) {
+                    flight = f;
+                    break;
+                }
+            }
+            if (flight == null) {
+                throw new FlightBookingSystemException("Flight not found");
+            }
+            UpdateFlightWindow updateWindow = new UpdateFlightWindow(this, flight);
+            updateWindow.setVisible(true);
+        } catch (FlightBookingSystemException ex) {
+            JOptionPane.showMessageDialog(this, "Error finding flight: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteSelectedFlight(JPanel panel) {
+        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
+        JTable table = findTableInContainer(tableContainer);
+        
+        if (table == null) return;
+        
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a flight to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Get the flight number from the selected row
+        int modelRow = table.convertRowIndexToModel(selectedRow);
+        String flightNumber = (String) table.getModel().getValueAt(modelRow, 0);
+        
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to delete flight " + flightNumber + "?\nThis will also cancel all associated bookings.", 
+            "Confirm Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                Flight flight = null;
+                for (Flight f : fbs.getFlights()) {
+                    if (f.getFlightNumber().equals(flightNumber)) {
+                        flight = f;
+                        break;
+                    }
+                }
+                if (flight == null) {
+                    throw new FlightBookingSystemException("Flight not found");
+                }
+                
+                // Cancel all bookings for this flight
+                List<Customer> customers = fbs.getCustomers();
+                int cancelledBookings = 0;
+                for (Customer customer : customers) {
+                    List<Booking> bookingsToRemove = new ArrayList<>();
+                    for (Booking booking : customer.getBookings()) {
+                        if (booking.getFlight().getId() == flight.getId()) {
+                            bookingsToRemove.add(booking);
+                        }
+                    }
+                    for (Booking booking : bookingsToRemove) {
+                        customer.removeBooking(booking);
+                        fbs.removeBooking(booking);
+                        cancelledBookings++;
+                    }
+                }
+                
+                // Delete the flight
+                fbs.removeFlight(flight);
+                
+                JOptionPane.showMessageDialog(this, 
+                    "Flight " + flightNumber + " has been deleted.\n" + cancelledBookings + " booking(s) were cancelled.", 
+                    "Flight Deleted", JOptionPane.INFORMATION_MESSAGE);
+                
+                refreshFlightsTable(panel);
+                
+            } catch (FlightBookingSystemException ex) {
+                JOptionPane.showMessageDialog(this, "Error deleting flight: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private JTable findTableInContainer(JPanel container) {
+        for (Component comp : container.getComponents()) {
+            if (comp instanceof JScrollPane) {
+                JScrollPane scrollPane = (JScrollPane) comp;
+                Component view = scrollPane.getViewport().getView();
+                if (view instanceof JTable) {
+                    return (JTable) view;
+                }
+            }
+        }
+        return null;
     }
 
     private void refreshCustomersTable(JPanel panel) {

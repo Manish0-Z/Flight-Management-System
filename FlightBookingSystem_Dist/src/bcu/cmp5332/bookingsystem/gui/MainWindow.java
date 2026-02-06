@@ -477,7 +477,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
         if (isAdmin) {
             addBtn.addActionListener(e -> {
-                AddFlightWindow addFlightWindow = new AddFlightWindow(this);
+                AddFlightWindow addFlightWindow = new AddFlightWindow();
                 addFlightWindow.setVisible(true);
             });
             toolbar.add(addBtn);
@@ -656,19 +656,10 @@ public class MainWindow extends JFrame implements ActionListener {
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton addBtn = new JButton("👤 Add Customer");
         JButton refreshBtn = new JButton("🔄 Refresh");
 
-        styleButton(addBtn);
         styleButton(refreshBtn);
 
-        if (isAdmin) {
-            addBtn.addActionListener(e -> {
-                AddCustomerWindow addCustomerWindow = new AddCustomerWindow(this);
-                addCustomerWindow.setVisible(true);
-            });
-            toolbar.add(addBtn);
-        }
         refreshBtn.addActionListener(e -> {
             refreshCustomersTable(panel);
             ToastNotification.showToast(this, "Customers refreshed successfully!", ToastNotification.ToastType.SUCCESS);
@@ -879,7 +870,9 @@ public class MainWindow extends JFrame implements ActionListener {
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        toolbar.add(addBtn);
+        if (!isAdmin) {  // Only add Add Booking button for customers
+            toolbar.add(addBtn);
+        }
         toolbar.add(cancelBtn);
         toolbar.add(refreshBtn);
         toolbar.add(Box.createHorizontalStrut(20));
@@ -1087,39 +1080,6 @@ public class MainWindow extends JFrame implements ActionListener {
         setActiveButton(customersBtn);
         refreshCustomersTable(customersPanel);
         cardLayout.show(contentPanel, "Customers");
-    }
-}
-
-class AddFlightWindow extends JFrame {
-    public AddFlightWindow(MainWindow mainWindow) {
-        // Basic constructor to resolve compilation error; implement window logic as needed
-        setTitle("Add Flight");
-        setSize(400, 300);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(mainWindow);
-        // Add components and functionality here
-    }
-}
-
-class AddCustomerWindow extends JFrame {
-    public AddCustomerWindow(MainWindow mainWindow) {
-        // Basic constructor to resolve compilation error; implement window logic as needed
-        setTitle("Add Customer");
-        setSize(400, 300);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(mainWindow);
-        // Add components and functionality here
-    }
-}
-
-class AddBookingWindow extends JFrame {
-    public AddBookingWindow(MainWindow mainWindow) {
-        // Basic constructor to resolve compilation error; implement window logic as needed
-        setTitle("Add Booking");
-        setSize(400, 300);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(mainWindow);
-        // Add components and functionality here
     }
 }
 
