@@ -1,7 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.gui.ToastNotification; 
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;

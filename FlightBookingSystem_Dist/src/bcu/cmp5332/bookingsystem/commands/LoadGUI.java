@@ -1,51 +1,15 @@
 package bcu.cmp5332.bookingsystem.commands;
 
-import javax.swing.JOptionPane;
-
 import bcu.cmp5332.bookingsystem.gui.AdminMainWindow;
-import bcu.cmp5332.bookingsystem.gui.CustomerMainWindow;
-import bcu.cmp5332.bookingsystem.gui.LoginDialog;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import bcu.cmp5332.bookingsystem.model.User;
 
 public class LoadGUI implements Command {
 
     @Override
     public void execute(FlightBookingSystem flightBookingSystem) throws FlightBookingSystemException {
-        // Show role selection dialog
-        Object[] options = {"Admin", "Customer"};
-        int choice = JOptionPane.showOptionDialog(
-            null,
-            "Select your role:",
-            "Flight Booking System",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            options,
-            options[0]
-        );
-
-        if (choice == JOptionPane.CLOSED_OPTION) {
-            return; // User closed the dialog
-        }
-
-        String selectedRole = (choice == JOptionPane.YES_OPTION) ? "admin" : "customer";
-
-        // Show login dialog
-        LoginDialog loginDialog = new LoginDialog(null, flightBookingSystem, selectedRole);
-        loginDialog.setVisible(true);
-
-        if (loginDialog.isLoggedIn()) {
-            User loggedInUser = loginDialog.getLoggedInUser();
-            if (loggedInUser.isAdmin()) {
-                AdminMainWindow adminMainWindow = new AdminMainWindow(flightBookingSystem);
-                adminMainWindow.setVisible(true);
-            } else {
-                CustomerMainWindow customerMainWindow = new CustomerMainWindow(flightBookingSystem, loggedInUser);
-                customerMainWindow.setVisible(true);
-            }
-        }
+        AdminMainWindow adminMainWindow = new AdminMainWindow(flightBookingSystem);
+        adminMainWindow.setVisible(true);
     }
     
 }
