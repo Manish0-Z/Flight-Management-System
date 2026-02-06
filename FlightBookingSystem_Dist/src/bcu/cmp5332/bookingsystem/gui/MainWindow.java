@@ -1,5 +1,11 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -19,7 +25,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -43,14 +48,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-
-public class MainWindow extends JFrame implements ActionListener {
+public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     static class ToastNotification extends JWindow {
 
@@ -1090,37 +1088,9 @@ public class MainWindow extends JFrame implements ActionListener {
     }
 }
 
-class AddFlightWindow extends JFrame {
-    public AddFlightWindow(MainWindow mainWindow) {
-        // Basic constructor to resolve compilation error; implement window logic as needed
-        setTitle("Add Flight");
-        setSize(400, 300);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(mainWindow);
-        // Add components and functionality here
-    }
-}
-
-class AddCustomerWindow extends JFrame {
-    public AddCustomerWindow(MainWindow mainWindow) {
-        // Basic constructor to resolve compilation error; implement window logic as needed
-        setTitle("Add Customer");
-        setSize(400, 300);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(mainWindow);
-        // Add components and functionality here
-    }
-}
-
-class AddBookingWindow extends JFrame {
-    public AddBookingWindow(MainWindow mainWindow) {
-        // Basic constructor to resolve compilation error; implement window logic as needed
-        setTitle("Add Booking");
-        setSize(400, 300);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(mainWindow);
-        // Add components and functionality here
-    }
-}
+// CHANGED: Removed placeholder classes - now using separate implementations
+// - AddFlightWindow.java (redesigned)
+// - AddCustomerWindow.java (separate file)
+// - AddBookingWindow.java (separate file)
 
 
