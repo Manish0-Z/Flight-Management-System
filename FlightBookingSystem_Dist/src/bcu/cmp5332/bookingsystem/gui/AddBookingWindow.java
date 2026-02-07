@@ -26,21 +26,7 @@ import bcu.cmp5332.bookingsystem.commands.AddBooking;
 import bcu.cmp5332.bookingsystem.commands.Command;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 
-/**
- * AddBookingWindow - Modern redesigned dialog for issuing bookings
- * 
- * CHANGES FROM ORIGINAL:
- * - Increased window size (400x280 → 520x480)
- * - Changed to GridBagLayout for better control
- * - Added modern header with icon
- * - Using styled text fields from DesignConstants
- * - Modern styled ComboBox
- * - Improved button styling
- * - Better spacing and visual hierarchy
- * - Professional color scheme
- * 
- * @author UI/UX Redesign 2026
- */
+
 public class AddBookingWindow extends JFrame implements ActionListener {
 
     private final GuiWindow mw;

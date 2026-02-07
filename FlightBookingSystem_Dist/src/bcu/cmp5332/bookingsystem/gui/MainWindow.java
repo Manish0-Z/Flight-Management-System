@@ -1,11 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -25,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -48,6 +43,13 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
@@ -529,6 +531,9 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         return chartPanel;
     }
 
+    /**
+     * @return
+     */
     private JPanel createFlightsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
@@ -562,7 +567,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         if (isAdmin) {
             addBtn.addActionListener(e -> {
-                AddFlightWindow addFlightWindow = new AddFlightWindow();
+                AddFlightWindow addFlightWindow = new AddFlightWindow(this);
                 addFlightWindow.setVisible(true);
             });
             toolbar.add(addBtn);
@@ -1168,12 +1173,5 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
     }
 }
 
-<<<<<<< HEAD
-=======
-// CHANGED: Removed placeholder classes - now using separate implementations
-// - AddFlightWindow.java (redesigned)
-// - AddCustomerWindow.java (separate file)
-// - AddBookingWindow.java (separate file)
 
->>>>>>> a64682e21958cf54e06495b49a79abfbace553bd
 

@@ -1,58 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-<<<<<<< HEAD
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.util.List;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JWindow;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
-import javax.swing.SwingConstants;
-import javax.swing.Timer;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
-
-=======
->>>>>>> a64682e21958cf54e06495b49a79abfbace553bd
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import bcu.cmp5332.bookingsystem.model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -68,7 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
-import javax.swing.BorderFactory;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -90,6 +37,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+import bcu.cmp5332.bookingsystem.model.User;
+
 public class CustomerMainWindow extends JFrame implements ActionListener, GuiWindow {
     // Enhanced sidebar color scheme
     private static final Color SIDEBAR_COLOR = new Color(30, 58, 138);
@@ -107,7 +62,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
     private CardLayout cardLayout;
     private JPanel contentPanel;
 
-    private JButton homeBtn, flightsBtn, bookingsBtn, exitBtn;
+    private JButton homeBtn, flightsBtn, bookingsBtn, profileBtn, exitBtn;
     private JPanel homePanel, flightsPanel, bookingsPanel;
 
     public CustomerMainWindow(FlightBookingSystem fbs, User loggedInUser) {
@@ -201,12 +156,12 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         sidebar.add(headerPanel);
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
 
-<<<<<<< HEAD
+
         // Buttons
-        homeBtn = createSidebarButton("Dashboard", "🏠");
-        flightsBtn = createSidebarButton("Flights", "✈️");
-        bookingsBtn = createSidebarButton("My Bookings", "🎫");
-=======
+        homeBtn = createSidebarButton("Dashboard", SidebarIcon.IconType.DASHBOARD);
+        flightsBtn = createSidebarButton("Flights", SidebarIcon.IconType.FLIGHTS);
+        bookingsBtn = createSidebarButton("My Bookings", SidebarIcon.IconType.BOOKINGS);
+        sidebar.add(homeBtn);
         // Navigation section label
         JLabel navLabel = new JLabel("NAVIGATION");
         navLabel.setForeground(new Color(150, 170, 220));
@@ -221,18 +176,17 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         flightsBtn = createSidebarButton("Flights", SidebarIcon.IconType.FLIGHTS);
         bookingsBtn = createSidebarButton("My Bookings", SidebarIcon.IconType.BOOKINGS);
         profileBtn = createSidebarButton("Profile", SidebarIcon.IconType.PROFILE);
->>>>>>> a64682e21958cf54e06495b49a79abfbace553bd
+
 
         sidebar.add(homeBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(flightsBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(bookingsBtn);
-<<<<<<< HEAD
-=======
+
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(profileBtn);
->>>>>>> a64682e21958cf54e06495b49a79abfbace553bd
+
 
         // Spacer to push exit button to bottom
         sidebar.add(Box.createVerticalGlue());
@@ -322,7 +276,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
 
     // Enhanced active state with accent border and icon color
     private void setActiveButton(JButton active) {
-        JButton[] btns = { homeBtn, flightsBtn, bookingsBtn };
+        JButton[] btns = { homeBtn, flightsBtn, bookingsBtn, profileBtn };
         for (JButton btn : btns) {
             btn.setBackground(SIDEBAR_COLOR);
             JLabel label = (JLabel) btn.getClientProperty("label");
@@ -740,6 +694,9 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         } else if (e.getSource() == bookingsBtn) {
             setActiveButton(bookingsBtn);
             cardLayout.show(contentPanel, "Bookings");
+        } else if (e.getSource() == profileBtn) {
+            setActiveButton(profileBtn);
+            cardLayout.show(contentPanel, "Profile");
         } else if (e.getSource() == exitBtn) {
             try {
                 FlightBookingSystemData.store(fbs);

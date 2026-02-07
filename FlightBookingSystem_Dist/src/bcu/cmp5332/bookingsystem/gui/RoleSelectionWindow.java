@@ -1,6 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -13,36 +12,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-<<<<<<< HEAD
-import javax.swing.SwingConstants;
-
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import bcu.cmp5332.bookingsystem.model.User;
-=======
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
->>>>>>> a64682e21958cf54e06495b49a79abfbace553bd
 
-/**
- * RoleSelectionWindow - Modern redesigned role selection interface
- * Improved visual hierarchy, spacing, and user experience
- * 
- * CHANGES FROM ORIGINAL:
- * - Increased window size for better spacing
- * - Added modern card-based layout for role buttons
- * - Enhanced visual hierarchy with larger icons and better typography
- * - Added hover effects and smooth interactions
- * - Improved color scheme and contrast
- * - Added subtitle and description for better UX
- * 
- * @author UI/UX Redesign 2026
- */
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+
+
 public class RoleSelectionWindow extends JFrame {
     private FlightBookingSystem fbs;
 
@@ -69,67 +51,18 @@ public class RoleSelectionWindow extends JFrame {
         // CHANGED: Set background color for modern appearance
         getContentPane().setBackground(DesignConstants.BACKGROUND);
 
-<<<<<<< HEAD
-        JLabel titleLabel = new JLabel("Access the system as:");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(titleLabel, BorderLayout.NORTH);
+    // CHANGED: Create header with logo and better typography
+    JPanel headerPanel = createHeaderPanel();
+    add(headerPanel, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(2, 1, 10, 10));
+    // CHANGED: Create card-based button panel with modern styling
+    JPanel buttonPanel = createButtonPanel();
+    add(buttonPanel, BorderLayout.CENTER);
 
-        JButton adminButton = new JButton("Admin");
-        JButton customerButton = new JButton("Customer");
-
-        adminButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showLoginDialog("admin");
-            }
-        });
-
-        customerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showLoginDialog("customer");
-            }
-        });
-
-        buttonPanel.add(adminButton);
-        buttonPanel.add(customerButton);
-=======
-        // CHANGED: Create header with logo and better typography
-        JPanel headerPanel = createHeaderPanel();
-        add(headerPanel, BorderLayout.NORTH);
->>>>>>> a64682e21958cf54e06495b49a79abfbace553bd
-
-        // CHANGED: Create card-based button panel with modern styling
-        JPanel buttonPanel = createButtonPanel();
-        add(buttonPanel, BorderLayout.CENTER);
-
-        setVisible(true);
-    }
-<<<<<<< HEAD
-
-    private void showLoginDialog(String role) {
-        LoginDialog loginDialog = new LoginDialog(this, fbs, role);
-        loginDialog.setVisible(true);
-
-        if (loginDialog.isLoggedIn()) {
-            User loggedInUser = loginDialog.getLoggedInUser();
-            if ("admin".equals(role)) {
-                new AdminMainWindow(fbs).setVisible(true);
-            } else if ("customer".equals(role)) {
-                new CustomerMainWindow(fbs, loggedInUser).setVisible(true);
-            }
-            dispose();
-        }
-=======
+    setVisible(true);
+}
     
-    /**
-     * Creates a modern header panel with logo and title
-     * CHANGED: New method for better visual hierarchy
-     */
+    
     private JPanel createHeaderPanel() {
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
@@ -297,6 +230,5 @@ public class RoleSelectionWindow extends JFrame {
         });
         
         return card;
->>>>>>> a64682e21958cf54e06495b49a79abfbace553bd
     }
 }
