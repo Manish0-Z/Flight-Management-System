@@ -1,5 +1,12 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+import bcu.cmp5332.bookingsystem.model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -20,7 +27,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -43,14 +49,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import bcu.cmp5332.bookingsystem.model.User;
 
 public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
@@ -379,21 +377,16 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Welcome header
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(240, 248, 255)); // Light blue background
-        headerPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
+        // Modern header with icon and subtitle
+        AirplaneIcon headerIcon = new AirplaneIcon(40, 28);
+        ModernHeader header = new ModernHeader(
+            headerIcon,
+            "Flight Management System",
+            "Welcome to your dashboard - Your complete flight management solution",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        JLabel welcomeLabel = new JLabel("Flight Management System");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        welcomeLabel.setForeground(new Color(30, 58, 138)); // Airline blue
-
-        AirplaneIcon headerPlane = new AirplaneIcon(40, 30);
-        headerPanel.add(headerPlane);
-        headerPanel.add(Box.createHorizontalStrut(15));
-        headerPanel.add(welcomeLabel);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Main content area with stats and chart
         JPanel contentArea = new JPanel(new BorderLayout(0, 20));
@@ -548,21 +541,16 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+        // Modern header with flight icon
+        AirplaneIcon flightIcon = new AirplaneIcon(32, 22);
+        ModernHeader header = new ModernHeader(
+            flightIcon,
+            "Flight Management",
+            "View, manage, and track all flights in the system",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        AirplaneIcon flightIcon = new AirplaneIcon(30, 20);
-        JLabel title = new JLabel("Flight Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
-
-        headerPanel.add(flightIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -793,22 +781,17 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern header with customer icon
         JLabel customerIcon = new JLabel("👥");
-        customerIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("Customer Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        customerIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            customerIcon,
+            "Customer Management",
+            "Manage customer profiles, bookings, and information",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(customerIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         JPanel tableContainer = new JPanel(new BorderLayout());
         panel.add(tableContainer, BorderLayout.CENTER);
@@ -912,21 +895,16 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+        // Modern header with booking accent
+        AirplaneIcon flightIcon = new AirplaneIcon(32, 22);
+        ModernHeader header = new ModernHeader(
+            flightIcon,
+            "Book Flight",
+            "Reserve seats on available flights quickly and easily",
+            ModernHeader.HeaderStyle.ACCENT
+        );
 
-        AirplaneIcon flightIcon = new AirplaneIcon(30, 20);
-        JLabel title = new JLabel("Book Flight");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
-
-        headerPanel.add(flightIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Center content with button
         JPanel centerPanel = new JPanel();
@@ -958,22 +936,17 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern header with booking icon
         JLabel bookingIcon = new JLabel("🎫");
-        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("Booking Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            bookingIcon,
+            "Booking Management",
+            "View, create, and manage flight reservations",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(bookingIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar - centered for customers
         JPanel toolbar = new JPanel(new FlowLayout(isAdmin ? FlowLayout.LEFT : FlowLayout.CENTER));
