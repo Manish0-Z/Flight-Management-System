@@ -108,6 +108,13 @@ public class FlightBookingSystem {
         return new ArrayList<>(users.values());
     }
 
+    public int getNextBookingId() {
+        if (bookings.isEmpty()) {
+            return 1;
+        }
+        return Collections.max(bookings.keySet()) + 1;
+    }
+
     public User getUser(String username) {
         return users.get(username);
     }

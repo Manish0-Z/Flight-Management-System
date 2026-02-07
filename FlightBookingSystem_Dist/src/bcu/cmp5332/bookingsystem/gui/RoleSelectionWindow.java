@@ -127,7 +127,7 @@ public class RoleSelectionWindow extends JFrame {
                 LoginDialog loginDialog = new LoginDialog(this, fbs, "admin");
                 loginDialog.setVisible(true);
                 if (loginDialog.isLoggedIn()) {
-                    new MainWindow(fbs, true).setVisible(true);
+                    new MainWindow(fbs, true, loginDialog.getLoggedInUser()).setVisible(true);
                     dispose();
                 }
             }
@@ -143,7 +143,7 @@ public class RoleSelectionWindow extends JFrame {
                 LoginDialog loginDialog = new LoginDialog(this, fbs, "customer");
                 loginDialog.setVisible(true);
                 if (loginDialog.isLoggedIn()) {
-                    new MainWindow(fbs, false).setVisible(true);
+                    new MainWindow(fbs, false, loginDialog.getLoggedInUser()).setVisible(true);
                     dispose();
                 }
             }
