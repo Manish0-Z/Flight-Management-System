@@ -1,5 +1,11 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -19,7 +25,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -43,13 +48,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
@@ -196,24 +194,9 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         AirlineLogo logo = new AirlineLogo(200, 80);
         logo.setAlignmentX(Component.CENTER_ALIGNMENT);
         headerPanel.add(logo);
-        headerPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        // Airplane icon
-        AirplaneIcon planeIcon = new AirplaneIcon(60, 40);
-        planeIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
-        headerPanel.add(planeIcon);
-        headerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        // Subtitle
-        JLabel subtitleLabel = new JLabel("Management System");
-        subtitleLabel.setForeground(AIRLINE_ACCENT);
-        subtitleLabel.setFont(new Font("Segoe UI", Font.ITALIC, 14));
-        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        headerPanel.add(subtitleLabel);
 
         sidebar.add(headerPanel);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 30)));
 
         // Navigation section label
         JLabel navLabel = new JLabel("NAVIGATION");
@@ -272,7 +255,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         
         // Create button
         JButton btn = new JButton();
-        btn.setLayout(new FlowLayout(FlowLayout.LEFT, 16, 12));
+        btn.setLayout(new BorderLayout());
         btn.setPreferredSize(new Dimension(236, 48));
         btn.setForeground(SIDEBAR_TEXT_COLOR);
         btn.setBackground(SIDEBAR_COLOR);
@@ -282,16 +265,20 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         btn.setOpaque(true);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        // Add icon
+        // Add icon on left with padding
         SidebarIcon icon = new SidebarIcon(iconType, 20);
         icon.setIconColor(ICON_COLOR);
-        btn.add(icon);
+        JPanel iconPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 14));
+        iconPanel.setOpaque(false);
+        iconPanel.add(icon);
+        btn.add(iconPanel, BorderLayout.WEST);
         
-        // Add label
+        // Add label centered
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         label.setForeground(SIDEBAR_TEXT_COLOR);
-        btn.add(label);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        btn.add(label, BorderLayout.CENTER);
         
         buttonPanel.add(btn, BorderLayout.CENTER);
         
