@@ -35,6 +35,8 @@ public class LoginDialog extends JDialog {
     private JTextField usernameField;
     private JTextField fullNameField;
     private JTextField emailField;
+    private JTextField phoneField;
+    private JTextField addressField;
     private JTextField emailFieldLogin;
     private JPasswordField passwordField;
     private JPasswordField passwordFieldLogin;
@@ -50,7 +52,7 @@ public class LoginDialog extends JDialog {
     }
 
     private void initialize() {
-        setSize(400, 350);
+        setSize(400, 450);
         setLocationRelativeTo(getParent());
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
@@ -113,25 +115,39 @@ public class LoginDialog extends JDialog {
         panel.add(emailField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 2;
+        panel.add(new JLabel("Phone Number:"), gbc);
+        gbc.gridx = 1;
+        phoneField = new JTextField(15);
+        setPlaceholder(phoneField, "Enter your phone number");
+        panel.add(phoneField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3;
+        panel.add(new JLabel("Address:"), gbc);
+        gbc.gridx = 1;
+        addressField = new JTextField(15);
+        setPlaceholder(addressField, "Enter your address");
+        panel.add(addressField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4;
         panel.add(new JLabel("Create Password:"), gbc);
         gbc.gridx = 1;
         passwordField = new JPasswordField(15);
         setPlaceholder(passwordField, "Create a password");
         panel.add(passwordField, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0; gbc.gridy = 5;
         panel.add(new JLabel("Confirm Password:"), gbc);
         gbc.gridx = 1;
         confirmPasswordField = new JPasswordField(15);
         setPlaceholder(confirmPasswordField, "Confirm your password");
         panel.add(confirmPasswordField, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
         signupButton = new JButton("Signup");
         signupButton.addActionListener(e -> signup());
         panel.add(signupButton, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2;
         JButton backFromSignupBtn = new JButton("Back");
         backFromSignupBtn.addActionListener(e -> cardLayout.show(mainPanel, "choice"));
         panel.add(backFromSignupBtn, gbc);
@@ -223,8 +239,10 @@ public class LoginDialog extends JDialog {
         if ("customer".equals(selectedRole)) {
             String email = getActualText(emailField, "Enter your email address");
             String fullName = getActualText(fullNameField, "Enter your full name");
+            String phone = getActualText(phoneField, "Enter your phone number");
+            String address = getActualText(addressField, "Enter your address");
 
-            if (email.isEmpty() || fullName.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty() || fullName.isEmpty() || phone.isEmpty() || address.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "All fields are required.", "Signup Failed", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -245,7 +263,7 @@ public class LoginDialog extends JDialog {
                     int lastIndex = fbs.getCustomers().size() - 1;
                     maxId = fbs.getCustomers().get(lastIndex).getId();
                 }
-                Customer newCustomer = new Customer(++maxId, fullName, "", email, "");
+                Customer newCustomer = new Customer(++maxId, fullName, phone, email, address);
                 fbs.addCustomer(newCustomer);
                 
                 JOptionPane.showMessageDialog(this, "Signup successful! Please login.", "Signup Success", JOptionPane.INFORMATION_MESSAGE);

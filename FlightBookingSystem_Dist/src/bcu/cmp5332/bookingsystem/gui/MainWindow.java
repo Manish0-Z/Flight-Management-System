@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -570,12 +571,21 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         if (isAdmin) {
             JButton addBtn = new JButton("✈️ Add Flight");
+            JButton updateBtn = new JButton("✏️ Update Flight");
+            JButton deleteBtn = new JButton("🗑️ Delete Flight");
             styleButton(addBtn);
+            styleButton(updateBtn);
+            styleButton(deleteBtn);
             addBtn.addActionListener(e -> {
+                System.out.println("Add Flight button clicked!");
                 AddFlightWindow addFlightWindow = new AddFlightWindow(this);
                 addFlightWindow.setVisible(true);
             });
+            updateBtn.addActionListener(e -> updateSelectedFlight(panel));
+            deleteBtn.addActionListener(e -> deleteSelectedFlight(panel));
             toolbar.add(addBtn);
+            toolbar.add(updateBtn);
+            toolbar.add(deleteBtn);
             panel.add(toolbar, BorderLayout.SOUTH);
         }
 
@@ -666,6 +676,116 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                     JOptionPane.INFORMATION_MESSAGE);
         } catch (NullPointerException | IllegalArgumentException | FlightBookingSystemException ex) {
             ToastNotification.showToast(this, "Flight not found!", ToastNotification.ToastType.ERROR);
+        }
+    }
+
+    private void deleteSelectedFlight(JPanel panel) {
+        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
+        JTable table = null;
+        for (Component comp : tableContainer.getComponents()) {
+            if (comp instanceof JScrollPane) {
+                JScrollPane scrollPane = (JScrollPane) comp;
+                Component view = scrollPane.getViewport().getView();
+                if (view instanceof JTable) {
+                    table = (JTable) view;
+                    break;
+                }
+            }
+        }
+        
+        if (table == null) return;
+        
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a flight to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Get the flight number from the selected row (column 1)
+        int modelRow = table.convertRowIndexToModel(selectedRow);
+        String flightNumber = (String) table.getModel().getValueAt(modelRow, 1);
+        
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to delete flight " + flightNumber + "?\nThis will also cancel all associated bookings.", 
+            "Confirm Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                Flight flight = null;
+                for (Flight f : fbs.getFlights()) {
+                    if (f.getFlightNumber().equals(flightNumber)) {
+                        flight = f;
+                        break;
+                    }
+                }
+                if (flight == null) {
+                    throw new FlightBookingSystemException("Flight not found");
+                }
+                
+                // Cancel all bookings for this flight
+                List<Customer> customers = fbs.getCustomers();
+                int cancelledBookings = 0;
+                for (Customer customer : customers) {
+                    List<Booking> bookingsToRemove = new ArrayList<>();
+                    for (Booking booking : customer.getBookings()) {
+                        if (booking.getFlight().getId() == flight.getId()) {
+                            bookingsToRemove.add(booking);
+                        }
+                    }
+                    for (Booking booking : bookingsToRemove) {
+                        customer.removeBooking(booking);
+                        fbs.removeBooking(booking);
+                        cancelledBookings++;
+                    }
+                }
+                
+                // Delete the flight
+                fbs.removeFlight(flight);
+                
+                JOptionPane.showMessageDialog(this, 
+                    "Flight " + flightNumber + " has been deleted.\n" + cancelledBookings + " booking(s) were cancelled.", 
+                    "Flight Deleted", JOptionPane.INFORMATION_MESSAGE);
+                
+                refreshFlightsTable(panel);
+                
+            } catch (FlightBookingSystemException ex) {
+                JOptionPane.showMessageDialog(this, "Error deleting flight: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void updateSelectedFlight(JPanel panel) {
+        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
+        JTable table = null;
+        for (Component comp : tableContainer.getComponents()) {
+            if (comp instanceof JScrollPane) {
+                JScrollPane scrollPane = (JScrollPane) comp;
+                Component view = scrollPane.getViewport().getView();
+                if (view instanceof JTable) {
+                    table = (JTable) view;
+                    break;
+                }
+            }
+        }
+        
+        if (table == null) return;
+        
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a flight to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Get the flight ID from the selected row (column 0)
+        int modelRow = table.convertRowIndexToModel(selectedRow);
+        int flightId = (int) table.getModel().getValueAt(modelRow, 0);
+        
+        try {
+            Flight flight = fbs.getFlightByID(flightId);
+            UpdateFlightWindow updateFlightWindow = new UpdateFlightWindow(this, flight);
+            updateFlightWindow.setVisible(true);
+        } catch (FlightBookingSystemException ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -1,8 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.commands.AddFlight;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -20,9 +18,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+
+import bcu.cmp5332.bookingsystem.commands.AddFlight;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 
 /**
  * AddFlightWindow - Modern redesigned dialog for adding flights
@@ -55,6 +58,8 @@ public class AddFlightWindow extends JFrame implements ActionListener {
 
     public AddFlightWindow(GuiWindow mw) {
         this.mw = mw;
+        
+        System.out.println("Creating AddFlightWindow...");
         
         // CHANGED: Initialize styled text fields
         flightNoText = DesignConstants.createStyledTextField(15);
@@ -131,9 +136,9 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         gbc.insets = new Insets(DesignConstants.SPACING_SM, 0, DesignConstants.SPACING_SM, DesignConstants.SPACING_MD);
         gbc.anchor = GridBagConstraints.WEST;
         
-        // Flight Number
+        // Flight Name
         gbc.gridx = 0; gbc.gridy = 0;
-        JLabel flightNoLabel = DesignConstants.createBodyLabel("Flight No:");
+        JLabel flightNoLabel = DesignConstants.createBodyLabel("Flight Name:");
         flightNoLabel.setForeground(DesignConstants.TEXT_PRIMARY);
         formPanel.add(flightNoLabel, gbc);
         
@@ -168,11 +173,11 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         gbc.weightx = 1.0;
         formPanel.add(destinationText, gbc);
         
-        // Departure Date
+        // TakeOff Date
         gbc.gridx = 0; gbc.gridy = 3;
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 0;
-        JLabel dateLabel = DesignConstants.createBodyLabel("Departure Date:");
+        JLabel dateLabel = DesignConstants.createBodyLabel("TakeOff Date:");
         dateLabel.setForeground(DesignConstants.TEXT_PRIMARY);
         formPanel.add(dateLabel, gbc);
         
@@ -182,7 +187,7 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         JPanel datePanel = new JPanel(new BorderLayout(DesignConstants.SPACING_SM, 0));
         datePanel.setBackground(DesignConstants.BACKGROUND);
         datePanel.add(depDateText, BorderLayout.CENTER);
-        JLabel dateHint = new JLabel("(YYYY-MM-DD)");
+        JLabel dateHint = new JLabel("(YYYY-MM-DD format)");
         dateHint.setFont(DesignConstants.FONT_SMALL);
         dateHint.setForeground(DesignConstants.TEXT_SECONDARY);
         datePanel.add(dateHint, BorderLayout.EAST);
@@ -214,7 +219,12 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         gbc.weightx = 1.0;
         formPanel.add(priceText, gbc);
         
-        add(formPanel, BorderLayout.CENTER);
+        // Wrap formPanel in JScrollPane for scrolling when window is small
+        JScrollPane scrollPane = new JScrollPane(formPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(null); // Remove border for cleaner look
+        add(scrollPane, BorderLayout.CENTER);
         
         // CHANGED: Create button panel with better spacing
         JPanel buttonPanel = new JPanel();
@@ -238,7 +248,10 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         add(buttonPanel, BorderLayout.SOUTH);
         setLocationRelativeTo((Component) mw);
 
+        setAlwaysOnTop(true);
         setVisible(true);
+        toFront();
+        requestFocus();
     }
 
     @Override

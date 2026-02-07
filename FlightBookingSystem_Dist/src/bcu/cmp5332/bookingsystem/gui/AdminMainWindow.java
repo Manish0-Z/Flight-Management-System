@@ -418,28 +418,19 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         JButton addBtn = new JButton("✈️ Add Flight");
-        JButton updateBtn = new JButton("✏️ Update Flight");
         JButton deleteBtn = new JButton("🗑️ Delete Flight");
-        JButton refreshBtn = new JButton("🔄 Refresh");
 
         styleButton(addBtn);
-        styleButton(updateBtn);
         styleButton(deleteBtn);
-        styleButton(refreshBtn);
 
         addBtn.addActionListener(e -> {
             AddFlightWindow addFlightWindow = new AddFlightWindow(this);
             addFlightWindow.setVisible(true);
         });
-        updateBtn.addActionListener(e -> updateSelectedFlight(panel));
         deleteBtn.addActionListener(e -> deleteSelectedFlight(panel));
-        refreshBtn.addActionListener(e -> {
-            refreshFlightsTable(panel);
-        });
+        
         toolbar.add(addBtn);
-        toolbar.add(updateBtn);
         toolbar.add(deleteBtn);
-        toolbar.add(refreshBtn);
         toolbar.add(Box.createHorizontalStrut(20));
 
         // Search field
@@ -490,24 +481,12 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton refreshBtn = new JButton("🔄 Refresh");
-
-        styleButton(refreshBtn);
-
-        refreshBtn.addActionListener(e -> {
-            refreshCustomersTable(panel);
-        });
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-
         // Search field
         JTextField searchField = new JTextField(20);
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
         toolbar.add(searchLabel);
         toolbar.add(searchField);
 
@@ -549,22 +528,12 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton refreshBtn = new JButton("🔄 Refresh");
-
-        styleButton(refreshBtn);
-
-        refreshBtn.addActionListener(e -> {
-            refreshBookingsTable(panel);
-        });
-
         // Search field
         JTextField searchField = new JTextField(20);
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
         toolbar.add(searchLabel);
         toolbar.add(searchField);
 
