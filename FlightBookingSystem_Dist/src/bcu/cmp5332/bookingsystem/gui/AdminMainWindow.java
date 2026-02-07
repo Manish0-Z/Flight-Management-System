@@ -1,5 +1,11 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -16,7 +22,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -39,13 +44,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 
 
@@ -310,21 +308,16 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Welcome header
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(240, 248, 255)); // Light blue background
-        headerPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
+        // Modern admin dashboard header
+        AirplaneIcon headerIcon = new AirplaneIcon(40, 28);
+        ModernHeader header = new ModernHeader(
+            headerIcon,
+            "Flight Management System",
+            "Admin Dashboard - Complete system overview and management",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        JLabel welcomeLabel = new JLabel("Flight Management System");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        welcomeLabel.setForeground(new Color(30, 58, 138)); // Airline blue
-
-        AirplaneIcon headerPlane = new AirplaneIcon(40, 30);
-        headerPanel.add(headerPlane);
-        headerPanel.add(Box.createHorizontalStrut(15));
-        headerPanel.add(welcomeLabel);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Main content area with stats and chart
         JPanel contentArea = new JPanel(new BorderLayout(0, 20));
@@ -395,22 +388,17 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern flight management header
         JLabel flightIcon = new JLabel("✈️");
-        flightIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("Flight Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        flightIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            flightIcon,
+            "Flight Management",
+            "Create, update, and manage all flights in the system",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(flightIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -459,22 +447,17 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern customer management header
         JLabel customerIcon = new JLabel("👥");
-        customerIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("Customer Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        customerIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            customerIcon,
+            "Customer Management",
+            "View and manage customer profiles, bookings, and contact information",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(customerIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -506,22 +489,17 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern booking management header
         JLabel bookingIcon = new JLabel("🎫");
-        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("Booking Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            bookingIcon,
+            "Booking Management",
+            "Monitor, search, and manage all flight reservations",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(bookingIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));

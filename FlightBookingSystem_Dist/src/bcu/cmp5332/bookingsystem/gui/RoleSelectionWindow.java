@@ -74,12 +74,10 @@ public class RoleSelectionWindow extends JFrame {
             DesignConstants.SPACING_MD
         ));
         
-        // Logo/Icon
-        JLabel iconLabel = new JLabel("✈");
-        iconLabel.setFont(new Font("Segoe UI", Font.PLAIN, 48));
-        iconLabel.setForeground(DesignConstants.PRIMARY);
-        iconLabel.setAlignmentX(CENTER_ALIGNMENT);
-        header.add(iconLabel);
+        // Logo/Icon - Airplane
+        AirlineLogo logo = new AirlineLogo(120, 60);
+        logo.setAlignmentX(CENTER_ALIGNMENT);
+        header.add(logo);
         
         header.add(Box.createRigidArea(new Dimension(0, DesignConstants.SPACING_MD)));
         
@@ -120,11 +118,12 @@ public class RoleSelectionWindow extends JFrame {
         gbc.weightx = 1.0;
         gbc.weighty = 0.0;
         
-        // CHANGED: Create card-style buttons
+        // CHANGED: Create card-style buttons with custom icons
         JPanel adminCard = createRoleCard(
-            "🔐 Administrator",
+            "Administrator",
             "Full system access and management",
             DesignConstants.PRIMARY,
+            RoleIcon.RoleType.ADMIN,
             e -> {
                 // LoginDialog loginDialog = new LoginDialog(this, fbs, "admin");
                 // loginDialog.setVisible(true);
@@ -138,9 +137,10 @@ public class RoleSelectionWindow extends JFrame {
         
         gbc.gridy = 1;
         JPanel customerCard = createRoleCard(
-            "👤 Customer",
+            "Customer",
             "Book flights and manage your bookings",
             DesignConstants.ACCENT,
+            RoleIcon.RoleType.CUSTOMER,
             e -> {
                 // LoginDialog loginDialog = new LoginDialog(this, fbs, "customer");
                 // loginDialog.setVisible(true);
@@ -156,10 +156,10 @@ public class RoleSelectionWindow extends JFrame {
     }
     
     /**
-     * Creates a modern card-style role selection button
-     * CHANGED: New method for card-based design
+     * Creates a modern card-style role selection button with custom icon
+     * CHANGED: New method for card-based design with RoleIcon
      */
-    private JPanel createRoleCard(String title, String description, Color accentColor, ActionListener action) {
+    private JPanel createRoleCard(String title, String description, Color accentColor, RoleIcon.RoleType iconType, ActionListener action) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout(DesignConstants.SPACING_MD, DesignConstants.SPACING_SM));
         card.setBackground(DesignConstants.SURFACE);
@@ -177,7 +177,13 @@ public class RoleSelectionWindow extends JFrame {
         card.setMaximumSize(new Dimension(500, 110));
         card.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
-        // Left: Content
+        // Left: Icon with subtle background
+        Color iconBgColor = new Color(accentColor.getRed(), accentColor.getGreen(), accentColor.getBlue(), 30);
+        RoleIcon icon = new RoleIcon(iconType, 64, accentColor, iconBgColor);
+        icon.setBorder(new EmptyBorder(0, 0, 0, DesignConstants.SPACING_MD));
+        card.add(icon, BorderLayout.WEST);
+        
+        // Center: Content
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(DesignConstants.SURFACE);
@@ -211,6 +217,9 @@ public class RoleSelectionWindow extends JFrame {
             public void mouseEntered(MouseEvent e) {
                 card.setBackground(DesignConstants.SURFACE_HOVER);
                 contentPanel.setBackground(DesignConstants.SURFACE_HOVER);
+                // Brighten icon background on hover
+                Color hoverIconBg = new Color(accentColor.getRed(), accentColor.getGreen(), accentColor.getBlue(), 50);
+                icon.setBackgroundColor(hoverIconBg);
                 card.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(accentColor, 2),
                     new EmptyBorder(
@@ -226,6 +235,8 @@ public class RoleSelectionWindow extends JFrame {
             public void mouseExited(MouseEvent e) {
                 card.setBackground(DesignConstants.SURFACE);
                 contentPanel.setBackground(DesignConstants.SURFACE);
+                // Reset icon background
+                icon.setBackgroundColor(iconBgColor);
                 card.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(DesignConstants.BORDER, 1),
                     new EmptyBorder(

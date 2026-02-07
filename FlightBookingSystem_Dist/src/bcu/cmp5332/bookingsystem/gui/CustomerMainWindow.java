@@ -1,5 +1,12 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+import bcu.cmp5332.bookingsystem.model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -15,13 +22,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -37,14 +42,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import bcu.cmp5332.bookingsystem.model.User;
 
 public class CustomerMainWindow extends JFrame implements ActionListener, GuiWindow {
     // Enhanced sidebar color scheme
@@ -158,6 +155,11 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
 
 
+        // Buttons
+        homeBtn = createSidebarButton("Dashboard", SidebarIcon.IconType.DASHBOARD);
+        flightsBtn = createSidebarButton("Flights", SidebarIcon.IconType.FLIGHTS);
+        bookingsBtn = createSidebarButton("My Bookings", SidebarIcon.IconType.BOOKINGS);
+        sidebar.add(homeBtn);
         // Navigation section label
         JLabel navLabel = new JLabel("NAVIGATION");
         navLabel.setForeground(new Color(150, 170, 220));
@@ -179,6 +181,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         sidebar.add(flightsBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(bookingsBtn);
+
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(profileBtn);
 
@@ -314,21 +317,16 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Welcome header
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(240, 248, 255)); // Light blue background
-        headerPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
+        // Modern customer welcome header
+        AirplaneIcon headerIcon = new AirplaneIcon(40, 28);
+        ModernHeader header = new ModernHeader(
+            headerIcon,
+            "Welcome to Flight Booking System",
+            "Book flights, manage reservations, and explore destinations",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        JLabel welcomeLabel = new JLabel("Welcome to Flight Booking System");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        welcomeLabel.setForeground(new Color(30, 58, 138)); // Airline blue
-
-        AirplaneIcon headerPlane = new AirplaneIcon(40, 30);
-        headerPanel.add(headerPlane);
-        headerPanel.add(Box.createHorizontalStrut(15));
-        headerPanel.add(welcomeLabel);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Main content area
         JPanel contentArea = new JPanel(new BorderLayout(0, 20));
@@ -336,27 +334,35 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         contentArea.setBorder(new EmptyBorder(20, 30, 20, 30));
 
         // Quick actions
-        JPanel actionsPanel = new JPanel(new GridLayout(2, 1, 20, 20));
+        JPanel actionsPanel = new JPanel(new GridLayout(1, 3, 20, 0));
         actionsPanel.setBackground(Color.WHITE);
 
         JButton viewFlightsBtn = new JButton("✈️ View Flights");
-        JButton viewBookingsBtn = new JButton("🎫 My Bookings");
+        JButton myBookingsBtn = new JButton("🎫 My Bookings");
+        JButton bookFlightBtn = new JButton("✍️ Book Flight");
 
         styleButton(viewFlightsBtn);
-        styleButton(viewBookingsBtn);
+        styleButton(myBookingsBtn);
+        styleButton(bookFlightBtn);
 
         viewFlightsBtn.addActionListener(e -> {
             setActiveButton(flightsBtn);
             cardLayout.show(contentPanel, "Flights");
         });
 
-        viewBookingsBtn.addActionListener(e -> {
+        myBookingsBtn.addActionListener(e -> {
             setActiveButton(bookingsBtn);
             cardLayout.show(contentPanel, "Bookings");
         });
 
+        bookFlightBtn.addActionListener(e -> {
+            AddBookingWindow addBookingWindow = new AddBookingWindow(this);
+            addBookingWindow.setVisible(true);
+        });
+
         actionsPanel.add(viewFlightsBtn);
-        actionsPanel.add(viewBookingsBtn);
+        actionsPanel.add(myBookingsBtn);
+        actionsPanel.add(bookFlightBtn);
 
         contentArea.add(actionsPanel, BorderLayout.CENTER);
 
@@ -369,51 +375,39 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern flights browser header
         JLabel flightIcon = new JLabel("✈️");
-        flightIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("Available Flights");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        flightIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            flightIcon,
+            "Available Flights",
+            "Browse and search for flights to your destination",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(flightIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
+        JButton bookBtn = new JButton("✍️ Book Flight");
         JButton refreshBtn = new JButton("🔄 Refresh");
-        JButton bookBtn = new JButton("🎫 Book Flight");
 
-        styleButton(refreshBtn);
         styleButton(bookBtn);
+        styleButton(refreshBtn);
 
+        bookBtn.addActionListener(e -> {
+            AddBookingWindow addBookingWindow = new AddBookingWindow(this);
+            addBookingWindow.setVisible(true);
+        });
         refreshBtn.addActionListener(e -> {
             refreshFlightsTable(panel);
             ToastNotification.showToast(this, "Flights refreshed successfully!", ToastNotification.ToastType.SUCCESS);
         });
-        
-        bookBtn.addActionListener(e -> {
-            int selectedRow = getSelectedFlightRow(panel);
-            if (selectedRow >= 0) {
-                showBookingDialog(selectedRow);
-            } else {
-                ToastNotification.showToast(this, "Please select a flight to book!", ToastNotification.ToastType.WARNING);
-            }
-        });
-        
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(10));
         toolbar.add(bookBtn);
+        toolbar.add(refreshBtn);
         toolbar.add(Box.createHorizontalStrut(20));
 
         // Search field
@@ -442,51 +436,43 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern bookings header with accent
         JLabel bookingIcon = new JLabel("🎫");
-        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("My Bookings");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            bookingIcon,
+            "My Bookings",
+            "View and manage your flight reservations",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(bookingIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton refreshBtn = new JButton("🔄 Refresh");
+        JButton bookBtn = new JButton("📅 New Booking");
         JButton cancelBtn = new JButton("❌ Cancel Booking");
+        JButton refreshBtn = new JButton("🔄 Refresh");
 
-        styleButton(refreshBtn);
+        styleButton(bookBtn);
         styleButton(cancelBtn);
+        styleButton(refreshBtn);
 
+        bookBtn.addActionListener(e -> {
+            AddBookingWindow addBookingWindow = new AddBookingWindow(this);
+            addBookingWindow.setVisible(true);
+        });
+
+        cancelBtn.addActionListener(e -> {
+            ToastNotification.showToast(this, "Cancel Booking feature coming soon!", ToastNotification.ToastType.INFO);
+        });
         refreshBtn.addActionListener(e -> {
             refreshBookingsTable(panel);
             ToastNotification.showToast(this, "Bookings refreshed successfully!", ToastNotification.ToastType.SUCCESS);
         });
-
-        cancelBtn.addActionListener(e -> {
-            int selectedRow = getSelectedBookingRow(panel);
-            if (selectedRow >= 0) {
-                cancelSelectedBooking(selectedRow);
-            } else {
-                ToastNotification.showToast(this, "Please select a booking to cancel!", ToastNotification.ToastType.WARNING);
-            }
-        });
-
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(10));
-        toolbar.add(cancelBtn);
 
         // Search field
         JTextField searchField = new JTextField(20);
@@ -494,6 +480,9 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
+        toolbar.add(bookBtn);
+        toolbar.add(cancelBtn);
+        toolbar.add(refreshBtn);
         toolbar.add(Box.createHorizontalStrut(20));
         toolbar.add(searchLabel);
         toolbar.add(searchField);
@@ -505,7 +494,6 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
 
         panel.putClientProperty("tableContainer", tableContainer);
         panel.putClientProperty("searchField", searchField);
-
         refreshBookingsTable(panel);
 
         return panel;
@@ -603,91 +591,6 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         tableContainer.add(scrollPane, BorderLayout.CENTER);
         tableContainer.revalidate();
         tableContainer.repaint();
-    }
-
-    private int getSelectedFlightRow(JPanel panel) {
-        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        if (tableContainer.getComponentCount() > 0) {
-            JScrollPane scrollPane = (JScrollPane) tableContainer.getComponent(0);
-            JTable table = (JTable) scrollPane.getViewport().getView();
-            return table.getSelectedRow();
-        }
-        return -1;
-    }
-
-    private void showBookingDialog(int selectedRow) {
-        // Get the selected flight
-        List<Flight> flights = fbs.getFlights();
-        Flight selectedFlight = null;
-        int count = 0;
-        for (Flight flight : flights) {
-            if (!flight.isDeleted()) {
-                if (count == selectedRow) {
-                    selectedFlight = flight;
-                    break;
-                }
-                count++;
-            }
-        }
-        
-        if (selectedFlight == null) return;
-        
-        // Create booking dialog
-        CustomerBookingDialog dialog = new CustomerBookingDialog(this, selectedFlight, loggedInUser);
-        dialog.setVisible(true);
-    }
-
-    public void refreshBookingsIfVisible() {
-        // If bookings panel is currently visible, refresh it
-        if ("Bookings".equals(getCurrentCard())) {
-            refreshBookingsTable(bookingsPanel);
-        }
-    }
-
-    private String getCurrentCard() {
-        for (Component comp : contentPanel.getComponents()) {
-            if (comp.isVisible()) {
-                return comp.getName();
-            }
-        }
-        return null;
-    }
-
-    private int getSelectedBookingRow(JPanel panel) {
-        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        if (tableContainer.getComponentCount() > 0) {
-            JScrollPane scrollPane = (JScrollPane) tableContainer.getComponent(0);
-            JTable table = (JTable) scrollPane.getViewport().getView();
-            return table.getSelectedRow();
-        }
-        return -1;
-    }
-
-    private void cancelSelectedBooking(int selectedRow) {
-        try {
-            Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
-            List<Booking> bookings = customer.getBookings();
-            
-            if (selectedRow >= 0 && selectedRow < bookings.size()) {
-                Booking booking = bookings.get(selectedRow);
-                
-                int result = JOptionPane.showConfirmDialog(this, 
-                    "Are you sure you want to cancel booking for flight " + booking.getFlight().getFlightNumber() + "?",
-                    "Cancel Booking", JOptionPane.YES_NO_OPTION);
-                
-                if (result == JOptionPane.YES_OPTION) {
-                    // Create cancel booking command
-                    bcu.cmp5332.bookingsystem.commands.CancelBooking cancelCmd = 
-                        new bcu.cmp5332.bookingsystem.commands.CancelBooking(customer.getId(), booking.getFlight().getId());
-                    cancelCmd.execute(fbs);
-                    
-                    ToastNotification.showToast(this, "Booking cancelled successfully!", ToastNotification.ToastType.SUCCESS);
-                    refreshBookingsTable(bookingsPanel);
-                }
-            }
-        } catch (FlightBookingSystemException ex) {
-            ToastNotification.showToast(this, "Error cancelling booking: " + ex.getMessage(), ToastNotification.ToastType.ERROR);
-        }
     }
 
     private void refreshBookingsTable(JPanel panel) {

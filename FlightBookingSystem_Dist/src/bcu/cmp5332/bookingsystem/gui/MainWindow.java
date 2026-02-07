@@ -380,21 +380,16 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Welcome header
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(240, 248, 255)); // Light blue background
-        headerPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
+        // Modern header with icon and subtitle
+        AirplaneIcon headerIcon = new AirplaneIcon(40, 28);
+        ModernHeader header = new ModernHeader(
+            headerIcon,
+            "Flight Management System",
+            "Welcome to your dashboard - Your complete flight management solution",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        JLabel welcomeLabel = new JLabel("Flight Management System");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        welcomeLabel.setForeground(new Color(30, 58, 138)); // Airline blue
-
-        AirplaneIcon headerPlane = new AirplaneIcon(40, 30);
-        headerPanel.add(headerPlane);
-        headerPanel.add(Box.createHorizontalStrut(15));
-        headerPanel.add(welcomeLabel);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Main content area with stats and chart
         JPanel contentArea = new JPanel(new BorderLayout(0, 20));
@@ -549,21 +544,16 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+        // Modern header with flight icon
+        AirplaneIcon flightIcon = new AirplaneIcon(32, 22);
+        ModernHeader header = new ModernHeader(
+            flightIcon,
+            "Flight Management",
+            "View, manage, and track all flights in the system",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        AirplaneIcon flightIcon = new AirplaneIcon(30, 20);
-        JLabel title = new JLabel("Flight Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
-
-        headerPanel.add(flightIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -607,7 +597,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         tableContainer.removeAll();
 
         List<Flight> flightsList = fbs.getFlights();
-        String[] columns = new String[] { "ID", "Flight ID", "Origin", "Destination", "Departure Date", "Capacity", "Price" };
+        String[] columns = new String[] { "ID", "Flight No", "Origin", "Destination", "Departure Date", "Capacity", "Price" };
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -795,22 +785,17 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern header with customer icon
         JLabel customerIcon = new JLabel("👥");
-        customerIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("Customer Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        customerIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            customerIcon,
+            "Customer Management",
+            "Manage customer profiles, bookings, and information",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(customerIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         JPanel tableContainer = new JPanel(new BorderLayout());
         panel.add(tableContainer, BorderLayout.CENTER);
@@ -914,21 +899,16 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+        // Modern header with booking accent
+        AirplaneIcon flightIcon = new AirplaneIcon(32, 22);
+        ModernHeader header = new ModernHeader(
+            flightIcon,
+            "Book Flight",
+            "Reserve seats on available flights quickly and easily",
+            ModernHeader.HeaderStyle.ACCENT
+        );
 
-        AirplaneIcon flightIcon = new AirplaneIcon(30, 20);
-        JLabel title = new JLabel("Book Flight");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
-
-        headerPanel.add(flightIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Center content with button
         JPanel centerPanel = new JPanel();
@@ -960,36 +940,41 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
+        // Modern header with booking icon
         JLabel bookingIcon = new JLabel("🎫");
-        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("Booking Management");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
+        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
+        ModernHeader header = new ModernHeader(
+            bookingIcon,
+            "Booking Management",
+            "View, create, and manage flight reservations",
+            ModernHeader.HeaderStyle.LIGHT
+        );
 
-        headerPanel.add(bookingIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(header, BorderLayout.NORTH);
 
         // Toolbar - centered for customers
         JPanel toolbar = new JPanel(new FlowLayout(isAdmin ? FlowLayout.LEFT : FlowLayout.CENTER));
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        if (!isAdmin) {
-            JButton cancelBtn = new JButton("❌ Cancel Booking");
-            styleButton(cancelBtn);
+        JButton cancelBtn = new JButton("❌ Cancel Booking");
+        styleButton(cancelBtn);
 
-            cancelBtn.addActionListener(e -> {
-                cancelBooking();
+        cancelBtn.addActionListener(e -> {
+            cancelBooking();
+        });
+
+        if (isAdmin) {
+            JButton addBtn = new JButton("🎫 Add Booking");
+            styleButton(addBtn);
+            addBtn.addActionListener(e -> {
+                AddBookingWindow addBookingWindow = new AddBookingWindow(this);
+                addBookingWindow.setVisible(true);
             });
-            
+            toolbar.add(addBtn);
+        }
+        
+        if (!isAdmin) {
             JButton rescheduleBtn = new JButton("🔄 Reschedule Booking");
             styleButton(rescheduleBtn);
 
@@ -997,10 +982,11 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                 rescheduleBooking();
             });
             
-            toolbar.add(cancelBtn);
-            toolbar.add(Box.createHorizontalStrut(10));
             toolbar.add(rescheduleBtn);
+            toolbar.add(Box.createHorizontalStrut(10));
         }
+
+        toolbar.add(cancelBtn);
 
         panel.add(toolbar, BorderLayout.SOUTH);
 
@@ -1018,7 +1004,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         tableContainer.removeAll();
 
         // Flatten bookings
-        String[] columns = new String[] { "Customer ID", "Full Name", "Flight ID", "Seat No", "Class",
+        String[] columns = new String[] { "Customer ID", "Customer Name", "Flight No", "Seat", "Class", "Date",
                 "Special Requests" };
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
@@ -1036,6 +1022,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                         b.getFlight().getFlightNumber(),
                         b.getSeatNumber(),
                         b.getBookingClass(),
+                        b.getBookingDate(),
                         b.getSpecialRequests()
                 });
             }
@@ -1174,7 +1161,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void bookFlight() {
         JDialog dialog = new JDialog(this, "Book a Flight", true);
-        dialog.setSize(400, 550);
+        dialog.setSize(400, 500);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout());
 
@@ -1195,13 +1182,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JTextField flightField = new JTextField(20);
         flightPanel.add(flightField);
         panel.add(flightPanel);
-
-        // Seat Number
-        JPanel seatNoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        seatNoPanel.add(new JLabel("Seat No:"));
-        JTextField seatNoField = new JTextField(20);
-        seatNoPanel.add(seatNoField);
-        panel.add(seatNoPanel);
 
         // Email
         JPanel emailPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1252,14 +1232,13 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         bookButton.addActionListener(e -> {
             String name = nameField.getText().trim();
             String flightIdStr = flightField.getText().trim();
-            String seatNo = seatNoField.getText().trim();
             String email = emailField.getText().trim();
             String phone = phoneField.getText().trim();
             String seatType = (String) seatCombo.getSelectedItem();
             String foodType = (String) foodCombo.getSelectedItem();
             String request = requestArea.getText().trim();
 
-            if (name.isEmpty() || flightIdStr.isEmpty() || seatNo.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+            if (name.isEmpty() || flightIdStr.isEmpty() || email.isEmpty() || phone.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog, "Please fill all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -1286,7 +1265,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
                 // Create booking
                 int bookingId = fbs.getNextBookingId();
-                Booking booking = new Booking(bookingId, customer, flight, fbs.getSystemDate(), seatNo, seatType, foodType + " - " + request);
+                Booking booking = new Booking(bookingId, customer, flight, fbs.getSystemDate(), "1", seatType, foodType + " - " + request);
                 customer.addBooking(booking);
                 flight.addPassenger(customer);
 
@@ -1353,8 +1332,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         styleButton(closeButton);
         
         cancelBookingButton.setBackground(new Color(239, 68, 68));
-        cancelBookingButton.setForeground(Color.BLACK);
-        closeButton.setForeground(Color.BLACK);
+        cancelBookingButton.setForeground(Color.WHITE);
         
         buttonPanel.add(cancelBookingButton);
         buttonPanel.add(closeButton);
