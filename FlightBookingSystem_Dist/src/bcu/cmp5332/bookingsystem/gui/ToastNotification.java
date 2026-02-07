@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,23 +34,23 @@ public class ToastNotification extends JWindow {
         String icon;
         switch (type) {
             case SUCCESS:
-                bgColor = new Color(76, 175, 80);
-                textColor = Color.WHITE;
+                bgColor = DesignConstants.SUCCESS;
+                textColor = DesignConstants.TEXT_ON_PRIMARY;
                 icon = "✓";
                 break;
             case ERROR:
-                bgColor = new Color(244, 67, 54);
-                textColor = Color.WHITE;
+                bgColor = DesignConstants.ERROR;
+                textColor = DesignConstants.TEXT_ON_PRIMARY;
                 icon = "✗";
                 break;
             case WARNING:
-                bgColor = new Color(255, 152, 0);
-                textColor = Color.WHITE;
+                bgColor = DesignConstants.WARNING;
+                textColor = DesignConstants.TEXT_ON_PRIMARY;
                 icon = "⚠";
                 break;
             default: // INFO
-                bgColor = new Color(33, 150, 243);
-                textColor = Color.WHITE;
+                bgColor = DesignConstants.INFO;
+                textColor = DesignConstants.TEXT_ON_PRIMARY;
                 icon = "ℹ";
                 break;
         }

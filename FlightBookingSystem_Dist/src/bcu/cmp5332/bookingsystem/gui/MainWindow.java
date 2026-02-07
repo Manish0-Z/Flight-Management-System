@@ -77,7 +77,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
             JLabel label = new JLabel(message);
-            label.setForeground(Color.WHITE);
+            label.setForeground(DesignConstants.TEXT_ON_PRIMARY);
             label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
             panel.add(label);
@@ -86,10 +86,10 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         private Color getColorForType(ToastType type) {
             switch (type) {
-                case SUCCESS: return new Color(34, 197, 94);
-                case ERROR: return new Color(239, 68, 68);
-                case INFO: return new Color(59, 130, 246);
-                default: return Color.GRAY;
+                case SUCCESS: return DesignConstants.SUCCESS;
+                case ERROR: return DesignConstants.ERROR;
+                case INFO: return DesignConstants.INFO;
+                default: return DesignConstants.TEXT_DISABLED;
             }
         }
 
@@ -116,13 +116,13 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
     private JPanel statsPanel;
 
     // Enhanced sidebar color scheme
-    private static final Color SIDEBAR_COLOR = new Color(30, 58, 138);
-    private static final Color SIDEBAR_TEXT_COLOR = Color.WHITE;
-    private static final Color ACTIVE_BTN_COLOR = new Color(52, 73, 154);
-    private static final Color HOVER_BTN_COLOR = new Color(69, 90, 171);
-    private static final Color ACCENT_BORDER = new Color(255, 193, 7);
-    private static final Color ICON_COLOR = new Color(200, 215, 255);
-    private static final Color ICON_ACTIVE_COLOR = Color.WHITE;
+    private static final Color SIDEBAR_COLOR = DesignConstants.SIDEBAR_BG;
+    private static final Color SIDEBAR_TEXT_COLOR = DesignConstants.SIDEBAR_TEXT;
+    private static final Color ACTIVE_BTN_COLOR = DesignConstants.SIDEBAR_ACTIVE;
+    private static final Color HOVER_BTN_COLOR = DesignConstants.SIDEBAR_HOVER;
+    private static final Color ACCENT_BORDER = DesignConstants.ACCENT;
+    private static final Color ICON_COLOR = DesignConstants.PRIMARY_LIGHTER;
+    private static final Color ICON_ACTIVE_COLOR = DesignConstants.TEXT_ON_PRIMARY;
 
     private boolean isAdmin;
 
@@ -143,6 +143,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                  IllegalAccessException | UnsupportedLookAndFeelException ex) {
             // Log or ignore
         }
+        DesignConstants.applyDarkThemeDefaults();
 
         setTitle(isAdmin ? "Flight Booking System - Admin Dashboard" : "Flight Booking System - Customer Dashboard");
         setSize(1000, 600);
@@ -157,7 +158,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         // Create Content Area
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
-        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBackground(DesignConstants.BACKGROUND);
 
         // Initialize Panels
         homePanel = createHomePanel();
@@ -207,7 +208,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         // Navigation section label
         JLabel navLabel = new JLabel("NAVIGATION");
-        navLabel.setForeground(new Color(150, 170, 220));
+        navLabel.setForeground(DesignConstants.TEXT_DISABLED);
         navLabel.setFont(new Font("Segoe UI", Font.BOLD, 11));
         navLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         navLabel.setBorder(new EmptyBorder(0, 20, 8, 0));
@@ -246,12 +247,12 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         // System section divider
         JSeparator separator = new JSeparator();
         separator.setMaximumSize(new Dimension(200, 1));
-        separator.setForeground(new Color(60, 88, 168));
+        separator.setForeground(DesignConstants.SIDEBAR_ACTIVE);
         sidebar.add(separator);
         sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
 
         exitBtn = createSidebarButton("Exit", SidebarIcon.IconType.EXIT);
-        exitBtn.setBackground(new Color(180, 50, 50));
+        exitBtn.setBackground(DesignConstants.ERROR);
         sidebar.add(exitBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -313,7 +314,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             public void mouseEntered(MouseEvent e) {
                 if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn) {
                     btn.setBackground(HOVER_BTN_COLOR);
-                    icon.setIconColor(Color.WHITE);
+                    icon.setIconColor(DesignConstants.TEXT_ON_PRIMARY);
                 }
             }
 
@@ -375,7 +376,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private JPanel createHomePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern header with icon and subtitle
         AirplaneIcon headerIcon = new AirplaneIcon(40, 28);
@@ -390,12 +391,12 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         // Main content area with stats and chart
         JPanel contentArea = new JPanel(new BorderLayout(0, 20));
-        contentArea.setBackground(Color.WHITE);
+        contentArea.setBackground(DesignConstants.BACKGROUND);
         contentArea.setBorder(new EmptyBorder(20, 30, 30, 30));
 
         // Stats panel
         statsPanel = new JPanel(new GridLayout(1, 3, 20, 20));
-        statsPanel.setBackground(Color.WHITE);
+        statsPanel.setBackground(DesignConstants.BACKGROUND);
         refreshHomeStats(statsPanel);
         contentArea.add(statsPanel, BorderLayout.NORTH);
 
@@ -414,9 +415,9 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         int customerCount = fbs.getCustomers().size();
         int bookingCount = fbs.getCustomers().stream().mapToInt(c -> c.getBookings().size()).sum();
 
-        panel.add(createStatCard("Total Flights", String.valueOf(flightCount), new Color(30, 144, 255), "✈️"));
-        panel.add(createStatCard("Total Customers", String.valueOf(customerCount), new Color(50, 205, 50), "👥"));
-        panel.add(createStatCard("Active Bookings", String.valueOf(bookingCount), new Color(255, 140, 0), "🎫"));
+        panel.add(createStatCard("Total Flights", String.valueOf(flightCount), DesignConstants.PRIMARY, "✈️"));
+        panel.add(createStatCard("Total Customers", String.valueOf(customerCount), DesignConstants.SUCCESS, "👥"));
+        panel.add(createStatCard("Active Bookings", String.valueOf(bookingCount), DesignConstants.WARNING, "🎫"));
 
         panel.revalidate();
         panel.repaint();
@@ -425,8 +426,11 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
     private JPanel createStatCard(String title, String value, Color color, String icon) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout());
-        card.setBackground(color);
-        card.setBorder(new EmptyBorder(20, 20, 20, 20));
+        card.setBackground(DesignConstants.SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS, DesignConstants.BORDER),
+            new EmptyBorder(20, 20, 20, 20)
+        ));
 
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         titlePanel.setOpaque(false);
@@ -435,14 +439,14 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         iconLabel.setFont(new Font("Segoe UI", Font.PLAIN, 24));
 
         JLabel titleLbl = new JLabel(title);
-        titleLbl.setForeground(Color.WHITE);
+        titleLbl.setForeground(DesignConstants.TEXT_SECONDARY);
         titleLbl.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         titlePanel.add(iconLabel);
         titlePanel.add(titleLbl);
 
         JLabel valueLbl = new JLabel(value);
-        valueLbl.setForeground(Color.WHITE);
+        valueLbl.setForeground(color);
         valueLbl.setFont(new Font("Segoe UI", Font.BOLD, 48));
         valueLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 
@@ -481,11 +485,11 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
                 // Draw bars
                 Color[] colors = {
-                        new Color(30, 144, 255),
-                        new Color(50, 205, 50),
-                        new Color(255, 140, 0),
-                        new Color(255, 193, 7),
-                        new Color(156, 39, 176)
+                        DesignConstants.PRIMARY,
+                        DesignConstants.SUCCESS,
+                        DesignConstants.WARNING,
+                        DesignConstants.ACCENT,
+                        DesignConstants.PRIMARY_LIGHT
                 };
 
                 for (int i = 0; i < displayCount; i++) {
@@ -500,7 +504,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                     g2d.fillRoundRect(x, y, barWidth, barHeight, 10, 10);
 
                     // Draw count on top
-                    g2d.setColor(Color.BLACK);
+                    g2d.setColor(DesignConstants.TEXT_PRIMARY);
                     g2d.setFont(new Font("Segoe UI", Font.BOLD, 12));
                     String countStr = String.valueOf(count);
                     FontMetrics fm = g2d.getFontMetrics();
@@ -517,7 +521,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                 }
 
                 // Draw title
-                g2d.setColor(new Color(30, 58, 138));
+                g2d.setColor(DesignConstants.TEXT_PRIMARY);
                 g2d.setFont(new Font("Segoe UI", Font.BOLD, 16));
                 g2d.drawString("Bookings per Flight (Top 5)", padding, 25);
 
@@ -525,9 +529,9 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             }
         };
 
-        chartPanel.setBackground(Color.WHITE);
+        chartPanel.setBackground(DesignConstants.SURFACE);
         chartPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+            BorderFactory.createLineBorder(DesignConstants.BORDER, 1),
                 new EmptyBorder(10, 10, 10, 10)));
         chartPanel.setPreferredSize(new Dimension(0, 200));
 
@@ -539,7 +543,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
      */
     private JPanel createFlightsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern header with flight icon
         AirplaneIcon flightIcon = new AirplaneIcon(32, 22);
@@ -554,7 +558,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         // Toolbar
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(Color.WHITE);
+        toolbar.setBackground(DesignConstants.BACKGROUND);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         if (isAdmin) {
@@ -617,7 +621,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setFillsViewportHeight(true);
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table.setSelectionBackground(new Color(184, 207, 229));
+        table.setSelectionBackground(DesignConstants.PRIMARY_LIGHTER);
+        DesignConstants.styleTable(table);
 
         // Add double-click listener to view details
         table.addMouseListener(new MouseAdapter() {
@@ -634,7 +639,9 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             }
         });
 
-        tableContainer.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(table);
+        DesignConstants.styleScrollPane(scrollPane);
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
 
         tableContainer.revalidate();
         tableContainer.repaint();
@@ -646,7 +653,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
             StringBuilder details = new StringBuilder();
             details.append("<html><body style='width: 300px; padding: 10px;'>");
-            details.append("<h2 style='color: #1e3a8a;'>Flight Details</h2>");
+            details.append("<h2 style='color: #93c5fd;'>Flight Details</h2>");
             details.append("<table>");
             details.append("<tr><td><b>ID:</b></td><td>").append(flight.getId()).append("</td></tr>");
             details.append("<tr><td><b>Flight Number:</b></td><td>").append(flight.getFlightNumber())
@@ -779,7 +786,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private JPanel createCustomersPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern header with customer icon
         JLabel customerIcon = new JLabel("👥");
@@ -831,7 +838,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setFillsViewportHeight(true);
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table.setSelectionBackground(new Color(184, 207, 229));
+        table.setSelectionBackground(DesignConstants.PRIMARY_LIGHTER);
+        DesignConstants.styleTable(table);
 
         // Add double-click listener
         table.addMouseListener(new MouseAdapter() {
@@ -848,7 +856,9 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             }
         });
 
-        tableContainer.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(table);
+        DesignConstants.styleScrollPane(scrollPane);
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
 
         tableContainer.revalidate();
         tableContainer.repaint();
@@ -860,7 +870,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
             StringBuilder details = new StringBuilder();
             details.append("<html><body style='width: 350px; padding: 10px;'>");
-            details.append("<h2 style='color: #1e3a8a;'>Customer Details</h2>");
+            details.append("<h2 style='color: #93c5fd;'>Customer Details</h2>");
             details.append("<table>");
             details.append("<tr><td><b>ID:</b></td><td>").append(customer.getId()).append("</td></tr>");
             details.append("<tr><td><b>Name:</b></td><td>").append(customer.getName()).append("</td></tr>");
@@ -872,7 +882,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             details.append("</table>");
 
             if (!customer.getBookings().isEmpty()) {
-                details.append("<h3 style='color: #1e3a8a; margin-top: 15px;'>Booking History</h3>");
+                details.append("<h3 style='color: #93c5fd; margin-top: 15px;'>Booking History</h3>");
                 details.append("<ul>");
                 for (Booking booking : customer.getBookings()) {
                     details.append("<li>").append(booking.getFlight().getFlightNumber())
@@ -893,7 +903,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private JPanel createBookFlightPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern header with booking accent
         AirplaneIcon flightIcon = new AirplaneIcon(32, 22);
@@ -909,15 +919,17 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         // Center content with button
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.setBackground(Color.WHITE);
+        centerPanel.setBackground(DesignConstants.BACKGROUND);
         centerPanel.setBorder(new EmptyBorder(50, 50, 50, 50));
 
         JButton bookBtn = new JButton("Book a Flight");
         bookBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        bookBtn.setBackground(new Color(30, 58, 138));
-        bookBtn.setForeground(Color.WHITE);
+        bookBtn.setBackground(DesignConstants.PRIMARY);
+        bookBtn.setForeground(DesignConstants.TEXT_ON_PRIMARY);
         bookBtn.setFocusPainted(false);
-        bookBtn.setBorderPainted(false);
+        bookBtn.setBorder(new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER));
+        bookBtn.setContentAreaFilled(true);
+        bookBtn.setOpaque(true);
         bookBtn.setPreferredSize(new Dimension(200, 50));
         bookBtn.setMaximumSize(new Dimension(200, 50));
         bookBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -934,7 +946,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private JPanel createBookingsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern header with booking icon
         JLabel bookingIcon = new JLabel("🎫");
@@ -950,7 +962,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         // Toolbar - centered for customers
         JPanel toolbar = new JPanel(new FlowLayout(isAdmin ? FlowLayout.LEFT : FlowLayout.CENTER));
-        toolbar.setBackground(Color.WHITE);
+        toolbar.setBackground(DesignConstants.BACKGROUND);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         JButton cancelBtn = new JButton("❌ Cancel Booking");
@@ -1016,7 +1028,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setFillsViewportHeight(true);
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table.setSelectionBackground(new Color(184, 207, 229));
+        table.setSelectionBackground(DesignConstants.PRIMARY_LIGHTER);
+        DesignConstants.styleTable(table);
 
         // Add double-click listener
         table.addMouseListener(new MouseAdapter() {
@@ -1032,7 +1045,9 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             }
         });
 
-        tableContainer.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(table);
+        DesignConstants.styleScrollPane(scrollPane);
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
 
         tableContainer.revalidate();
         tableContainer.repaint();
@@ -1041,7 +1056,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
     private void showBookingDetails(DefaultTableModel model, int row) {
         StringBuilder details = new StringBuilder();
         details.append("<html><body style='width: 350px; padding: 10px;'>");
-        details.append("<h2 style='color: #1e3a8a;'>Booking Details</h2>");
+        details.append("<h2 style='color: #93c5fd;'>Booking Details</h2>");
         details.append("<table>");
         details.append("<tr><td><b>Customer ID:</b></td><td>").append(model.getValueAt(row, 0)).append("</td></tr>");
         details.append("<tr><td><b>Customer Name:</b></td><td>").append(model.getValueAt(row, 1)).append("</td></tr>");
@@ -1059,8 +1074,12 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void styleButton(JButton btn) {
         btn.setFocusPainted(false);
-        btn.setBackground(new Color(240, 240, 240));
+        btn.setBackground(DesignConstants.SURFACE_HOVER);
+        btn.setForeground(DesignConstants.TEXT_PRIMARY);
         btn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        btn.setBorder(new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER));
+        btn.setContentAreaFilled(true);
+        btn.setOpaque(true);
     }
 
     @Override
@@ -1315,8 +1334,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         styleButton(cancelBookingButton);
         styleButton(closeButton);
         
-        cancelBookingButton.setBackground(new Color(239, 68, 68));
-        cancelBookingButton.setForeground(Color.WHITE);
+        cancelBookingButton.setBackground(DesignConstants.ERROR);
+        cancelBookingButton.setForeground(DesignConstants.TEXT_ON_PRIMARY);
         
         buttonPanel.add(cancelBookingButton);
         buttonPanel.add(closeButton);

@@ -5,11 +5,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-
 import javax.swing.JPanel;
 
 class AirplaneIcon extends JPanel {
-    private final Color planeColor = new Color(255, 193, 7);
+    private final Color planeColor = DesignConstants.ACCENT;
 
     public AirplaneIcon(int width, int height) {
         setPreferredSize(new Dimension(width, height));
@@ -37,7 +36,7 @@ class AirplaneIcon extends JPanel {
         g2d.fillRoundRect(width - width / 4 - 6, height / 2 - 25, 8, 20, 4, 4);
 
         // Draw windows
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(DesignConstants.TEXT_ON_PRIMARY);
         for (int i = 0; i < 4; i++) {
             g2d.fillOval(width / 3 + 15 + i * 12, height / 2 - 4, 6, 8);
         }

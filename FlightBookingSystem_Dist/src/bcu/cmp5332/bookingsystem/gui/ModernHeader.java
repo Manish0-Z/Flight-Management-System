@@ -127,26 +127,26 @@ public class ModernHeader extends JPanel {
                 break;
                 
             case LIGHT:
-                // Light background with subtle border
-                setBackground(new Color(248, 250, 252));
-                setBorder(createStyledBorder(new Color(241, 245, 249)));
+                // Dark surface background with subtle border
+                setBackground(DesignConstants.SURFACE);
+                setBorder(createStyledBorder(DesignConstants.BORDER));
                 break;
                 
             case ACCENT:
-                // Accent color theme
-                setBackground(new Color(254, 252, 232)); // Light amber
-                setBorder(createStyledBorder(new Color(254, 243, 199)));
+                // Accent-tinted surface for gentle emphasis
+                setBackground(new Color(20, 27, 33));
+                setBorder(createStyledBorder(DesignConstants.ACCENT_DARK));
                 break;
                 
             case SUCCESS:
-                // Success color theme
-                setBackground(new Color(236, 253, 245)); // Light green
-                setBorder(createStyledBorder(new Color(209, 250, 229)));
+                // Success-tinted surface
+                setBackground(new Color(19, 27, 24));
+                setBorder(createStyledBorder(DesignConstants.SUCCESS));
                 break;
                 
             case MINIMAL:
                 // Minimal flat style
-                setBackground(Color.WHITE);
+                setBackground(DesignConstants.BACKGROUND);
                 setBorder(new EmptyBorder(
                     DesignConstants.SPACING_LG,
                     DesignConstants.SPACING_LG,
@@ -175,10 +175,10 @@ public class ModernHeader extends JPanel {
                 titleLabel.setForeground(DesignConstants.TEXT_ON_PRIMARY);
                 break;
             case ACCENT:
-                titleLabel.setForeground(new Color(146, 64, 14)); // Amber-900
+                titleLabel.setForeground(DesignConstants.TEXT_PRIMARY);
                 break;
             case SUCCESS:
-                titleLabel.setForeground(new Color(6, 95, 70)); // Green-900
+                titleLabel.setForeground(DesignConstants.TEXT_PRIMARY);
                 break;
             default:
                 titleLabel.setForeground(DesignConstants.TEXT_PRIMARY);
@@ -190,13 +190,13 @@ public class ModernHeader extends JPanel {
         
         switch (style) {
             case PRIMARY:
-                subtitleLabel.setForeground(new Color(200, 215, 255, 230));
+                subtitleLabel.setForeground(new Color(226, 232, 240, 220));
                 break;
             case ACCENT:
-                subtitleLabel.setForeground(new Color(180, 83, 9)); // Amber-700
+                subtitleLabel.setForeground(DesignConstants.TEXT_SECONDARY);
                 break;
             case SUCCESS:
-                subtitleLabel.setForeground(new Color(21, 128, 61)); // Green-700
+                subtitleLabel.setForeground(DesignConstants.TEXT_SECONDARY);
                 break;
             default:
                 subtitleLabel.setForeground(DesignConstants.TEXT_SECONDARY);
@@ -215,7 +215,12 @@ public class ModernHeader extends JPanel {
             // Gradient from primarydark to primary
             GradientPaint gradient = new GradientPaint(
                 0, 0, DesignConstants.PRIMARY_DARK,
-                0, getHeight(), new Color(37, 99, 235, 240)
+                0, getHeight(), new Color(
+                    DesignConstants.PRIMARY.getRed(),
+                    DesignConstants.PRIMARY.getGreen(),
+                    DesignConstants.PRIMARY.getBlue(),
+                    240
+                )
             );
             g2.setPaint(gradient);
             g2.fillRect(0, 0, getWidth(), getHeight());

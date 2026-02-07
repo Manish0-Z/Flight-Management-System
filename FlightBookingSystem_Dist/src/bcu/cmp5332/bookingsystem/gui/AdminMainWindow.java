@@ -49,14 +49,14 @@ import javax.swing.table.TableRowSorter;
 
 public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow {
     // Enhanced sidebar color scheme
-    private static final Color SIDEBAR_COLOR = new Color(30, 58, 138);
-    private static final Color SIDEBAR_TEXT_COLOR = Color.WHITE;
-    private static final Color HOVER_BTN_COLOR = new Color(50, 78, 158);
-    private static final Color ACTIVE_BTN_COLOR = new Color(60, 98, 178);
-    private static final Color AIRLINE_ACCENT = new Color(255, 193, 7);
-    private static final Color ACCENT_BORDER = new Color(255, 193, 7);
-    private static final Color ICON_COLOR = new Color(200, 215, 255);
-    private static final Color ICON_ACTIVE_COLOR = Color.WHITE;
+    private static final Color SIDEBAR_COLOR = DesignConstants.SIDEBAR_BG;
+    private static final Color SIDEBAR_TEXT_COLOR = DesignConstants.SIDEBAR_TEXT;
+    private static final Color HOVER_BTN_COLOR = DesignConstants.SIDEBAR_HOVER;
+    private static final Color ACTIVE_BTN_COLOR = DesignConstants.SIDEBAR_ACTIVE;
+    private static final Color AIRLINE_ACCENT = DesignConstants.ACCENT;
+    private static final Color ACCENT_BORDER = DesignConstants.ACCENT;
+    private static final Color ICON_COLOR = DesignConstants.PRIMARY_LIGHTER;
+    private static final Color ICON_ACTIVE_COLOR = DesignConstants.TEXT_ON_PRIMARY;
 
     private final FlightBookingSystem fbs;
 
@@ -82,6 +82,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
                  IllegalAccessException | UnsupportedLookAndFeelException ex) {
             // Log or ignore
         }
+        DesignConstants.applyDarkThemeDefaults();
 
         setTitle("Flight Booking System - Admin Dashboard");
         setSize(1000, 600);
@@ -96,7 +97,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         // Create Content Area
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
-        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBackground(DesignConstants.BACKGROUND);
 
         // Initialize Panels
         homePanel = createHomePanel();
@@ -156,7 +157,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         // Navigation section label
         JLabel navLabel = new JLabel("NAVIGATION");
-        navLabel.setForeground(new Color(150, 170, 220));
+        navLabel.setForeground(DesignConstants.TEXT_DISABLED);
         navLabel.setFont(new Font("Segoe UI", Font.BOLD, 11));
         navLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         navLabel.setBorder(new EmptyBorder(0, 20, 8, 0));
@@ -183,12 +184,12 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         // System section divider
         JSeparator separator = new JSeparator();
         separator.setMaximumSize(new Dimension(200, 1));
-        separator.setForeground(new Color(60, 88, 168));
+        separator.setForeground(DesignConstants.SIDEBAR_ACTIVE);
         sidebar.add(separator);
         sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
 
         exitBtn = createSidebarButton("Exit", SidebarIcon.IconType.EXIT);
-        exitBtn.setBackground(new Color(180, 50, 50));
+        exitBtn.setBackground(DesignConstants.ERROR);
         sidebar.add(exitBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -246,7 +247,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
             public void mouseEntered(MouseEvent e) {
                 if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn) {
                     btn.setBackground(HOVER_BTN_COLOR);
-                    icon.setIconColor(Color.WHITE);
+                    icon.setIconColor(DesignConstants.TEXT_ON_PRIMARY);
                 }
             }
 
@@ -306,7 +307,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     private JPanel createHomePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern admin dashboard header
         AirplaneIcon headerIcon = new AirplaneIcon(40, 28);
@@ -321,38 +322,38 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         // Main content area with stats and chart
         JPanel contentArea = new JPanel(new BorderLayout(0, 20));
-        contentArea.setBackground(Color.WHITE);
+        contentArea.setBackground(DesignConstants.BACKGROUND);
         contentArea.setBorder(new EmptyBorder(20, 30, 20, 30));
 
         // Stats Panel
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 20, 0));
-        statsPanel.setBackground(Color.WHITE);
+        statsPanel.setBackground(DesignConstants.BACKGROUND);
 
         // Flights stat
-        JPanel flightsStat = createStatPanel("✈️ Total Flights", String.valueOf(fbs.getFlights().size()), new Color(33, 150, 243));
+        JPanel flightsStat = createStatPanel("✈️ Total Flights", String.valueOf(fbs.getFlights().size()), DesignConstants.PRIMARY);
         statsPanel.add(flightsStat);
 
         // Customers stat
-        JPanel customersStat = createStatPanel("👥 Total Customers", String.valueOf(fbs.getCustomers().size()), new Color(76, 175, 80));
+        JPanel customersStat = createStatPanel("👥 Total Customers", String.valueOf(fbs.getCustomers().size()), DesignConstants.SUCCESS);
         statsPanel.add(customersStat);
 
         // Bookings stat
-        JPanel bookingsStat = createStatPanel("🎫 Total Bookings", String.valueOf(fbs.getBookings().size()), new Color(255, 152, 0));
+        JPanel bookingsStat = createStatPanel("🎫 Total Bookings", String.valueOf(fbs.getBookings().size()), DesignConstants.WARNING);
         statsPanel.add(bookingsStat);
 
         // Revenue stat (placeholder)
-        JPanel revenueStat = createStatPanel("💰 Revenue", "$0.00", new Color(156, 39, 176));
+        JPanel revenueStat = createStatPanel("💰 Revenue", "$0.00", DesignConstants.ACCENT_DARK);
         statsPanel.add(revenueStat);
 
         contentArea.add(statsPanel, BorderLayout.NORTH);
 
         // Placeholder for chart or additional content
         JPanel chartPanel = new JPanel();
-        chartPanel.setBackground(Color.WHITE);
+        chartPanel.setBackground(DesignConstants.SURFACE);
         chartPanel.setBorder(BorderFactory.createTitledBorder("System Overview"));
         JLabel chartPlaceholder = new JLabel("Chart visualization would go here", SwingConstants.CENTER);
         chartPlaceholder.setFont(new Font("Segoe UI", Font.ITALIC, 16));
-        chartPlaceholder.setForeground(Color.GRAY);
+        chartPlaceholder.setForeground(DesignConstants.TEXT_SECONDARY);
         chartPanel.add(chartPlaceholder);
 
         contentArea.add(chartPanel, BorderLayout.CENTER);
@@ -364,9 +365,9 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     private JPanel createStatPanel(String title, String value, Color color) {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.SURFACE);
         panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(color, 2),
+            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS, DesignConstants.BORDER),
             new EmptyBorder(15, 15, 15, 15)
         ));
 
@@ -376,7 +377,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        titleLabel.setForeground(Color.GRAY);
+        titleLabel.setForeground(DesignConstants.TEXT_SECONDARY);
 
         panel.add(valueLabel, BorderLayout.CENTER);
         panel.add(titleLabel, BorderLayout.SOUTH);
@@ -386,7 +387,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     private JPanel createFlightsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern flight management header
         JLabel flightIcon = new JLabel("✈️");
@@ -402,7 +403,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(Color.WHITE);
+        toolbar.setBackground(DesignConstants.BACKGROUND);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         JButton addBtn = new JButton("✈️ Add Flight");
@@ -424,8 +425,16 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         // Search field
         JTextField searchField = new JTextField(20);
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        searchField.setBackground(DesignConstants.SURFACE);
+        searchField.setForeground(DesignConstants.TEXT_PRIMARY);
+        searchField.setCaretColor(DesignConstants.TEXT_PRIMARY);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER),
+            BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        searchLabel.setForeground(DesignConstants.TEXT_SECONDARY);
 
         toolbar.add(searchLabel);
         toolbar.add(searchField);
@@ -445,7 +454,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     private JPanel createCustomersPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern customer management header
         JLabel customerIcon = new JLabel("👥");
@@ -461,14 +470,22 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(Color.WHITE);
+        toolbar.setBackground(DesignConstants.BACKGROUND);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         // Search field
         JTextField searchField = new JTextField(20);
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        searchField.setBackground(DesignConstants.SURFACE);
+        searchField.setForeground(DesignConstants.TEXT_PRIMARY);
+        searchField.setCaretColor(DesignConstants.TEXT_PRIMARY);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER),
+            BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        searchLabel.setForeground(DesignConstants.TEXT_SECONDARY);
 
         toolbar.add(searchLabel);
         toolbar.add(searchField);
@@ -487,7 +504,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     private JPanel createBookingsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(DesignConstants.BACKGROUND);
 
         // Modern booking management header
         JLabel bookingIcon = new JLabel("🎫");
@@ -503,14 +520,22 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(Color.WHITE);
+        toolbar.setBackground(DesignConstants.BACKGROUND);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         // Search field
         JTextField searchField = new JTextField(20);
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        searchField.setBackground(DesignConstants.SURFACE);
+        searchField.setForeground(DesignConstants.TEXT_PRIMARY);
+        searchField.setCaretColor(DesignConstants.TEXT_PRIMARY);
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER),
+            BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        searchLabel.setForeground(DesignConstants.TEXT_SECONDARY);
 
         toolbar.add(searchLabel);
         toolbar.add(searchField);
@@ -529,22 +554,24 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     private void styleButton(JButton button) {
         button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setBackground(new Color(30, 58, 138));
-        button.setForeground(Color.WHITE);
+        button.setBackground(DesignConstants.PRIMARY);
+        button.setForeground(DesignConstants.TEXT_ON_PRIMARY);
         button.setFocusPainted(false);
-        button.setBorderPainted(false);
+        button.setBorder(new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER));
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
         button.setPreferredSize(new Dimension(120, 35));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(50, 78, 158));
+                button.setBackground(DesignConstants.PRIMARY_LIGHT);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(30, 58, 138));
+                button.setBackground(DesignConstants.PRIMARY);
             }
         });
     }
@@ -585,6 +612,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        DesignConstants.styleTable(table);
 
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
@@ -616,6 +644,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         });
 
         JScrollPane scrollPane = new JScrollPane(table);
+        DesignConstants.styleScrollPane(scrollPane);
         tableContainer.add(scrollPane, BorderLayout.CENTER);
         tableContainer.revalidate();
         tableContainer.repaint();
@@ -765,6 +794,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        DesignConstants.styleTable(table);
 
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
@@ -796,6 +826,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         });
 
         JScrollPane scrollPane = new JScrollPane(table);
+        DesignConstants.styleScrollPane(scrollPane);
         tableContainer.add(scrollPane, BorderLayout.CENTER);
         tableContainer.revalidate();
         tableContainer.repaint();
@@ -834,6 +865,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        DesignConstants.styleTable(table);
 
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);

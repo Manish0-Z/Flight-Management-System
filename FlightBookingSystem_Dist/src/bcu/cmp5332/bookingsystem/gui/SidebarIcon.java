@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
-
 import javax.swing.JPanel;
 
 /**
@@ -21,7 +20,7 @@ public class SidebarIcon extends JPanel {
     }
     
     private final IconType type;
-    private Color iconColor = Color.WHITE;
+    private Color iconColor = DesignConstants.TEXT_ON_PRIMARY;
     
     public SidebarIcon(IconType type, int size) {
         this.type = type;
