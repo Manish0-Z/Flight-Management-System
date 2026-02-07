@@ -36,16 +36,12 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JWindow;
-import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
@@ -567,41 +563,21 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Toolbar with search
+        // Toolbar
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton addBtn = new JButton("✈️ Add Flight");
-        JButton refreshBtn = new JButton("🔄 Refresh");
-
-        styleButton(addBtn);
-        styleButton(refreshBtn);
-
         if (isAdmin) {
+            JButton addBtn = new JButton("✈️ Add Flight");
+            styleButton(addBtn);
             addBtn.addActionListener(e -> {
                 AddFlightWindow addFlightWindow = new AddFlightWindow(this);
                 addFlightWindow.setVisible(true);
             });
             toolbar.add(addBtn);
+            panel.add(toolbar, BorderLayout.SOUTH);
         }
-        refreshBtn.addActionListener(e -> {
-            refreshFlightsTable(panel);
-            ToastNotification.showToast(this, "Flights refreshed successfully!", ToastNotification.ToastType.SUCCESS);
-        });
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JLabel searchLabel = new JLabel("🔍 Search:");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
-
-        panel.add(toolbar, BorderLayout.SOUTH);
 
         // Table container
         JPanel tableContainer = new JPanel(new BorderLayout());
@@ -609,7 +585,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         // Store references
         panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
 
         refreshFlightsTable(panel);
 
@@ -618,7 +593,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void refreshFlightsTable(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
         tableContainer.removeAll();
 
         List<Flight> flightsList = fbs.getFlights();
@@ -646,44 +620,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionBackground(new Color(184, 207, 229));
-
-        // Add TableRowSorter for search functionality
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        // Add search listener
-        if (searchField != null) {
-            // Remove old listeners
-            for (DocumentListener dl : searchField.getListeners(DocumentListener.class)) {
-                searchField.getDocument().removeDocumentListener(dl);
-            }
-
-            searchField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                private void filter() {
-                    String text = searchField.getText();
-                    if (text.trim().length() == 0) {
-                        sorter.setRowFilter(null);
-                    } else {
-                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                    }
-                }
-            });
-        }
 
         // Add double-click listener to view details
         table.addMouseListener(new MouseAdapter() {
@@ -754,40 +690,10 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Toolbar with search
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(Color.WHITE);
-        toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
-
-        JButton refreshBtn = new JButton("🔄 Refresh");
-
-        styleButton(refreshBtn);
-
-        refreshBtn.addActionListener(e -> {
-            refreshCustomersTable(panel);
-            ToastNotification.showToast(this, "Customers refreshed successfully!", ToastNotification.ToastType.SUCCESS);
-        });
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JLabel searchLabel = new JLabel("🔍 Search:");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
-
-        panel.add(toolbar, BorderLayout.SOUTH);
-
         JPanel tableContainer = new JPanel(new BorderLayout());
         panel.add(tableContainer, BorderLayout.CENTER);
 
         panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
 
         refreshCustomersTable(panel);
 
@@ -796,7 +702,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void refreshCustomersTable(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
         tableContainer.removeAll();
 
         List<Customer> customersList = fbs.getCustomers();
@@ -824,43 +729,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionBackground(new Color(184, 207, 229));
-
-        // Add TableRowSorter for search
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        // Add search listener
-        if (searchField != null) {
-            for (DocumentListener dl : searchField.getListeners(DocumentListener.class)) {
-                searchField.getDocument().removeDocumentListener(dl);
-            }
-
-            searchField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                private void filter() {
-                    String text = searchField.getText();
-                    if (text.trim().length() == 0) {
-                        sorter.setRowFilter(null);
-                    } else {
-                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                    }
-                }
-            });
-        }
 
         // Add double-click listener
         table.addMouseListener(new MouseAdapter() {
@@ -987,46 +855,29 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Toolbar with search
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Toolbar - centered for customers
+        JPanel toolbar = new JPanel(new FlowLayout(isAdmin ? FlowLayout.LEFT : FlowLayout.CENTER));
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton addBtn = new JButton("🎫 Add Booking");
         JButton cancelBtn = new JButton("❌ Cancel Booking");
-        JButton refreshBtn = new JButton("🔄 Refresh");
-
-        styleButton(addBtn);
         styleButton(cancelBtn);
-        styleButton(refreshBtn);
-
-        addBtn.addActionListener(e -> {
-            AddBookingWindow addBookingWindow = new AddBookingWindow(this);
-            addBookingWindow.setVisible(true);
-        });
 
         cancelBtn.addActionListener(e -> {
-            ToastNotification.showToast(this, "Cancel Booking feature coming soon!", ToastNotification.ToastType.INFO);
-        });
-        refreshBtn.addActionListener(e -> {
-            refreshBookingsTable(panel);
-            ToastNotification.showToast(this, "Bookings refreshed successfully!", ToastNotification.ToastType.SUCCESS);
+            cancelBooking();
         });
 
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JLabel searchLabel = new JLabel("🔍 Search:");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        if (!isAdmin) {  // Only add Add Booking button for customers
+        if (isAdmin) {
+            JButton addBtn = new JButton("🎫 Add Booking");
+            styleButton(addBtn);
+            addBtn.addActionListener(e -> {
+                AddBookingWindow addBookingWindow = new AddBookingWindow(this);
+                addBookingWindow.setVisible(true);
+            });
             toolbar.add(addBtn);
         }
+        
         toolbar.add(cancelBtn);
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
 
         panel.add(toolbar, BorderLayout.SOUTH);
 
@@ -1034,7 +885,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         panel.add(tableContainer, BorderLayout.CENTER);
 
         panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
         refreshBookingsTable(panel);
 
         return panel;
@@ -1042,7 +892,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void refreshBookingsTable(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
         tableContainer.removeAll();
 
         // Flatten bookings
@@ -1075,43 +924,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionBackground(new Color(184, 207, 229));
-
-        // Add TableRowSorter for search
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        // Add search listener
-        if (searchField != null) {
-            for (DocumentListener dl : searchField.getListeners(DocumentListener.class)) {
-                searchField.getDocument().removeDocumentListener(dl);
-            }
-
-            searchField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                private void filter() {
-                    String text = searchField.getText();
-                    if (text.trim().length() == 0) {
-                        sorter.setRowFilter(null);
-                    } else {
-                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                    }
-                }
-            });
-        }
 
         // Add double-click listener
         table.addMouseListener(new MouseAdapter() {
@@ -1363,6 +1175,126 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         });
 
         cancelButton.addActionListener(e -> dialog.dispose());
+
+        dialog.setVisible(true);
+    }
+
+    private void cancelBooking() {
+        JDialog dialog = new JDialog(this, "Cancel Booking", true);
+        dialog.setSize(400, 300);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        // Flight ID
+        JPanel flightPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        flightPanel.add(new JLabel("Flight ID:"));
+        JTextField flightField = new JTextField(20);
+        flightPanel.add(flightField);
+        panel.add(flightPanel);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        // Reason
+        JPanel reasonPanel = new JPanel();
+        reasonPanel.setLayout(new BoxLayout(reasonPanel, BoxLayout.Y_AXIS));
+        JLabel reasonLabel = new JLabel("Reason for Cancellation:");
+        reasonLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        reasonPanel.add(reasonLabel);
+        reasonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        
+        JTextArea reasonArea = new JTextArea(5, 20);
+        reasonArea.setLineWrap(true);
+        reasonArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(reasonArea);
+        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+        reasonPanel.add(scrollPane);
+        panel.add(reasonPanel);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton cancelBookingButton = new JButton("Cancel Booking");
+        JButton closeButton = new JButton("Close");
+        
+        styleButton(cancelBookingButton);
+        styleButton(closeButton);
+        
+        cancelBookingButton.setBackground(new Color(239, 68, 68));
+        cancelBookingButton.setForeground(Color.WHITE);
+        
+        buttonPanel.add(cancelBookingButton);
+        buttonPanel.add(closeButton);
+        panel.add(buttonPanel);
+
+        dialog.add(panel, BorderLayout.CENTER);
+
+        cancelBookingButton.addActionListener(e -> {
+            String flightIdStr = flightField.getText().trim();
+            String reason = reasonArea.getText().trim();
+
+            if (flightIdStr.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Please enter Flight ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (reason.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Please enter a reason for cancellation.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                int flightId = Integer.parseInt(flightIdStr);
+                Flight flight = fbs.getFlightByID(flightId);
+                if (flight == null) {
+                    JOptionPane.showMessageDialog(dialog, "Flight not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Find customer bookings for this flight
+                boolean bookingFound = false;
+                for (Customer customer : fbs.getCustomers()) {
+                    List<Booking> bookingsToRemove = customer.getBookings().stream()
+                        .filter(b -> b.getFlight().getId() == flightId)
+                        .toList();
+                    
+                    if (!bookingsToRemove.isEmpty()) {
+                        for (Booking booking : bookingsToRemove) {
+                            customer.getBookings().remove(booking);
+                            flight.getPassengers().remove(customer);
+                        }
+                        bookingFound = true;
+                        break;
+                    }
+                }
+
+                if (bookingFound) {
+                    JOptionPane.showMessageDialog(dialog, 
+                        "Booking cancelled successfully!\nReason: " + reason, 
+                        "Success", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                    dialog.dispose();
+                    
+                    // Refresh views
+                    refreshBookingsTable(bookingsPanel);
+                    refreshFlightsTable(flightsPanel);
+                } else {
+                    JOptionPane.showMessageDialog(dialog, 
+                        "No booking found for this flight.", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                }
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(dialog, "Invalid Flight ID. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (FlightBookingSystemException ex) {
+                JOptionPane.showMessageDialog(dialog, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        closeButton.addActionListener(e -> dialog.dispose());
 
         dialog.setVisible(true);
     }
