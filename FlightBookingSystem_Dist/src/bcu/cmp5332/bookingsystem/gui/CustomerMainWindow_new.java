@@ -596,33 +596,6 @@ public class CustomerMainWindow_new extends JFrame implements ActionListener, Gu
         tableContainer.repaint();
     }
 
-    private void showBookingDialog(int selectedRow) {
-        // Get the selected flight
-        List<Flight> flights = fbs.getFlights();
-        Flight selectedFlight = null;
-        int count = 0;
-        for (Flight flight : flights) {
-            if (!flight.isDeleted()) {
-                if (count == selectedRow) {
-                    selectedFlight = flight;
-                    break;
-                }
-                count++;
-            }
-        }
-        
-        if (selectedFlight == null) return;
-        
-        // Create booking dialog
-        try {
-            Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
-            CustomerBookingDialog dialog = new CustomerBookingDialog(fbs, customer, selectedFlight);
-            dialog.setVisible(true);
-        } catch (FlightBookingSystemException ex) {
-            ToastNotification.showToast(this, "Error loading customer data: " + ex.getMessage(), ToastNotification.ToastType.ERROR);
-        }
-    }
-
     public void refreshBookingsIfVisible() {
         // If bookings panel is currently visible, refresh it
         if ("Bookings".equals(getCurrentCard())) {
