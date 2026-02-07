@@ -1,13 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.commands.EditBooking;
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import bcu.cmp5332.bookingsystem.model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -28,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -50,6 +43,15 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import bcu.cmp5332.bookingsystem.commands.EditBooking;
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+import bcu.cmp5332.bookingsystem.model.User;
 
 public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
@@ -1224,19 +1226,63 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         phonePanel.add(phoneField);
         panel.add(phonePanel);
 
-        // Seat Number
-        JPanel seatNumberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        seatNumberPanel.add(new JLabel("Seat Number:"));
-        JTextField seatNumberField = new JTextField(20);
-        seatNumberPanel.add(seatNumberField);
-        panel.add(seatNumberPanel);
-
-        // Class
+        // Class (moved before Seat Number so we can filter seats by class)
         JPanel classPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         classPanel.add(new JLabel("Class:"));
         JComboBox<String> classCombo = new JComboBox<>(new String[]{"Economy", "Premium Economy", "Business", "First Class"});
         classPanel.add(classCombo);
         panel.add(classPanel);
+
+        // Seat Number (changed to dropdown)
+        JPanel seatNumberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        seatNumberPanel.add(new JLabel("Seat Number:"));
+        JComboBox<String> seatNumberCombo = new JComboBox<>();
+        // Populate with seat options based on Economy class initially
+        String[] seatLetters = {"A", "B", "C", "D", "E", "F"};
+        for (int row = 1; row <= 30; row++) {
+            for (String letter : seatLetters) {
+                seatNumberCombo.addItem(row + letter);
+            }
+        }
+        seatNumberPanel.add(seatNumberCombo);
+        panel.add(seatNumberPanel);
+        
+        // Add listener to update seats when class changes
+        classCombo.addActionListener(classChangeEvent -> {
+            String selectedClass = (String) classCombo.getSelectedItem();
+            seatNumberCombo.removeAllItems();
+            
+            switch (selectedClass) {
+                case "Economy":
+                    for (int row = 1; row <= 30; row++) {
+                        for (String letter : seatLetters) {
+                            seatNumberCombo.addItem(row + letter);
+                        }
+                    }
+                    break;
+                case "Premium Economy":
+                    for (int row = 31; row <= 35; row++) {
+                        for (String letter : seatLetters) {
+                            seatNumberCombo.addItem(row + letter);
+                        }
+                    }
+                    break;
+                case "Business":
+                    for (int row = 1; row <= 5; row++) {
+                        for (String letter : seatLetters) {
+                            seatNumberCombo.addItem(row + letter);
+                        }
+                    }
+                    break;
+                case "First Class":
+                    for (int row = 1; row <= 2; row++) {
+                        for (String letter : seatLetters) {
+                            seatNumberCombo.addItem(row + letter);
+                        }
+                    }
+                    break;
+            }
+        });
 
         // Food Type
         JPanel foodPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1268,12 +1314,12 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             String flightIdStr = flightField.getText().trim();
             String email = emailField.getText().trim();
             String phone = phoneField.getText().trim();
-            String seatNumber = seatNumberField.getText().trim();
+            String seatNumber = (String) seatNumberCombo.getSelectedItem();
             String bookingClass = (String) classCombo.getSelectedItem();
             String foodType = (String) foodCombo.getSelectedItem();
             String request = requestArea.getText().trim();
 
-            if (name.isEmpty() || flightIdStr.isEmpty() || email.isEmpty() || phone.isEmpty() || seatNumber.isEmpty()) {
+            if (name.isEmpty() || flightIdStr.isEmpty() || email.isEmpty() || phone.isEmpty() || seatNumber == null || seatNumber.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog, "Please fill all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
