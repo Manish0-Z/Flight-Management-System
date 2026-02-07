@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -625,10 +626,20 @@ public class CustomerMainWindow_new extends JFrame implements ActionListener, Gu
     private void cancelSelectedBooking(int selectedRow) {
         try {
             Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
-            List<Booking> bookings = customer.getBookings();
             
-            if (selectedRow >= 0 && selectedRow < bookings.size()) {
-                Booking booking = bookings.get(selectedRow);
+            // Get all non-deleted bookings
+            List<Booking> allBookings = fbs.getBookings().stream()
+                .filter(booking -> !booking.isDeleted())
+                .collect(Collectors.toList());
+            
+            if (selectedRow >= 0 && selectedRow < allBookings.size()) {
+                Booking booking = allBookings.get(selectedRow);
+                
+                // Check if the booking belongs to the logged-in customer
+                if (booking.getCustomer().getId() != customer.getId()) {
+                    ToastNotification.showToast(this, "You can only cancel your own bookings!", ToastNotification.ToastType.WARNING);
+                    return;
+                }
                 
                 int result = JOptionPane.showConfirmDialog(this, 
                     "Are you sure you want to cancel booking for flight " + booking.getFlight().getFlightNumber() + "?",
@@ -655,7 +666,7 @@ public class CustomerMainWindow_new extends JFrame implements ActionListener, Gu
 
         tableContainer.removeAll();
 
-        String[] columnNames = {"Booking ID", "Flight", "Seat No", "Date Booked", "Status"};
+        String[] columnNames = {"Booking ID", "Customer", "Flight", "Seat No", "Date Booked", "Status"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -663,23 +674,19 @@ public class CustomerMainWindow_new extends JFrame implements ActionListener, Gu
             }
         };
 
-        try {
-            Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
-            List<Booking> bookings = customer.getBookings();
-            for (Booking booking : bookings) {
-                if (!booking.isDeleted()) {
-                    Object[] row = {
-                        booking.getId(),
-                        booking.getFlight().getFlightNumber(),
-                        booking.getSeatNumber(),
-                        booking.getBookingDate(),
-                        booking.getStatus()
-                    };
-                    model.addRow(row);
-                }
+        List<Booking> allBookings = fbs.getBookings();
+        for (Booking booking : allBookings) {
+            if (!booking.isDeleted()) {
+                Object[] row = {
+                    booking.getId(),
+                    booking.getCustomer().getName(),
+                    booking.getFlight().getFlightNumber(),
+                    booking.getSeatNumber(),
+                    booking.getBookingDate(),
+                    booking.getStatus()
+                };
+                model.addRow(row);
             }
-        } catch (NumberFormatException | FlightBookingSystemException e) {
-            // If can't parse or find customer, show no bookings
         }
 
         JTable table = new JTable(model);
