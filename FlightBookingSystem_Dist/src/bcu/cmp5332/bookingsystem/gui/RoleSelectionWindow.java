@@ -125,12 +125,12 @@ public class RoleSelectionWindow extends JFrame {
             DesignConstants.PRIMARY,
             RoleIcon.RoleType.ADMIN,
             e -> {
-                // LoginDialog loginDialog = new LoginDialog(this, fbs, "admin");
-                // loginDialog.setVisible(true);
-                // if (loginDialog.isLoggedIn()) {
-                    new MainWindow(fbs, true, null).setVisible(true);
+                LoginDialog loginDialog = new LoginDialog(this, fbs, "admin");
+                loginDialog.setVisible(true);
+                if (loginDialog.isLoggedIn()) {
+                    new MainWindow(fbs, true, loginDialog.getLoggedInUser()).setVisible(true);
                     dispose();
-                // }
+                }
             }
         );
         panel.add(adminCard, gbc);
@@ -142,12 +142,12 @@ public class RoleSelectionWindow extends JFrame {
             DesignConstants.ACCENT,
             RoleIcon.RoleType.CUSTOMER,
             e -> {
-                // LoginDialog loginDialog = new LoginDialog(this, fbs, "customer");
-                // loginDialog.setVisible(true);
-                // if (loginDialog.isLoggedIn()) {
-                    new MainWindow(fbs, false, null).setVisible(true);
+                LoginDialog loginDialog = new LoginDialog(this, fbs, "customer");
+                loginDialog.setVisible(true);
+                if (loginDialog.isLoggedIn()) {
+                    new MainWindow(fbs, false, loginDialog.getLoggedInUser()).setVisible(true);
                     dispose();
-                // }
+                }
             }
         );
         panel.add(customerCard, gbc);

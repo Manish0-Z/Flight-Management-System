@@ -46,7 +46,7 @@ import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import bcu.cmp5332.bookingsystem.model.User;
 
-public class CustomerMainWindow extends JFrame implements ActionListener, GuiWindow {
+public class CustomerMainWindow_new extends JFrame implements ActionListener, GuiWindow {
     // Enhanced sidebar color scheme
     private static final Color SIDEBAR_COLOR = new Color(30, 58, 138);
     private static final Color SIDEBAR_TEXT_COLOR = Color.WHITE;
@@ -66,7 +66,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
     private JButton homeBtn, flightsBtn, bookingsBtn, profileBtn, exitBtn;
     private JPanel homePanel, flightsPanel, bookingsPanel;
 
-    public CustomerMainWindow(FlightBookingSystem fbs, User loggedInUser) {
+    public CustomerMainWindow_new(FlightBookingSystem fbs, User loggedInUser) {
         this.fbs = fbs;
         this.loggedInUser = loggedInUser;
         initialize();
@@ -392,30 +392,18 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         JButton refreshBtn = new JButton("🔄 Refresh");
-        JButton bookBtn = new JButton("🎫 Book Flight");
+        // Removed per-flight "Book Flight" button as requested
 
         styleButton(refreshBtn);
-        styleButton(bookBtn);
-        bookBtn.setForeground(Color.BLACK);
 
         refreshBtn.addActionListener(e -> {
             refreshFlightsTable(panel);
             ToastNotification.showToast(this, "Flights refreshed successfully!", ToastNotification.ToastType.SUCCESS);
         });
-        
-        bookBtn.addActionListener(e -> {
-            int selectedRow = getSelectedFlightRow(panel);
-            if (selectedRow >= 0) {
-                showBookingDialog(selectedRow);
-            } else {
-                ToastNotification.showToast(this, "Please select a flight to book!", ToastNotification.ToastType.WARNING);
-            }
-        });
-        
+
         toolbar.add(refreshBtn);
         toolbar.add(Box.createHorizontalStrut(10));
-        toolbar.add(bookBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
+        // ...existing code...
 
         // Search field
         JTextField searchField = new JTextField(20);
@@ -423,6 +411,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
+        toolbar.add(Box.createHorizontalStrut(20));
         toolbar.add(searchLabel);
         toolbar.add(searchField);
 
@@ -607,16 +596,6 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         tableContainer.repaint();
     }
 
-    private int getSelectedFlightRow(JPanel panel) {
-        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        if (tableContainer.getComponentCount() > 0) {
-            JScrollPane scrollPane = (JScrollPane) tableContainer.getComponent(0);
-            JTable table = (JTable) scrollPane.getViewport().getView();
-            return table.getSelectedRow();
-        }
-        return -1;
-    }
-
     private void showBookingDialog(int selectedRow) {
         // Get the selected flight
         List<Flight> flights = fbs.getFlights();
@@ -635,8 +614,13 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         if (selectedFlight == null) return;
         
         // Create booking dialog
-        CustomerBookingDialog dialog = new CustomerBookingDialog(this, selectedFlight, loggedInUser);
-        dialog.setVisible(true);
+        try {
+            Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
+            CustomerBookingDialog dialog = new CustomerBookingDialog(fbs, customer, selectedFlight);
+            dialog.setVisible(true);
+        } catch (FlightBookingSystemException ex) {
+            ToastNotification.showToast(this, "Error loading customer data: " + ex.getMessage(), ToastNotification.ToastType.ERROR);
+        }
     }
 
     public void refreshBookingsIfVisible() {
