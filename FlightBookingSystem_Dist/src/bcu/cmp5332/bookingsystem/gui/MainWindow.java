@@ -467,7 +467,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
                 int height = getHeight();
                 int padding = 40;
-                int barWidth = 60;
+                int barGap = 24;
                 int maxBarHeight = height - 2 * padding;
 
                 // Get booking counts per flight (top 5)
@@ -484,6 +484,12 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                 if (maxCount == 0)
                     maxCount = 1; // Avoid division by zero
 
+                int availableWidth = Math.max(0, getWidth() - 2 * padding);
+                int totalGap = barGap * Math.max(0, displayCount - 1);
+                int barWidth = displayCount > 0
+                    ? Math.max(40, (availableWidth - totalGap) / displayCount)
+                    : 0;
+
                 // Draw bars
                 Color[] colors = {
                         DesignConstants.PRIMARY,
@@ -497,7 +503,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                     Flight flight = flights.get(i);
                     int count = flight.getPassengers().size();
                     int barHeight = (int) ((double) count / maxCount * maxBarHeight);
-                    int x = padding + i * (barWidth + 30);
+                    int x = padding + i * (barWidth + barGap);
                     int y = height - padding - barHeight;
 
                     // Draw bar
@@ -534,7 +540,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         chartPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(DesignConstants.BORDER, 1),
                 new EmptyBorder(10, 10, 10, 10)));
-        chartPanel.setPreferredSize(new Dimension(0, 200));
+        chartPanel.setPreferredSize(new Dimension(0, 220));
 
         return chartPanel;
     }
