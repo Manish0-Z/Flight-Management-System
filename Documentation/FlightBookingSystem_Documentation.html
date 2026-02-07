@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Booking System Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .code {
+            background: #f4f4f4;
+            padding: 10px;
+            border-left: 4px solid #333;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flight Booking System Documentation</h1>
+        
+        <div class="section">
+            <h2>Introduction</h2>
+            <p>The Flight Booking System is a comprehensive Java-based application designed to manage flight bookings, customer information, and flight data. It features a graphical user interface (GUI) for both administrators and customers, allowing for efficient management of flights, bookings, and user accounts.</p>
+        </div>
+        
+        <div class="section">
+            <h2>Project Structure</h2>
+            <p>The project is organized into the following main packages:</p>
+            <ul>
+                <li><strong>bcu.cmp5332.bookingsystem.main</strong>: Contains the main entry point and core exception handling</li>
+                <li><strong>bcu.cmp5332.bookingsystem.model</strong>: Defines the core data models (Flight, Customer, Booking, User, FlightBookingSystem)</li>
+                <li><strong>bcu.cmp5332.bookingsystem.data</strong>: Handles data persistence and management for flights, customers, bookings, and users</li>
+                <li><strong>bcu.cmp5332.bookingsystem.commands</strong>: Implements the command pattern for various operations (add, cancel, list, etc.)</li>
+                <li><strong>bcu.cmp5332.bookingsystem.gui</strong>: Provides the graphical user interface components</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Main Classes</h2>
+            <h3>Model Classes</h3>
+            <ul>
+                <li><strong>FlightBookingSystem</strong>: Central class managing all system data and operations</li>
+                <li><strong>Flight</strong>: Represents flight information including flight number, origin, destination, departure date, capacity, and price</li>
+                <li><strong>Customer</strong>: Represents customer details and their bookings</li>
+                <li><strong>Booking</strong>: Represents a booking with associated flight, customer, seat number, and booking date</li>
+                <li><strong>User</strong>: Represents system users with authentication details</li>
+            </ul>
+            
+            <h3>Data Management Classes</h3>
+            <ul>
+                <li><strong>FlightDataManager</strong>: Handles loading and storing flight data</li>
+                <li><strong>CustomerDataManager</strong>: Manages customer data persistence</li>
+                <li><strong>BookingDataManager</strong>: Handles booking data operations</li>
+                <li><strong>UserDataManager</strong>: Manages user authentication data</li>
+                <li><strong>FlightBookingSystemData</strong>: Coordinates all data managers</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Command Classes</h2>
+            <p>The system uses the Command pattern for operations:</p>
+            <ul>
+                <li><strong>AddBooking</strong>: Creates new flight bookings</li>
+                <li><strong>AddCustomer</strong>: Adds new customers to the system</li>
+                <li><strong>AddFlight</strong>: Adds new flights</li>
+                <li><strong>CancelBooking</strong>: Cancels existing bookings</li>
+                <li><strong>EditBooking</strong>: Modifies booking details</li>
+                <li><strong>ListCustomers</strong>: Displays customer information</li>
+                <li><strong>ListFlights</strong>: Shows available flights</li>
+                <li><strong>ShowCustomer</strong>: Displays detailed customer information</li>
+                <li><strong>ShowFlight</strong>: Shows flight details</li>
+                <li><strong>UpdateFlight</strong>: Modifies flight information</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>GUI Components</h2>
+            <h3>Main Windows</h3>
+            <ul>
+                <li><strong>MainWindow</strong>: Entry point for the application</li>
+                <li><strong>AdminMainWindow</strong>: Administrator interface for system management</li>
+                <li><strong>CustomerMainWindow_new</strong>: Enhanced customer interface with modern design</li>
+                <li><strong>RoleSelectionWindow</strong>: Allows users to select their role (admin/customer)</li>
+                <li><strong>LoginDialog</strong>: Authentication dialog</li>
+            </ul>
+            
+            <h3>Dialog Windows</h3>
+            <ul>
+                <li><strong>AddBookingWindow</strong>: Interface for creating new bookings</li>
+                <li><strong>AddCustomerWindow</strong>: Customer registration form</li>
+                <li><strong>AddFlightWindow</strong>: Flight creation interface</li>
+                <li><strong>CancelBookingWindow</strong>: Booking cancellation interface</li>
+                <li><strong>CustomerBookingDialog</strong>: Customer booking creation dialog</li>
+                <li><strong>UpdateFlightWindow</strong>: Flight modification interface</li>
+            </ul>
+            
+            <h3>Utility Components</h3>
+            <ul>
+                <li><strong>AirlineLogo</strong>: Custom logo component</li>
+                <li><strong>AirplaneIcon</strong>: Airplane icon component</li>
+                <li><strong>DesignConstants</strong>: UI design constants and utilities</li>
+                <li><strong>ModernHeader</strong>: Modern header component</li>
+                <li><strong>RoleIcon</strong>: Role-specific icons</li>
+                <li><strong>SidebarIcon</strong>: Sidebar navigation icons</li>
+                <li><strong>ToastNotification</strong>: Notification system</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Key Features</h2>
+            <ul>
+                <li><strong>User Authentication</strong>: Role-based access for administrators and customers</li>
+                <li><strong>Flight Management</strong>: Add, update, and view flight information</li>
+                <li><strong>Customer Management</strong>: Register and manage customer accounts</li>
+                <li><strong>Booking System</strong>: Create, view, and cancel flight bookings</li>
+                <li><strong>Data Persistence</strong>: Stores data in text files (flights.txt, customers.txt, bookings.txt, users.txt)</li>
+                <li><strong>Modern GUI</strong>: Intuitive graphical interface with sidebar navigation</li>
+                <li><strong>Search Functionality</strong>: Search through flights and bookings</li>
+                <li><strong>Toast Notifications</strong>: User feedback system</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>How to Run</h2>
+            <ol>
+                <li>Ensure Java is installed on your system</li>
+                <li>Navigate to the project directory</li>
+                <li>Compile the project: <code class="code">javac -cp "src" src/bcu/cmp5332/bookingsystem/main/Main.java</code></li>
+                <li>Run the application: <code class="code">java -cp "src" bcu.cmp5332.bookingsystem.main.Main</code></li>
+                <li>Alternatively, use the provided run.bat file</li>
+            </ol>
+        </div>
+        
+        <div class="section">
+            <h2>Data Files</h2>
+            <p>The system uses the following data files located in the resources/data directory:</p>
+            <ul>
+                <li><strong>flights.txt</strong>: Stores flight information</li>
+                <li><strong>customers.txt</strong>: Contains customer data</li>
+                <li><strong>bookings.txt</strong>: Holds booking records</li>
+                <li><strong>users.txt</strong>: User authentication data</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Architecture Notes</h2>
+            <ul>
+                <li>The system follows the Model-View-Controller (MVC) pattern</li>
+                <li>Data access is abstracted through DataManager classes</li>
+                <li>GUI components are designed with reusability in mind</li>
+                <li>The Command pattern allows for extensible operations</li>
+                <li>Exception handling is centralized in FlightBookingSystemException</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
