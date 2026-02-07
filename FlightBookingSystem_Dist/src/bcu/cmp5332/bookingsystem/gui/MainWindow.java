@@ -1444,17 +1444,23 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                     return;
                 }
 
-                // Find customer bookings for this flight
+                // Find the customer who has this flight and remove all their bookings.
                 boolean bookingFound = false;
                 for (Customer customer : fbs.getCustomers()) {
-                    List<Booking> bookingsToRemove = customer.getBookings().stream()
-                        .filter(b -> b.getFlight().getId() == flightId)
-                        .toList();
-                    
-                    if (!bookingsToRemove.isEmpty()) {
+                    boolean hasFlightBooking = false;
+                    for (Booking booking : customer.getBookings()) {
+                        if (booking.getFlight().getId() == flightId) {
+                            hasFlightBooking = true;
+                            break;
+                        }
+                    }
+
+                    if (hasFlightBooking) {
+                        List<Booking> bookingsToRemove = new ArrayList<>(customer.getBookings());
                         for (Booking booking : bookingsToRemove) {
-                            customer.getBookings().remove(booking);
-                            flight.getPassengers().remove(customer);
+                            customer.removeBooking(booking);
+                            fbs.removeBooking(booking);
+                            booking.getFlight().removePassenger(customer);
                         }
                         bookingFound = true;
                         break;
