@@ -116,7 +116,7 @@ public class UpdateFlightWindow extends JFrame implements ActionListener {
                 throw new FlightBookingSystemException("Date must be in YYYY-MM-DD format");
             }
             int capacity = Integer.parseInt(capacityText.getText());
-            double price = Double.parseDouble(priceText.getText());
+            double price = Double.parseDouble(priceText.getText().replace("$", "").trim());
             // create and execute the UpdateFlight Command
             Command updateFlight = new UpdateFlight(flight.getId(), flightNumber, origin, destination, departureDate, capacity, price);
             updateFlight.execute(mw.getFlightBookingSystem());

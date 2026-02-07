@@ -136,9 +136,9 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         gbc.insets = new Insets(DesignConstants.SPACING_SM, 0, DesignConstants.SPACING_SM, DesignConstants.SPACING_MD);
         gbc.anchor = GridBagConstraints.WEST;
         
-        // Flight Name
+        // Flight ID
         gbc.gridx = 0; gbc.gridy = 0;
-        JLabel flightNoLabel = DesignConstants.createBodyLabel("Flight Name:");
+        JLabel flightNoLabel = DesignConstants.createBodyLabel("Flight ID:");
         flightNoLabel.setForeground(DesignConstants.TEXT_PRIMARY);
         formPanel.add(flightNoLabel, gbc);
         
@@ -276,7 +276,7 @@ public class AddFlightWindow extends JFrame implements ActionListener {
                 throw new FlightBookingSystemException("Date must be in YYYY-MM-DD format");
             }
             int capacity = Integer.parseInt(capacityText.getText());
-            double price = Double.parseDouble(priceText.getText());
+            double price = Double.parseDouble(priceText.getText().replace("$", "").trim());
             // create and execute the AddFlight Command
             Command addFlight = new AddFlight(flightNumber, origin, destination, departureDate, capacity, price);
             addFlight.execute(mw.getFlightBookingSystem());

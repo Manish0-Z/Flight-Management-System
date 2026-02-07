@@ -1,11 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -20,9 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BorderFactory;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -45,34 +38,46 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+import bcu.cmp5332.bookingsystem.model.User;
 
-
-public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow {
+public class CustomerMainWindow extends JFrame implements ActionListener, GuiWindow {
     // Enhanced sidebar color scheme
-    private static final Color SIDEBAR_COLOR = DesignConstants.SIDEBAR_BG;
-    private static final Color SIDEBAR_TEXT_COLOR = DesignConstants.SIDEBAR_TEXT;
-    private static final Color HOVER_BTN_COLOR = DesignConstants.SIDEBAR_HOVER;
-    private static final Color ACTIVE_BTN_COLOR = DesignConstants.SIDEBAR_ACTIVE;
-    private static final Color AIRLINE_ACCENT = DesignConstants.ACCENT;
-    private static final Color ACCENT_BORDER = DesignConstants.ACCENT;
-    private static final Color ICON_COLOR = DesignConstants.PRIMARY_LIGHTER;
-    private static final Color ICON_ACTIVE_COLOR = DesignConstants.TEXT_ON_PRIMARY;
+    private static final Color SIDEBAR_COLOR = new Color(30, 58, 138);
+    private static final Color SIDEBAR_TEXT_COLOR = Color.WHITE;
+    private static final Color HOVER_BTN_COLOR = new Color(50, 78, 158);
+    private static final Color ACTIVE_BTN_COLOR = new Color(60, 98, 178);
+    private static final Color AIRLINE_ACCENT = new Color(255, 193, 7);
+    private static final Color ACCENT_BORDER = new Color(255, 193, 7);
+    private static final Color ICON_COLOR = new Color(200, 215, 255);
+    private static final Color ICON_ACTIVE_COLOR = Color.WHITE;
 
     private final FlightBookingSystem fbs;
+    private final User loggedInUser;
 
     private CardLayout cardLayout;
     private JPanel contentPanel;
 
-    private JButton homeBtn, flightsBtn, customersBtn, bookingsBtn, exitBtn;
-    private JPanel homePanel, flightsPanel, customersPanel, bookingsPanel;
+    private JButton homeBtn, flightsBtn, bookingsBtn, profileBtn, exitBtn;
+    private JPanel homePanel, flightsPanel, bookingsPanel;
 
-    public AdminMainWindow(FlightBookingSystem fbs) {
+    public CustomerMainWindow(FlightBookingSystem fbs, User loggedInUser) {
         this.fbs = fbs;
+        this.loggedInUser = loggedInUser;
         initialize();
     }
 
     public FlightBookingSystem getFlightBookingSystem() {
         return fbs;
+    }
+
+    public User getLoggedInUser() {
+        return loggedInUser;
     }
 
     private void initialize() {
@@ -82,9 +87,8 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
                  IllegalAccessException | UnsupportedLookAndFeelException ex) {
             // Log or ignore
         }
-        DesignConstants.applyDarkThemeDefaults();
 
-        setTitle("Flight Booking System - Admin Dashboard");
+        setTitle("Flight Booking System - Customer Dashboard");
         setSize(1000, 600);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -97,17 +101,15 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         // Create Content Area
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
-        contentPanel.setBackground(DesignConstants.BACKGROUND);
+        contentPanel.setBackground(Color.WHITE);
 
         // Initialize Panels
         homePanel = createHomePanel();
         flightsPanel = createFlightsPanel();
-        customersPanel = createCustomersPanel();
         bookingsPanel = createBookingsPanel();
 
         contentPanel.add(homePanel, "Home");
         contentPanel.add(flightsPanel, "Flights");
-        contentPanel.add(customersPanel, "Customers");
         contentPanel.add(bookingsPanel, "Bookings");
 
         add(contentPanel, BorderLayout.CENTER);
@@ -145,7 +147,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         headerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         // Subtitle
-        JLabel subtitleLabel = new JLabel("Management System");
+        JLabel subtitleLabel = new JLabel("Customer Portal");
         subtitleLabel.setForeground(AIRLINE_ACCENT);
         subtitleLabel.setFont(new Font("Segoe UI", Font.ITALIC, 14));
         subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -155,9 +157,10 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         sidebar.add(headerPanel);
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
 
+
         // Navigation section label
         JLabel navLabel = new JLabel("NAVIGATION");
-        navLabel.setForeground(DesignConstants.TEXT_DISABLED);
+        navLabel.setForeground(new Color(150, 170, 220));
         navLabel.setFont(new Font("Segoe UI", Font.BOLD, 11));
         navLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         navLabel.setBorder(new EmptyBorder(0, 20, 8, 0));
@@ -167,16 +170,18 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         // Buttons with custom icons
         homeBtn = createSidebarButton("Dashboard", SidebarIcon.IconType.DASHBOARD);
         flightsBtn = createSidebarButton("Flights", SidebarIcon.IconType.FLIGHTS);
-        customersBtn = createSidebarButton("Customers", SidebarIcon.IconType.CUSTOMERS);
-        bookingsBtn = createSidebarButton("Bookings", SidebarIcon.IconType.BOOKINGS);
+        bookingsBtn = createSidebarButton("My Bookings", SidebarIcon.IconType.BOOKINGS);
+        profileBtn = createSidebarButton("Profile", SidebarIcon.IconType.PROFILE);
+
 
         sidebar.add(homeBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(flightsBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
-        sidebar.add(customersBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(bookingsBtn);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
+        sidebar.add(profileBtn);
+
 
         // Spacer to push exit button to bottom
         sidebar.add(Box.createVerticalGlue());
@@ -184,12 +189,12 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         // System section divider
         JSeparator separator = new JSeparator();
         separator.setMaximumSize(new Dimension(200, 1));
-        separator.setForeground(DesignConstants.SIDEBAR_ACTIVE);
+        separator.setForeground(new Color(60, 88, 168));
         sidebar.add(separator);
         sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
 
         exitBtn = createSidebarButton("Exit", SidebarIcon.IconType.EXIT);
-        exitBtn.setBackground(DesignConstants.ERROR);
+        exitBtn.setBackground(new Color(180, 50, 50));
         sidebar.add(exitBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -247,7 +252,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
             public void mouseEntered(MouseEvent e) {
                 if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn) {
                     btn.setBackground(HOVER_BTN_COLOR);
-                    icon.setIconColor(DesignConstants.TEXT_ON_PRIMARY);
+                    icon.setIconColor(Color.WHITE);
                 }
             }
 
@@ -266,7 +271,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     // Enhanced active state with accent border and icon color
     private void setActiveButton(JButton active) {
-        JButton[] btns = { homeBtn, flightsBtn, customersBtn, bookingsBtn };
+        JButton[] btns = { homeBtn, flightsBtn, bookingsBtn, profileBtn };
         for (JButton btn : btns) {
             btn.setBackground(SIDEBAR_COLOR);
             JLabel label = (JLabel) btn.getClientProperty("label");
@@ -307,134 +312,116 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     private JPanel createHomePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(DesignConstants.BACKGROUND);
+        panel.setBackground(Color.WHITE);
 
-        // Modern admin dashboard header
-        AirplaneIcon headerIcon = new AirplaneIcon(40, 28);
-        ModernHeader header = new ModernHeader(
-            headerIcon,
-            "Flight Management System",
-            "Admin Dashboard - Complete system overview and management",
-            ModernHeader.HeaderStyle.LIGHT
-        );
+        // Welcome header
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(new Color(240, 248, 255)); // Light blue background
+        headerPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
 
-        panel.add(header, BorderLayout.NORTH);
+        JLabel welcomeLabel = new JLabel("Welcome to Flight Booking System");
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        welcomeLabel.setForeground(new Color(30, 58, 138)); // Airline blue
 
-        // Main content area with stats and chart
+        AirplaneIcon headerPlane = new AirplaneIcon(40, 30);
+        headerPanel.add(headerPlane);
+        headerPanel.add(Box.createHorizontalStrut(15));
+        headerPanel.add(welcomeLabel);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // Main content area
         JPanel contentArea = new JPanel(new BorderLayout(0, 20));
-        contentArea.setBackground(DesignConstants.BACKGROUND);
+        contentArea.setBackground(Color.WHITE);
         contentArea.setBorder(new EmptyBorder(20, 30, 20, 30));
 
-        // Stats Panel
-        JPanel statsPanel = new JPanel(new GridLayout(1, 4, 20, 0));
-        statsPanel.setBackground(DesignConstants.BACKGROUND);
+        // Quick actions
+        JPanel actionsPanel = new JPanel(new GridLayout(2, 1, 20, 20));
+        actionsPanel.setBackground(Color.WHITE);
 
-        // Flights stat
-        JPanel flightsStat = createStatPanel("✈️ Total Flights", String.valueOf(fbs.getFlights().size()), DesignConstants.PRIMARY);
-        statsPanel.add(flightsStat);
+        JButton viewFlightsBtn = new JButton("✈️ View Flights");
+        JButton viewBookingsBtn = new JButton("🎫 My Bookings");
 
-        // Customers stat
-        JPanel customersStat = createStatPanel("👥 Total Customers", String.valueOf(fbs.getCustomers().size()), DesignConstants.SUCCESS);
-        statsPanel.add(customersStat);
+        styleButton(viewFlightsBtn);
+        styleButton(viewBookingsBtn);
 
-        // Bookings stat
-        JPanel bookingsStat = createStatPanel("🎫 Total Bookings", String.valueOf(fbs.getBookings().size()), DesignConstants.WARNING);
-        statsPanel.add(bookingsStat);
+        viewFlightsBtn.addActionListener(e -> {
+            setActiveButton(flightsBtn);
+            cardLayout.show(contentPanel, "Flights");
+        });
 
-        // Revenue stat (placeholder)
-        JPanel revenueStat = createStatPanel("💰 Revenue", "$0.00", DesignConstants.ACCENT_DARK);
-        statsPanel.add(revenueStat);
+        viewBookingsBtn.addActionListener(e -> {
+            setActiveButton(bookingsBtn);
+            cardLayout.show(contentPanel, "Bookings");
+        });
 
-        contentArea.add(statsPanel, BorderLayout.NORTH);
+        actionsPanel.add(viewFlightsBtn);
+        actionsPanel.add(viewBookingsBtn);
 
-        // Placeholder for chart or additional content
-        JPanel chartPanel = new JPanel();
-        chartPanel.setBackground(DesignConstants.SURFACE);
-        chartPanel.setBorder(BorderFactory.createTitledBorder("System Overview"));
-        JLabel chartPlaceholder = new JLabel("Chart visualization would go here", SwingConstants.CENTER);
-        chartPlaceholder.setFont(new Font("Segoe UI", Font.ITALIC, 16));
-        chartPlaceholder.setForeground(DesignConstants.TEXT_SECONDARY);
-        chartPanel.add(chartPlaceholder);
-
-        contentArea.add(chartPanel, BorderLayout.CENTER);
+        contentArea.add(actionsPanel, BorderLayout.CENTER);
 
         panel.add(contentArea, BorderLayout.CENTER);
 
         return panel;
     }
 
-    private JPanel createStatPanel(String title, String value, Color color) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(DesignConstants.SURFACE);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS, DesignConstants.BORDER),
-            new EmptyBorder(15, 15, 15, 15)
-        ));
-
-        JLabel valueLabel = new JLabel(value, SwingConstants.CENTER);
-        valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        valueLabel.setForeground(color);
-
-        JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        titleLabel.setForeground(DesignConstants.TEXT_SECONDARY);
-
-        panel.add(valueLabel, BorderLayout.CENTER);
-        panel.add(titleLabel, BorderLayout.SOUTH);
-
-        return panel;
-    }
-
     private JPanel createFlightsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(DesignConstants.BACKGROUND);
+        panel.setBackground(Color.WHITE);
 
-        // Modern flight management header
+        // Header
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        headerPanel.setBackground(new Color(240, 248, 255));
+        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+
         JLabel flightIcon = new JLabel("✈️");
-        flightIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
-        ModernHeader header = new ModernHeader(
-            flightIcon,
-            "Flight Management",
-            "Create, update, and manage all flights in the system",
-            ModernHeader.HeaderStyle.LIGHT
-        );
+        flightIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
+        JLabel title = new JLabel("Available Flights");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        title.setForeground(new Color(30, 58, 138));
 
-        panel.add(header, BorderLayout.NORTH);
+        headerPanel.add(flightIcon);
+        headerPanel.add(Box.createHorizontalStrut(10));
+        headerPanel.add(title);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(DesignConstants.BACKGROUND);
+        toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton addBtn = new JButton("✈️ Add Flight");
-        JButton deleteBtn = new JButton("🗑️ Delete Flight");
+        JButton refreshBtn = new JButton("🔄 Refresh");
+        JButton bookBtn = new JButton("🎫 Book Flight");
 
-        styleButton(addBtn);
-        styleButton(deleteBtn);
+        styleButton(refreshBtn);
+        styleButton(bookBtn);
+        bookBtn.setForeground(Color.BLACK);
 
-        addBtn.addActionListener(e -> {
-            AddFlightWindow addFlightWindow = new AddFlightWindow(this);
-            addFlightWindow.setVisible(true);
+        refreshBtn.addActionListener(e -> {
+            refreshFlightsTable(panel);
+            ToastNotification.showToast(this, "Flights refreshed successfully!", ToastNotification.ToastType.SUCCESS);
         });
-        deleteBtn.addActionListener(e -> deleteSelectedFlight(panel));
         
-        toolbar.add(addBtn);
-        toolbar.add(deleteBtn);
+        bookBtn.addActionListener(e -> {
+            int selectedRow = getSelectedFlightRow(panel);
+            if (selectedRow >= 0) {
+                showBookingDialog(selectedRow);
+            } else {
+                ToastNotification.showToast(this, "Please select a flight to book!", ToastNotification.ToastType.WARNING);
+            }
+        });
+        
+        toolbar.add(refreshBtn);
+        toolbar.add(Box.createHorizontalStrut(10));
+        toolbar.add(bookBtn);
         toolbar.add(Box.createHorizontalStrut(20));
 
         // Search field
         JTextField searchField = new JTextField(20);
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        searchField.setBackground(DesignConstants.SURFACE);
-        searchField.setForeground(DesignConstants.TEXT_PRIMARY);
-        searchField.setCaretColor(DesignConstants.TEXT_PRIMARY);
-        searchField.setBorder(BorderFactory.createCompoundBorder(
-            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        searchLabel.setForeground(DesignConstants.TEXT_SECONDARY);
 
         toolbar.add(searchLabel);
         toolbar.add(searchField);
@@ -452,91 +439,64 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         return panel;
     }
 
-    private JPanel createCustomersPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(DesignConstants.BACKGROUND);
-
-        // Modern customer management header
-        JLabel customerIcon = new JLabel("👥");
-        customerIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
-        ModernHeader header = new ModernHeader(
-            customerIcon,
-            "Customer Management",
-            "View and manage customer profiles, bookings, and contact information",
-            ModernHeader.HeaderStyle.LIGHT
-        );
-
-        panel.add(header, BorderLayout.NORTH);
-
-        // Toolbar with search
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(DesignConstants.BACKGROUND);
-        toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
-
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        searchField.setBackground(DesignConstants.SURFACE);
-        searchField.setForeground(DesignConstants.TEXT_PRIMARY);
-        searchField.setCaretColor(DesignConstants.TEXT_PRIMARY);
-        searchField.setBorder(BorderFactory.createCompoundBorder(
-            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
-        JLabel searchLabel = new JLabel("🔍 Search:");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        searchLabel.setForeground(DesignConstants.TEXT_SECONDARY);
-
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
-
-        panel.add(toolbar, BorderLayout.SOUTH);
-
-        JPanel tableContainer = new JPanel(new BorderLayout());
-        panel.add(tableContainer, BorderLayout.CENTER);
-
-        panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
-        refreshCustomersTable(panel);
-
-        return panel;
-    }
-
     private JPanel createBookingsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(DesignConstants.BACKGROUND);
+        panel.setBackground(Color.WHITE);
 
-        // Modern booking management header
+        // Header
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        headerPanel.setBackground(new Color(240, 248, 255));
+        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+
         JLabel bookingIcon = new JLabel("🎫");
-        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 28));
-        ModernHeader header = new ModernHeader(
-            bookingIcon,
-            "Booking Management",
-            "Monitor, search, and manage all flight reservations",
-            ModernHeader.HeaderStyle.LIGHT
-        );
+        bookingIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
+        JLabel title = new JLabel("My Bookings");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        title.setForeground(new Color(30, 58, 138));
 
-        panel.add(header, BorderLayout.NORTH);
+        headerPanel.add(bookingIcon);
+        headerPanel.add(Box.createHorizontalStrut(10));
+        headerPanel.add(title);
+
+        panel.add(headerPanel, BorderLayout.NORTH);
 
         // Toolbar with search
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(DesignConstants.BACKGROUND);
+        toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        JButton refreshBtn = new JButton("🔄 Refresh");
+        JButton cancelBtn = new JButton("❌ Cancel Booking");
+
+        styleButton(refreshBtn);
+        styleButton(cancelBtn);
+        cancelBtn.setForeground(Color.BLACK);
+
+        refreshBtn.addActionListener(e -> {
+            refreshBookingsTable(panel);
+            ToastNotification.showToast(this, "Bookings refreshed successfully!", ToastNotification.ToastType.SUCCESS);
+        });
+
+        cancelBtn.addActionListener(e -> {
+            int selectedRow = getSelectedBookingRow(panel);
+            if (selectedRow >= 0) {
+                cancelSelectedBooking(selectedRow);
+            } else {
+                ToastNotification.showToast(this, "Please select a booking to cancel!", ToastNotification.ToastType.WARNING);
+            }
+        });
+
+        toolbar.add(refreshBtn);
+        toolbar.add(Box.createHorizontalStrut(10));
+        toolbar.add(cancelBtn);
 
         // Search field
         JTextField searchField = new JTextField(20);
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        searchField.setBackground(DesignConstants.SURFACE);
-        searchField.setForeground(DesignConstants.TEXT_PRIMARY);
-        searchField.setCaretColor(DesignConstants.TEXT_PRIMARY);
-        searchField.setBorder(BorderFactory.createCompoundBorder(
-            new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER),
-            BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
         JLabel searchLabel = new JLabel("🔍 Search:");
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        searchLabel.setForeground(DesignConstants.TEXT_SECONDARY);
 
+        toolbar.add(Box.createHorizontalStrut(20));
         toolbar.add(searchLabel);
         toolbar.add(searchField);
 
@@ -547,6 +507,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         panel.putClientProperty("tableContainer", tableContainer);
         panel.putClientProperty("searchField", searchField);
+
         refreshBookingsTable(panel);
 
         return panel;
@@ -554,24 +515,22 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
     private void styleButton(JButton button) {
         button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setBackground(DesignConstants.PRIMARY);
-        button.setForeground(DesignConstants.TEXT_ON_PRIMARY);
+        button.setBackground(new Color(30, 58, 138));
+        button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setBorder(new DesignConstants.RoundedBorder(DesignConstants.BORDER_RADIUS_SMALL, DesignConstants.BORDER));
-        button.setContentAreaFilled(true);
-        button.setOpaque(true);
+        button.setBorderPainted(false);
         button.setPreferredSize(new Dimension(120, 35));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(DesignConstants.PRIMARY_LIGHT);
+                button.setBackground(new Color(50, 78, 158));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(DesignConstants.PRIMARY);
+                button.setBackground(new Color(30, 58, 138));
             }
         });
     }
@@ -612,7 +571,6 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        DesignConstants.styleTable(table);
 
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
@@ -644,158 +602,94 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         });
 
         JScrollPane scrollPane = new JScrollPane(table);
-        DesignConstants.styleScrollPane(scrollPane);
         tableContainer.add(scrollPane, BorderLayout.CENTER);
         tableContainer.revalidate();
         tableContainer.repaint();
     }
 
-    private void deleteSelectedFlight(JPanel panel) {
+    private int getSelectedFlightRow(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTable table = findTableInContainer(tableContainer);
-        
-        if (table == null) return;
-        
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a flight to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
-            return;
+        if (tableContainer.getComponentCount() > 0) {
+            JScrollPane scrollPane = (JScrollPane) tableContainer.getComponent(0);
+            JTable table = (JTable) scrollPane.getViewport().getView();
+            return table.getSelectedRow();
+        }
+        return -1;
+    }
+
+    private void showBookingDialog(int selectedRow) {
+        // Get the selected flight
+        List<Flight> flights = fbs.getFlights();
+        Flight selectedFlight = null;
+        int count = 0;
+        for (Flight flight : flights) {
+            if (!flight.isDeleted()) {
+                if (count == selectedRow) {
+                    selectedFlight = flight;
+                    break;
+                }
+                count++;
+            }
         }
         
-        // Get the flight number from the selected row
-        int modelRow = table.convertRowIndexToModel(selectedRow);
-        String flightNumber = (String) table.getModel().getValueAt(modelRow, 0);
+        if (selectedFlight == null) return;
         
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            "Are you sure you want to delete flight " + flightNumber + "?\nThis will also cancel all associated bookings.", 
-            "Confirm Delete", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                Flight flight = null;
-                for (Flight f : fbs.getFlights()) {
-                    if (f.getFlightNumber().equals(flightNumber)) {
-                        flight = f;
-                        break;
-                    }
-                }
-                if (flight == null) {
-                    throw new FlightBookingSystemException("Flight not found");
-                }
-                
-                // Cancel all bookings for this flight
-                List<Customer> customers = fbs.getCustomers();
-                int cancelledBookings = 0;
-                for (Customer customer : customers) {
-                    List<Booking> bookingsToRemove = new ArrayList<>();
-                    for (Booking booking : customer.getBookings()) {
-                        if (booking.getFlight().getId() == flight.getId()) {
-                            bookingsToRemove.add(booking);
-                        }
-                    }
-                    for (Booking booking : bookingsToRemove) {
-                        customer.removeBooking(booking);
-                        fbs.removeBooking(booking);
-                        cancelledBookings++;
-                    }
-                }
-                
-                // Delete the flight
-                fbs.removeFlight(flight);
-                
-                JOptionPane.showMessageDialog(this, 
-                    "Flight " + flightNumber + " has been deleted.\n" + cancelledBookings + " booking(s) were cancelled.", 
-                    "Flight Deleted", JOptionPane.INFORMATION_MESSAGE);
-                
-                refreshFlightsTable(panel);
-                
-            } catch (FlightBookingSystemException ex) {
-                JOptionPane.showMessageDialog(this, "Error deleting flight: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
+        // Create booking dialog
+        CustomerBookingDialog dialog = new CustomerBookingDialog(this, selectedFlight, loggedInUser);
+        dialog.setVisible(true);
+    }
+
+    public void refreshBookingsIfVisible() {
+        // If bookings panel is currently visible, refresh it
+        if ("Bookings".equals(getCurrentCard())) {
+            refreshBookingsTable(bookingsPanel);
         }
     }
 
-    private JTable findTableInContainer(JPanel container) {
-        for (Component comp : container.getComponents()) {
-            if (comp instanceof JScrollPane) {
-                JScrollPane scrollPane = (JScrollPane) comp;
-                Component view = scrollPane.getViewport().getView();
-                if (view instanceof JTable) {
-                    return (JTable) view;
-                }
+    private String getCurrentCard() {
+        for (Component comp : contentPanel.getComponents()) {
+            if (comp.isVisible()) {
+                return comp.getName();
             }
         }
         return null;
     }
 
-    private void refreshCustomersTable(JPanel panel) {
+    private int getSelectedBookingRow(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
-
-        tableContainer.removeAll();
-
-        String[] columnNames = {"ID", "Name", "Phone", "Email"};
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        List<Customer> customers = fbs.getCustomers();
-        for (Customer customer : customers) {
-            if (!customer.isDeleted()) {
-                Object[] row = {
-                    customer.getId(),
-                    customer.getName(),
-                    customer.getPhone(),
-                    customer.getEmail()
-                };
-                model.addRow(row);
-            }
+        if (tableContainer.getComponentCount() > 0) {
+            JScrollPane scrollPane = (JScrollPane) tableContainer.getComponent(0);
+            JTable table = (JTable) scrollPane.getViewport().getView();
+            return table.getSelectedRow();
         }
+        return -1;
+    }
 
-        JTable table = new JTable(model);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        table.setRowHeight(25);
-        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        DesignConstants.styleTable(table);
-
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        searchField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                filterTable();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                filterTable();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                filterTable();
-            }
-
-            private void filterTable() {
-                String text = searchField.getText();
-                if (text.trim().length() == 0) {
-                    sorter.setRowFilter(null);
-                } else {
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+    private void cancelSelectedBooking(int selectedRow) {
+        try {
+            Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
+            List<Booking> bookings = customer.getBookings();
+            
+            if (selectedRow >= 0 && selectedRow < bookings.size()) {
+                Booking booking = bookings.get(selectedRow);
+                
+                int result = JOptionPane.showConfirmDialog(this, 
+                    "Are you sure you want to cancel booking for flight " + booking.getFlight().getFlightNumber() + "?",
+                    "Cancel Booking", JOptionPane.YES_NO_OPTION);
+                
+                if (result == JOptionPane.YES_OPTION) {
+                    // Create cancel booking command
+                    bcu.cmp5332.bookingsystem.commands.CancelBooking cancelCmd = 
+                        new bcu.cmp5332.bookingsystem.commands.CancelBooking(customer.getId(), booking.getFlight().getId());
+                    cancelCmd.execute(fbs);
+                    
+                    ToastNotification.showToast(this, "Booking cancelled successfully!", ToastNotification.ToastType.SUCCESS);
+                    refreshBookingsTable(bookingsPanel);
                 }
             }
-        });
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        DesignConstants.styleScrollPane(scrollPane);
-        tableContainer.add(scrollPane, BorderLayout.CENTER);
-        tableContainer.revalidate();
-        tableContainer.repaint();
+        } catch (FlightBookingSystemException ex) {
+            ToastNotification.showToast(this, "Error cancelling booking: " + ex.getMessage(), ToastNotification.ToastType.ERROR);
+        }
     }
 
     private void refreshBookingsTable(JPanel panel) {
@@ -804,7 +698,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         tableContainer.removeAll();
 
-        String[] columnNames = {"ID", "Customer", "Flight", "Booking Date", "Seat", "Class", "Status"};
+        String[] columnNames = {"Booking ID", "Flight", "Seat No", "Date Booked", "Status"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -812,20 +706,23 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
             }
         };
 
-        List<Booking> bookings = fbs.getBookings();
-        for (Booking booking : bookings) {
-            if (!booking.isDeleted()) {
-                Object[] row = {
-                    booking.getId(),
-                    booking.getCustomer().getName(),
-                    booking.getFlight().getFlightNumber(),
-                    booking.getBookingDate(),
-                    booking.getSeatNumber(),
-                    booking.getBookingClass(),
-                    booking.getStatus()
-                };
-                model.addRow(row);
+        try {
+            Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
+            List<Booking> bookings = customer.getBookings();
+            for (Booking booking : bookings) {
+                if (!booking.isDeleted()) {
+                    Object[] row = {
+                        booking.getId(),
+                        booking.getFlight().getFlightNumber(),
+                        booking.getSeatNumber(),
+                        booking.getBookingDate(),
+                        booking.getStatus()
+                    };
+                    model.addRow(row);
+                }
             }
+        } catch (NumberFormatException | FlightBookingSystemException e) {
+            // If can't parse or find customer, show no bookings
         }
 
         JTable table = new JTable(model);
@@ -833,7 +730,6 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        DesignConstants.styleTable(table);
 
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
@@ -878,17 +774,18 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         } else if (e.getSource() == flightsBtn) {
             setActiveButton(flightsBtn);
             cardLayout.show(contentPanel, "Flights");
-        } else if (e.getSource() == customersBtn) {
-            setActiveButton(customersBtn);
-            cardLayout.show(contentPanel, "Customers");
         } else if (e.getSource() == bookingsBtn) {
             setActiveButton(bookingsBtn);
             cardLayout.show(contentPanel, "Bookings");
+        } else if (e.getSource() == profileBtn) {
+            setActiveButton(profileBtn);
+            cardLayout.show(contentPanel, "Profile");
         } else if (e.getSource() == exitBtn) {
             try {
                 FlightBookingSystemData.store(fbs);
+                ToastNotification.showToast(this, "Data saved successfully!", ToastNotification.ToastType.SUCCESS);
             } catch (IOException ex) {
-                // Error saving data: " + ex.getMessage()
+                ToastNotification.showToast(this, "Error saving data: " + ex.getMessage(), ToastNotification.ToastType.ERROR);
             }
             System.exit(0);
         }

@@ -1,6 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -13,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -21,6 +21,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 
 public class RoleSelectionWindow extends JFrame {
@@ -125,12 +127,12 @@ public class RoleSelectionWindow extends JFrame {
             DesignConstants.PRIMARY,
             RoleIcon.RoleType.ADMIN,
             e -> {
-                LoginDialog loginDialog = new LoginDialog(this, fbs, "admin");
-                loginDialog.setVisible(true);
-                if (loginDialog.isLoggedIn()) {
-                    new MainWindow(fbs, true, loginDialog.getLoggedInUser()).setVisible(true);
+                // LoginDialog loginDialog = new LoginDialog(this, fbs, "admin");
+                // loginDialog.setVisible(true);
+                // if (loginDialog.isLoggedIn()) {
+                    new MainWindow(fbs, true, null).setVisible(true);
                     dispose();
-                }
+                // }
             }
         );
         panel.add(adminCard, gbc);
@@ -142,12 +144,12 @@ public class RoleSelectionWindow extends JFrame {
             DesignConstants.ACCENT,
             RoleIcon.RoleType.CUSTOMER,
             e -> {
-                LoginDialog loginDialog = new LoginDialog(this, fbs, "customer");
-                loginDialog.setVisible(true);
-                if (loginDialog.isLoggedIn()) {
-                    new MainWindow(fbs, false, loginDialog.getLoggedInUser()).setVisible(true);
+                // LoginDialog loginDialog = new LoginDialog(this, fbs, "customer");
+                // loginDialog.setVisible(true);
+                // if (loginDialog.isLoggedIn()) {
+                    new MainWindow(fbs, false, null).setVisible(true);
                     dispose();
-                }
+                // }
             }
         );
         panel.add(customerCard, gbc);

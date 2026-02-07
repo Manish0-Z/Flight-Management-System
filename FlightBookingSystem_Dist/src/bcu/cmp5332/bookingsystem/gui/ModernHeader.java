@@ -33,7 +33,6 @@ public class ModernHeader extends JPanel {
         MINIMAL
     }
     
-    private JLabel iconLabel;
     private JLabel titleLabel;
     private JLabel subtitleLabel;
     private JPanel actionPanel;
