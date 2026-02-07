@@ -1,3 +1,1 @@
-1::John::9874563210::john@gmail.com::US::
-2::Jane::1234567890::jane@example.com::UK::
-3::John Doe::9874563210::doe@gmail.com::London::
+1::John Cena::::cena@gmail.com::::

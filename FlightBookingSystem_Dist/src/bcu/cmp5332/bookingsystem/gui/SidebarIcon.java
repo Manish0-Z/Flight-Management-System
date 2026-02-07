@@ -1,8 +1,14 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import java.awt.*;
-import java.awt.geom.*;
-import javax.swing.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Path2D;
+
+import javax.swing.JPanel;
 
 /**
  * Custom icon components for sidebar navigation
@@ -148,8 +154,6 @@ public class SidebarIcon extends JPanel {
         g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         
         // Ticket outline with notches
-        int ticketW = w - 2 * pad;
-        int ticketH = h - 2 * pad;
         int notchR = 4;
         
         Path2D ticket = new Path2D.Float();

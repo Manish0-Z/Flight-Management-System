@@ -52,6 +52,15 @@ public class FlightBookingSystem {
         return customers.get(id);
     }
 
+    public Customer getCustomerByEmail(String email) throws FlightBookingSystemException {
+        for (Customer customer : customers.values()) {
+            if (customer.getEmail().equals(email)) {
+                return customer;
+            }
+        }
+        throw new FlightBookingSystemException("There is no customer with that email.");
+    }
+
     public void addFlight(Flight flight) throws FlightBookingSystemException {
         if (flights.containsKey(flight.getId())) {
             throw new IllegalArgumentException("Duplicate flight ID.");
@@ -66,6 +75,10 @@ public class FlightBookingSystem {
         flights.put(flight.getId(), flight);
     }
 
+    public void removeFlight(Flight flight) {
+        flights.remove(flight.getId());
+    }
+
     public void addCustomer(Customer customer) throws FlightBookingSystemException {
         if (customers.containsKey(customer.getId())) {
             throw new IllegalArgumentException("Duplicate customer ID.");
@@ -78,6 +91,10 @@ public class FlightBookingSystem {
             throw new IllegalArgumentException("Duplicate booking ID.");
         }
         bookings.put(booking.getId(), booking);
+    }
+
+    public void removeBooking(Booking booking) {
+        bookings.remove(booking.getId());
     }
 
     public void addUser(User user) throws FlightBookingSystemException {

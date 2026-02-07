@@ -1,6 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -13,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -22,20 +22,9 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-/**
- * RoleSelectionWindow - Modern redesigned role selection interface
- * Improved visual hierarchy, spacing, and user experience
- * 
- * CHANGES FROM ORIGINAL:
- * - Increased window size for better spacing
- * - Added modern card-based layout for role buttons
- * - Enhanced visual hierarchy with larger icons and better typography
- * - Added hover effects and smooth interactions
- * - Improved color scheme and contrast
- * - Added subtitle and description for better UX
- * 
- * @author UI/UX Redesign 2026
- */
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+
+
 public class RoleSelectionWindow extends JFrame {
     private FlightBookingSystem fbs;
 
@@ -62,21 +51,18 @@ public class RoleSelectionWindow extends JFrame {
         // CHANGED: Set background color for modern appearance
         getContentPane().setBackground(DesignConstants.BACKGROUND);
 
-        // CHANGED: Create header with logo and better typography
-        JPanel headerPanel = createHeaderPanel();
-        add(headerPanel, BorderLayout.NORTH);
+    // CHANGED: Create header with logo and better typography
+    JPanel headerPanel = createHeaderPanel();
+    add(headerPanel, BorderLayout.NORTH);
 
-        // CHANGED: Create card-based button panel with modern styling
-        JPanel buttonPanel = createButtonPanel();
-        add(buttonPanel, BorderLayout.CENTER);
+    // CHANGED: Create card-based button panel with modern styling
+    JPanel buttonPanel = createButtonPanel();
+    add(buttonPanel, BorderLayout.CENTER);
 
-        setVisible(true);
-    }
+    setVisible(true);
+}
     
-    /**
-     * Creates a modern header panel with logo and title
-     * CHANGED: New method for better visual hierarchy
-     */
+    
     private JPanel createHeaderPanel() {
         JPanel header = new JPanel();
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
@@ -138,8 +124,12 @@ public class RoleSelectionWindow extends JFrame {
             "Full system access and management",
             DesignConstants.PRIMARY,
             e -> {
-                new MainWindow(fbs, true).setVisible(true);
-                dispose();
+                LoginDialog loginDialog = new LoginDialog(this, fbs, "admin");
+                loginDialog.setVisible(true);
+                if (loginDialog.isLoggedIn()) {
+                    new MainWindow(fbs, true).setVisible(true);
+                    dispose();
+                }
             }
         );
         panel.add(adminCard, gbc);
@@ -150,8 +140,12 @@ public class RoleSelectionWindow extends JFrame {
             "Book flights and manage your bookings",
             DesignConstants.ACCENT,
             e -> {
-                new MainWindow(fbs, false).setVisible(true);
-                dispose();
+                LoginDialog loginDialog = new LoginDialog(this, fbs, "customer");
+                loginDialog.setVisible(true);
+                if (loginDialog.isLoggedIn()) {
+                    new MainWindow(fbs, false).setVisible(true);
+                    dispose();
+                }
             }
         );
         panel.add(customerCard, gbc);

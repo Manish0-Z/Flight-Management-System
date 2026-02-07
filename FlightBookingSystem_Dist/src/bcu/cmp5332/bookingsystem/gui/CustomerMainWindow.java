@@ -1,12 +1,5 @@
 package bcu.cmp5332.bookingsystem.gui;
 
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
-import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-import bcu.cmp5332.bookingsystem.model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,7 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
-import javax.swing.BorderFactory;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -44,6 +37,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
+import bcu.cmp5332.bookingsystem.model.User;
+
 public class CustomerMainWindow extends JFrame implements ActionListener, GuiWindow {
     // Enhanced sidebar color scheme
     private static final Color SIDEBAR_COLOR = new Color(30, 58, 138);
@@ -62,7 +63,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
     private JPanel contentPanel;
 
     private JButton homeBtn, flightsBtn, bookingsBtn, profileBtn, exitBtn;
-    private JPanel homePanel, flightsPanel, bookingsPanel, profilePanel;
+    private JPanel homePanel, flightsPanel, bookingsPanel;
 
     public CustomerMainWindow(FlightBookingSystem fbs, User loggedInUser) {
         this.fbs = fbs;
@@ -105,12 +106,10 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         homePanel = createHomePanel();
         flightsPanel = createFlightsPanel();
         bookingsPanel = createBookingsPanel();
-        profilePanel = createProfilePanel();
 
         contentPanel.add(homePanel, "Home");
         contentPanel.add(flightsPanel, "Flights");
         contentPanel.add(bookingsPanel, "Bookings");
-        contentPanel.add(profilePanel, "Profile");
 
         add(contentPanel, BorderLayout.CENTER);
 
@@ -157,6 +156,12 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         sidebar.add(headerPanel);
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
 
+
+        // Buttons
+        homeBtn = createSidebarButton("Dashboard", SidebarIcon.IconType.DASHBOARD);
+        flightsBtn = createSidebarButton("Flights", SidebarIcon.IconType.FLIGHTS);
+        bookingsBtn = createSidebarButton("My Bookings", SidebarIcon.IconType.BOOKINGS);
+        sidebar.add(homeBtn);
         // Navigation section label
         JLabel navLabel = new JLabel("NAVIGATION");
         navLabel.setForeground(new Color(150, 170, 220));
@@ -172,13 +177,16 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         bookingsBtn = createSidebarButton("My Bookings", SidebarIcon.IconType.BOOKINGS);
         profileBtn = createSidebarButton("Profile", SidebarIcon.IconType.PROFILE);
 
+
         sidebar.add(homeBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(flightsBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(bookingsBtn);
+
         sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(profileBtn);
+
 
         // Spacer to push exit button to bottom
         sidebar.add(Box.createVerticalGlue());
@@ -508,53 +516,6 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         return panel;
     }
 
-    private JPanel createProfilePanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
-
-        // Header
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setBackground(new Color(240, 248, 255));
-        headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
-
-        JLabel profileIcon = new JLabel("👤");
-        profileIcon.setFont(new Font("Segoe UI", Font.PLAIN, 24));
-        JLabel title = new JLabel("My Profile");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(30, 58, 138));
-
-        headerPanel.add(profileIcon);
-        headerPanel.add(Box.createHorizontalStrut(10));
-        headerPanel.add(title);
-
-        panel.add(headerPanel, BorderLayout.NORTH);
-
-        // Profile content
-        JPanel contentPanel = new JPanel();
-        contentPanel.setBackground(Color.WHITE);
-        contentPanel.setBorder(new EmptyBorder(20, 30, 20, 30));
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-
-        JPanel infoPanel = new JPanel(new GridLayout(0, 2, 10, 10));
-        infoPanel.setBackground(Color.WHITE);
-        infoPanel.setBorder(BorderFactory.createTitledBorder("User Information"));
-
-        infoPanel.add(new JLabel("Username:"));
-        infoPanel.add(new JLabel(loggedInUser.getUsername()));
-
-        infoPanel.add(new JLabel("Full Name:"));
-        infoPanel.add(new JLabel(loggedInUser.getFullName() != null ? loggedInUser.getFullName() : "N/A"));
-
-        infoPanel.add(new JLabel("Role:"));
-        infoPanel.add(new JLabel(loggedInUser.getRole()));
-
-        contentPanel.add(infoPanel);
-
-        panel.add(contentPanel, BorderLayout.CENTER);
-
-        return panel;
-    }
-
     private void styleButton(JButton button) {
         button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         button.setBackground(new Color(30, 58, 138));
@@ -664,8 +625,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         };
 
         try {
-            int customerId = Integer.parseInt(loggedInUser.getUsername());
-            Customer customer = fbs.getCustomerByID(customerId);
+            Customer customer = fbs.getCustomerByEmail(loggedInUser.getUsername());
             List<Booking> bookings = customer.getBookings();
             for (Booking booking : bookings) {
                 if (!booking.isDeleted()) {

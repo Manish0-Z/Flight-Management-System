@@ -1,2 +1,2 @@
-john doe::123456789::customer::
 admin::admin::admin::
+cena@gmail.com::0123456::customer::John Cena

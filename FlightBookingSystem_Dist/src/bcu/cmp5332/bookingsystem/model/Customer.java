@@ -69,6 +69,10 @@ public class Customer {
         bookings.add(booking);
     }
 
+    public void removeBooking(Booking booking) {
+        bookings.remove(booking);
+    }
+
     public void cancelBookingForFlight(Flight flight) {
         for (int i = 0; i < bookings.size(); i++) {
             if (bookings.get(i).getFlight().getId() == flight.getId()) {
