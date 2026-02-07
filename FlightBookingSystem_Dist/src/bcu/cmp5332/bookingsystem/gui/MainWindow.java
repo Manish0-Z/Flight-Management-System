@@ -12,18 +12,19 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,18 +36,13 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JWindow;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 
-import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
 import bcu.cmp5332.bookingsystem.model.Customer;
@@ -609,39 +605,20 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Toolbar with search
+        // Toolbar
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton addBtn = new JButton("✈️ Add Flight");
-        JButton refreshBtn = new JButton("🔄 Refresh");
-
-        styleButton(addBtn);
-        styleButton(refreshBtn);
-
         if (isAdmin) {
+            JButton addBtn = new JButton("✈️ Add Flight");
+            styleButton(addBtn);
             addBtn.addActionListener(e -> {
                 AddFlightWindow addFlightWindow = new AddFlightWindow(this);
                 addFlightWindow.setVisible(true);
             });
             toolbar.add(addBtn);
         }
-        refreshBtn.addActionListener(e -> {
-            refreshFlightsTable(panel);
-            ToastNotification.showToast(this, "Flights refreshed successfully!", ToastNotification.ToastType.SUCCESS);
-        });
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JLabel searchLabel = new JLabel("🔍 Search:");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
 
         panel.add(toolbar, BorderLayout.SOUTH);
 
@@ -651,7 +628,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         // Store references
         panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
 
         refreshFlightsTable(panel);
 
@@ -660,7 +636,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void refreshFlightsTable(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
         tableContainer.removeAll();
 
         List<Flight> flightsList = fbs.getFlights();
@@ -688,44 +663,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionBackground(new Color(184, 207, 229));
-
-        // Add TableRowSorter for search functionality
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        // Add search listener
-        if (searchField != null) {
-            // Remove old listeners
-            for (DocumentListener dl : searchField.getListeners(DocumentListener.class)) {
-                searchField.getDocument().removeDocumentListener(dl);
-            }
-
-            searchField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                private void filter() {
-                    String text = searchField.getText();
-                    if (text.trim().length() == 0) {
-                        sorter.setRowFilter(null);
-                    } else {
-                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                    }
-                }
-            });
-        }
 
         // Add double-click listener to view details
         table.addMouseListener(new MouseAdapter() {
@@ -795,61 +732,55 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Toolbar
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(Color.WHITE);
-        toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
+        // Center content with image
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBackground(Color.WHITE);
+        centerPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        JButton bookBtn = new JButton("🎫 Book Selected Flight");
-        JButton refreshBtn = new JButton("🔄 Refresh");
+        // Add airplane image from resources
+        ImageIcon airplaneIcon = new ImageIcon(getClass().getResource("/images/premium_photo-1663039978729-6f6775725f89.png"));
+        if (airplaneIcon.getIconWidth() == -1) {
+            // Image not loaded, use default AirplaneIcon
+            AirplaneIcon defaultIcon = new AirplaneIcon(100, 60);
+            JLabel defaultLabel = new JLabel();
+            defaultLabel.add(defaultIcon);
+            centerPanel.add(defaultLabel, BorderLayout.CENTER);
+        } else {
+            // Use custom ImagePanel for responsive scaling
+            ImagePanel imagePanel = new ImagePanel(airplaneIcon.getImage());
+            centerPanel.add(imagePanel, BorderLayout.CENTER);
+        }
 
-        styleButton(bookBtn);
-        styleButton(refreshBtn);
+        // Button at the bottom
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(Color.WHITE);
+        buttonPanel.setBorder(new EmptyBorder(10, 0, 20, 0));
+        
+        JButton bookBtn = new JButton("Book a Flight");
+        bookBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        bookBtn.setBackground(new Color(30, 58, 138));
+        bookBtn.setForeground(Color.WHITE);
+        bookBtn.setFocusPainted(false);
+        bookBtn.setBorderPainted(false);
+        bookBtn.setPreferredSize(new Dimension(200, 50));
+        bookBtn.addActionListener(e -> bookFlight());
+        
+        buttonPanel.add(bookBtn);
+        centerPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        bookBtn.addActionListener(e -> bookSelectedFlight(panel));
-        refreshBtn.addActionListener(e -> refreshFlightsTable(panel));
-
-        toolbar.add(bookBtn);
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JLabel searchLabel = new JLabel("🔍 Search:");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
-
-        panel.add(toolbar, BorderLayout.SOUTH);
-
-        JPanel tableContainer = new JPanel(new BorderLayout());
-        panel.add(tableContainer, BorderLayout.CENTER);
-
-        panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
-
-        refreshFlightsTable(panel);
+        panel.add(centerPanel, BorderLayout.CENTER);
 
         return panel;
     }
 
-    private void bookSelectedFlight(JPanel panel) {
-        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTable table = findTableInContainer(tableContainer);
+    private void bookFlight() {
+        String flightNumber = JOptionPane.showInputDialog(this, "Enter Flight Number:", "Book a Flight", JOptionPane.QUESTION_MESSAGE);
         
-        if (table == null) return;
-        
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a flight to book.", "No Selection", JOptionPane.WARNING_MESSAGE);
-            return;
+        if (flightNumber == null || flightNumber.trim().isEmpty()) {
+            return; // User cancelled or empty input
         }
         
-        // Get the flight number from the selected row
-        int modelRow = table.convertRowIndexToModel(selectedRow);
-        String flightNumber = (String) table.getModel().getValueAt(modelRow, 0);
+        flightNumber = flightNumber.trim();
         
         try {
             Flight flight = null;
@@ -882,8 +813,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             
             JOptionPane.showMessageDialog(this, "Flight booked successfully!", "Booking Confirmed", JOptionPane.INFORMATION_MESSAGE);
             
-            refreshFlightsTable(panel);
-            
         } catch (FlightBookingSystemException ex) {
             JOptionPane.showMessageDialog(this, "Error booking flight: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -910,35 +839,10 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // Toolbar
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbar.setBackground(Color.WHITE);
-        toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
-
-        JButton refreshBtn = new JButton("🔄 Refresh");
-
-        styleButton(refreshBtn);
-
-        refreshBtn.addActionListener(e -> refreshMyBookingsTable(panel));
-
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JLabel searchLabel = new JLabel("🔍 Search:");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
-
-        panel.add(toolbar, BorderLayout.SOUTH);
-
         JPanel tableContainer = new JPanel(new BorderLayout());
         panel.add(tableContainer, BorderLayout.CENTER);
 
         panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
         refreshMyBookingsTable(panel);
 
         return panel;
@@ -946,7 +850,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void refreshMyBookingsTable(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
 
         tableContainer.removeAll();
 
@@ -987,35 +890,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        searchField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                filterTable();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                filterTable();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                filterTable();
-            }
-
-            private void filterTable() {
-                String text = searchField.getText();
-                if (text.trim().length() == 0) {
-                    sorter.setRowFilter(null);
-                } else {
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
-            }
-        });
 
         JScrollPane scrollPane = new JScrollPane(table);
         tableContainer.add(scrollPane, BorderLayout.CENTER);
@@ -1058,18 +932,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             ToastNotification.showToast(this, "Customers refreshed successfully!", ToastNotification.ToastType.SUCCESS);
         });
         toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        JLabel searchLabel = new JLabel("🔍 Search:");
-        searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
 
         panel.add(toolbar, BorderLayout.SOUTH);
 
@@ -1077,7 +939,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         panel.add(tableContainer, BorderLayout.CENTER);
 
         panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
 
         refreshCustomersTable(panel);
 
@@ -1086,7 +947,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void refreshCustomersTable(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
         tableContainer.removeAll();
 
         List<Customer> customersList = fbs.getCustomers();
@@ -1114,43 +974,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionBackground(new Color(184, 207, 229));
-
-        // Add TableRowSorter for search
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        // Add search listener
-        if (searchField != null) {
-            for (DocumentListener dl : searchField.getListeners(DocumentListener.class)) {
-                searchField.getDocument().removeDocumentListener(dl);
-            }
-
-            searchField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                private void filter() {
-                    String text = searchField.getText();
-                    if (text.trim().length() == 0) {
-                        sorter.setRowFilter(null);
-                    } else {
-                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                    }
-                }
-            });
-        }
 
         // Add double-click listener
         table.addMouseListener(new MouseAdapter() {
@@ -1267,10 +1090,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             toolbar.add(addBtn);
         }
         toolbar.add(cancelBtn);
-        toolbar.add(refreshBtn);
-        toolbar.add(Box.createHorizontalStrut(20));
-        toolbar.add(searchLabel);
-        toolbar.add(searchField);
 
         panel.add(toolbar, BorderLayout.SOUTH);
 
@@ -1278,7 +1097,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         panel.add(tableContainer, BorderLayout.CENTER);
 
         panel.putClientProperty("tableContainer", tableContainer);
-        panel.putClientProperty("searchField", searchField);
         refreshBookingsTable(panel);
 
         return panel;
@@ -1286,7 +1104,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void refreshBookingsTable(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTextField searchField = (JTextField) panel.getClientProperty("searchField");
         tableContainer.removeAll();
 
         // Flatten bookings
@@ -1319,43 +1136,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         table.setRowHeight(25);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         table.setSelectionBackground(new Color(184, 207, 229));
-
-        // Add TableRowSorter for search
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-
-        // Add search listener
-        if (searchField != null) {
-            for (DocumentListener dl : searchField.getListeners(DocumentListener.class)) {
-                searchField.getDocument().removeDocumentListener(dl);
-            }
-
-            searchField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    filter();
-                }
-
-                private void filter() {
-                    String text = searchField.getText();
-                    if (text.trim().length() == 0) {
-                        sorter.setRowFilter(null);
-                    } else {
-                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                    }
-                }
-            });
-        }
 
         // Add double-click listener
         table.addMouseListener(new MouseAdapter() {
@@ -1423,40 +1203,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             refreshBookingsTable(bookingsPanel);
             cardLayout.show(contentPanel, "Bookings");
         } else if (source == exitBtn) {
-            exitApp();
-        }
-    }
-
-    private void exitApp() {
-        int choice = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to exit?\nAll data will be saved automatically.",
-                "Confirm Exit",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-
-        if (choice == JOptionPane.YES_OPTION) {
-            try {
-                FlightBookingSystemData.store(fbs);
-                ToastNotification.showToast(this, "Data saved successfully! Goodbye!",
-                        ToastNotification.ToastType.SUCCESS);
-                // Give toast time to display
-                Timer timer = new Timer(1000, e -> System.exit(0));
-                timer.setRepeats(false);
-                timer.start();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Error saving data: " + ex.getMessage(), "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                int exitAnyway = JOptionPane.showConfirmDialog(
-                        this,
-                        "Failed to save data. Exit anyway?",
-                        "Save Error",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-                if (exitAnyway == JOptionPane.YES_OPTION) {
-                    System.exit(0);
-                }
-            }
+            dispose();
+            new RoleSelectionWindow(fbs).setVisible(true);
         }
     }
 
@@ -1487,7 +1235,35 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         refreshCustomersTable(customersPanel);
         cardLayout.show(contentPanel, "Customers");
     }
+
+    // Custom panel to display image responsively
+    private static class ImagePanel extends JPanel {
+        private Image image;
+
+        public ImagePanel(Image image) {
+            this.image = image;
+            setBackground(Color.WHITE);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (image != null) {
+                int panelWidth = getWidth();
+                int panelHeight = getHeight();
+                int imageWidth = image.getWidth(this);
+                int imageHeight = image.getHeight(this);
+
+                if (imageWidth > 0 && imageHeight > 0) {
+                    // Stretch image to fill the entire panel
+                    int scaledWidth = panelWidth;
+                    int scaledHeight = panelHeight;
+                    int x = 0;
+                    int y = 0;
+
+                    g.drawImage(image, x, y, scaledWidth, scaledHeight, this);
+                }
+            }
+        }
+    }
 }
-
-
-
