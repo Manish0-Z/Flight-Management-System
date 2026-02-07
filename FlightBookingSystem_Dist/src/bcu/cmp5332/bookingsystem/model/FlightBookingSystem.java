@@ -115,6 +115,13 @@ public class FlightBookingSystem {
         return Collections.max(bookings.keySet()) + 1;
     }
 
+    public int getNextCustomerId() {
+        if (customers.isEmpty()) {
+            return 1;
+        }
+        return Collections.max(customers.keySet()) + 1;
+    }
+
     public User getUser(String username) {
         return users.get(username);
     }
