@@ -15,42 +15,47 @@ public class DesignConstants {
     // ==================== COLOR PALETTE ====================
     
     // Primary Colors
-    public static final Color PRIMARY_DARK = new Color(30, 58, 138);      // #1e3a8a - Deep Blue
-    public static final Color PRIMARY = new Color(37, 99, 235);           // #2563eb - Royal Blue
-    public static final Color PRIMARY_LIGHT = new Color(59, 130, 246);    // #3b82f6 - Bright Blue
-    public static final Color PRIMARY_LIGHTER = new Color(96, 165, 250);  // #60a5fa - Light Blue
+    // Dark theme accents: cool blue for focus and primary actions.
+    public static final Color PRIMARY_DARK = new Color(10, 12, 16);       // #0a0c10 - Near-black
+    public static final Color PRIMARY = new Color(59, 130, 246);          // #3b82f6 - Blue 500
+    public static final Color PRIMARY_LIGHT = new Color(96, 165, 250);    // #60a5fa - Blue 400
+    public static final Color PRIMARY_LIGHTER = new Color(147, 197, 253); // #93c5fd - Blue 300
     
     // Accent Colors
-    public static final Color ACCENT = new Color(245, 158, 11);           // #f59e0b - Amber Gold
-    public static final Color ACCENT_LIGHT = new Color(251, 191, 36);     // #fbbf24 - Light Gold
-    public static final Color ACCENT_DARK = new Color(217, 119, 6);       // #d97706 - Dark Gold
+    // Subtle cyan/teal accents for highlights and secondary emphasis.
+    public static final Color ACCENT = new Color(34, 211, 238);           // #22d3ee - Cyan 400
+    public static final Color ACCENT_LIGHT = new Color(103, 232, 249);    // #67e8f9 - Cyan 300
+    public static final Color ACCENT_DARK = new Color(14, 116, 144);      // #0e7490 - Cyan 700
     
     // Semantic Colors
-    public static final Color SUCCESS = new Color(16, 185, 129);          // #10b981 - Emerald
-    public static final Color SUCCESS_LIGHT = new Color(52, 211, 153);    // #34d399
-    public static final Color ERROR = new Color(239, 68, 68);             // #ef4444 - Red
-    public static final Color ERROR_LIGHT = new Color(248, 113, 113);     // #f87171
-    public static final Color WARNING = new Color(251, 146, 60);          // #fb923c - Orange
-    public static final Color INFO = new Color(59, 130, 246);             // #3b82f6- Blue
+    // Slightly desaturated to avoid over-bright alerts on dark surfaces.
+    public static final Color SUCCESS = new Color(34, 197, 94);           // #22c55e - Green 500
+    public static final Color SUCCESS_LIGHT = new Color(74, 222, 128);    // #4ade80
+    public static final Color ERROR = new Color(248, 113, 113);           // #f87171 - Soft red
+    public static final Color ERROR_LIGHT = new Color(252, 165, 165);     // #fca5a5
+    public static final Color WARNING = new Color(250, 204, 21);          // #facc15 - Amber 400
+    public static final Color INFO = new Color(96, 165, 250);             // #60a5fa - Blue 400
     
     // Neutral Colors
-    public static final Color BACKGROUND = new Color(248, 250, 252);      // #f8fafc - Light Gray
-    public static final Color SURFACE = Color.WHITE;                      // #ffffff
-    public static final Color SURFACE_HOVER = new Color(249, 250, 251);   // #f9fafb
-    public static final Color BORDER = new Color(226, 232, 240);          // #e2e8f0
-    public static final Color BORDER_DARK = new Color(203, 213, 225);     // #cbd5e1
+    // Dark charcoal base with subtle surface lift for panels and cards.
+    public static final Color BACKGROUND = new Color(15, 17, 21);         // #0f1115 - Charcoal
+    public static final Color SURFACE = new Color(23, 26, 33);            // #171a21 - Surface
+    public static final Color SURFACE_HOVER = new Color(28, 32, 40);      // #1c2028
+    public static final Color BORDER = new Color(38, 43, 54);             // #262b36 - Subtle border
+    public static final Color BORDER_DARK = new Color(52, 58, 70);        // #343a46
     
     // Text Colors
-    public static final Color TEXT_PRIMARY = new Color(30, 41, 59);       // #1e293b - Dark Slate
-    public static final Color TEXT_SECONDARY = new Color(100, 116, 139);  // #64748b - Gray
-    public static final Color TEXT_DISABLED = new Color(148, 163, 184);   // #94a3b8
-    public static final Color TEXT_ON_PRIMARY = Color.WHITE;
+    // Off-white text to reduce glare on dark backgrounds.
+    public static final Color TEXT_PRIMARY = new Color(226, 232, 240);    // #e2e8f0
+    public static final Color TEXT_SECONDARY = new Color(148, 163, 184);  // #94a3b8
+    public static final Color TEXT_DISABLED = new Color(100, 116, 139);   // #64748b
+    public static final Color TEXT_ON_PRIMARY = new Color(226, 232, 240); // #e2e8f0
     
     // Sidebar Colors
-    public static final Color SIDEBAR_BG = PRIMARY_DARK;
-    public static final Color SIDEBAR_HOVER = new Color(50, 78, 158);
-    public static final Color SIDEBAR_ACTIVE = new Color(60, 98, 178);
-    public static final Color SIDEBAR_TEXT = Color.WHITE;
+    public static final Color SIDEBAR_BG = new Color(12, 14, 18);         // #0c0e12
+    public static final Color SIDEBAR_HOVER = new Color(20, 24, 31);      // #14181f
+    public static final Color SIDEBAR_ACTIVE = new Color(28, 33, 42);     // #1c212a
+    public static final Color SIDEBAR_TEXT = TEXT_PRIMARY;
     
     // ==================== TYPOGRAPHY ====================
     
@@ -97,7 +102,9 @@ public class DesignConstants {
         button.setForeground(TEXT_ON_PRIMARY);
         button.setBackground(PRIMARY);
         button.setFocusPainted(false);
-        button.setBorderPainted(false);
+        button.setBorder(new RoundedBorder(BORDER_RADIUS_SMALL, BORDER));
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(120, BUTTON_HEIGHT));
         
@@ -124,9 +131,11 @@ public class DesignConstants {
         button.setBackground(SURFACE);
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_DARK, 1),
+            new RoundedBorder(BORDER_RADIUS_SMALL, BORDER),
             BorderFactory.createEmptyBorder(8, 16, 8, 16)
         ));
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(120, BUTTON_HEIGHT));
         
@@ -149,10 +158,12 @@ public class DesignConstants {
     public static JButton createAccentButton(String text) {
         JButton button = new JButton(text);
         button.setFont(FONT_BUTTON);
-        button.setForeground(Color.WHITE);
+        button.setForeground(TEXT_ON_PRIMARY);
         button.setBackground(ACCENT);
         button.setFocusPainted(false);
-        button.setBorderPainted(false);
+        button.setBorder(new RoundedBorder(BORDER_RADIUS_SMALL, BORDER));
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(120, BUTTON_HEIGHT));
         
@@ -175,10 +186,12 @@ public class DesignConstants {
     public static JButton createDangerButton(String text) {
         JButton button = new JButton(text);
         button.setFont(FONT_BUTTON);
-        button.setForeground(Color.WHITE);
+        button.setForeground(TEXT_ON_PRIMARY);
         button.setBackground(ERROR);
         button.setFocusPainted(false);
-        button.setBorderPainted(false);
+        button.setBorder(new RoundedBorder(BORDER_RADIUS_SMALL, BORDER));
+        button.setContentAreaFilled(true);
+        button.setOpaque(true);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(120, BUTTON_HEIGHT));
         
@@ -213,7 +226,7 @@ public class DesignConstants {
         field.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(PRIMARY_LIGHT, 2),
+                    BorderFactory.createLineBorder(PRIMARY, 2),
                     BorderFactory.createEmptyBorder(7, 11, 7, 11)
                 ));
             }
@@ -246,7 +259,7 @@ public class DesignConstants {
         field.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(PRIMARY_LIGHT, 2),
+                    BorderFactory.createLineBorder(PRIMARY, 2),
                     BorderFactory.createEmptyBorder(7, 11, 7, 11)
                 ));
             }
@@ -333,20 +346,31 @@ public class DesignConstants {
      */
     public static void styleTable(JTable table) {
         table.setFont(FONT_BODY);
-        table.setRowHeight(40);
+        table.setRowHeight(32);
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));
-        table.setSelectionBackground(PRIMARY_LIGHTER);
+        table.setSelectionBackground(new Color(PRIMARY.getRed(), PRIMARY.getGreen(), PRIMARY.getBlue(), 90));
         table.setSelectionForeground(TEXT_PRIMARY);
         table.setBackground(SURFACE);
         table.setForeground(TEXT_PRIMARY);
+        table.setGridColor(BORDER);
         
         // Style table header
         table.getTableHeader().setFont(FONT_BODY_BOLD);
-        table.getTableHeader().setBackground(BACKGROUND);
-        table.getTableHeader().setForeground(TEXT_PRIMARY);
-        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, BORDER_DARK));
+        table.getTableHeader().setBackground(SURFACE);
+        table.getTableHeader().setForeground(TEXT_SECONDARY);
+        table.getTableHeader().setOpaque(true);
+        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_DARK));
         table.getTableHeader().setPreferredSize(new Dimension(table.getTableHeader().getWidth(), 45));
+    }
+
+    /**
+     * Applies dark theme styling to scroll panes.
+     */
+    public static void styleScrollPane(JScrollPane scrollPane) {
+        scrollPane.setBackground(BACKGROUND);
+        scrollPane.getViewport().setBackground(SURFACE);
+        scrollPane.setBorder(BorderFactory.createLineBorder(BORDER, 1));
     }
     
     /**
@@ -361,5 +385,55 @@ public class DesignConstants {
      */
     public static Insets createPadding(int size) {
         return new Insets(size, size, size, size);
+    }
+
+    /**
+     * Applies dark theme defaults to Swing UIManager for consistent rendering.
+     */
+    public static void applyDarkThemeDefaults() {
+        UIManager.put("Panel.background", BACKGROUND);
+        UIManager.put("Label.foreground", TEXT_PRIMARY);
+        UIManager.put("Label.font", FONT_BODY);
+        UIManager.put("Label.disabledForeground", TEXT_DISABLED);
+
+        // Force basic button UI so backgrounds are respected on Windows LAF.
+        UIManager.put("ButtonUI", "javax.swing.plaf.basic.BasicButtonUI");
+        UIManager.put("ToggleButtonUI", "javax.swing.plaf.basic.BasicButtonUI");
+
+        UIManager.put("Button.background", SURFACE);
+        UIManager.put("Button.foreground", TEXT_PRIMARY);
+        UIManager.put("Button.font", FONT_BUTTON);
+        UIManager.put("Button.disabledText", TEXT_DISABLED);
+
+        UIManager.put("TextField.background", SURFACE);
+        UIManager.put("TextField.foreground", TEXT_PRIMARY);
+        UIManager.put("TextField.caretForeground", TEXT_PRIMARY);
+        UIManager.put("TextField.inactiveForeground", TEXT_DISABLED);
+        UIManager.put("PasswordField.background", SURFACE);
+        UIManager.put("PasswordField.foreground", TEXT_PRIMARY);
+        UIManager.put("PasswordField.caretForeground", TEXT_PRIMARY);
+        UIManager.put("PasswordField.inactiveForeground", TEXT_DISABLED);
+        UIManager.put("TextArea.background", SURFACE);
+        UIManager.put("TextArea.foreground", TEXT_PRIMARY);
+        UIManager.put("TextArea.caretForeground", TEXT_PRIMARY);
+
+        UIManager.put("Table.background", SURFACE);
+        UIManager.put("Table.foreground", TEXT_PRIMARY);
+        UIManager.put("Table.selectionBackground", new Color(PRIMARY.getRed(), PRIMARY.getGreen(), PRIMARY.getBlue(), 90));
+        UIManager.put("Table.selectionForeground", TEXT_PRIMARY);
+        UIManager.put("Table.gridColor", BORDER);
+        UIManager.put("TableHeader.background", SURFACE);
+        UIManager.put("TableHeader.foreground", TEXT_SECONDARY);
+
+        UIManager.put("ScrollPane.background", BACKGROUND);
+        UIManager.put("Viewport.background", BACKGROUND);
+
+        UIManager.put("OptionPane.background", BACKGROUND);
+        UIManager.put("OptionPane.messageForeground", TEXT_PRIMARY);
+        UIManager.put("OptionPane.foreground", TEXT_PRIMARY);
+        UIManager.put("OptionPane.buttonFont", FONT_BUTTON);
+        UIManager.put("OptionPane.buttonForeground", TEXT_PRIMARY);
+        UIManager.put("OptionPane.buttonBackground", SURFACE);
+        UIManager.put("Panel.foreground", TEXT_PRIMARY);
     }
 }

@@ -106,7 +106,7 @@ public class RoleIcon extends JPanel {
         g2d.drawArc(centerX - shackleW / 2, lockY - shackleH, shackleW, shackleH * 2, 0, 180);
         
         // Keyhole
-        g2d.setColor(backgroundColor != null ? backgroundColor : Color.WHITE);
+        g2d.setColor(backgroundColor != null ? backgroundColor : DesignConstants.TEXT_ON_PRIMARY);
         g2d.fillOval(centerX - 2, lockY + 3, 4, 4);
     }
     

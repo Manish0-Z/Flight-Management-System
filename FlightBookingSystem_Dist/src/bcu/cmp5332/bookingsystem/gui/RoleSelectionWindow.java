@@ -40,6 +40,7 @@ public class RoleSelectionWindow extends JFrame {
         } catch (Exception e) {
             // Use default if system LAF not available
         }
+        DesignConstants.applyDarkThemeDefaults();
         
         setTitle("Flight Management System - Role Selection");
         // CHANGED: Increased size for better spacing and modern layout
@@ -49,6 +50,7 @@ public class RoleSelectionWindow extends JFrame {
         setLayout(new BorderLayout());
         
         // CHANGED: Set background color for modern appearance
+        // Dark base for the role selection screen.
         getContentPane().setBackground(DesignConstants.BACKGROUND);
 
     // CHANGED: Create header with logo and better typography
