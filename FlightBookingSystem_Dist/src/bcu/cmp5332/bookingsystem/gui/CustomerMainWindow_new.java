@@ -396,6 +396,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
 
         styleButton(refreshBtn);
         styleButton(bookBtn);
+        bookBtn.setForeground(Color.BLACK);
 
         refreshBtn.addActionListener(e -> {
             refreshFlightsTable(panel);
@@ -469,6 +470,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
 
         styleButton(refreshBtn);
         styleButton(cancelBtn);
+        cancelBtn.setForeground(Color.BLACK);
 
         refreshBtn.addActionListener(e -> {
             refreshBookingsTable(panel);
@@ -696,7 +698,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
 
         tableContainer.removeAll();
 
-        String[] columnNames = {"Booking ID", "Flight", "Date Booked", "Status"};
+        String[] columnNames = {"Booking ID", "Flight", "Seat No", "Date Booked", "Status"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -712,6 +714,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
                     Object[] row = {
                         booking.getId(),
                         booking.getFlight().getFlightNumber(),
+                        booking.getSeatNumber(),
                         booking.getBookingDate(),
                         booking.getStatus()
                     };

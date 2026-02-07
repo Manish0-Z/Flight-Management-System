@@ -957,24 +957,13 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton cancelBtn = new JButton("❌ Cancel Booking");
-        styleButton(cancelBtn);
-
-        cancelBtn.addActionListener(e -> {
-            cancelBooking();
-        });
-
-        if (isAdmin) {
-            JButton addBtn = new JButton("🎫 Add Booking");
-            styleButton(addBtn);
-            addBtn.addActionListener(e -> {
-                AddBookingWindow addBookingWindow = new AddBookingWindow(this);
-                addBookingWindow.setVisible(true);
-            });
-            toolbar.add(addBtn);
-        }
-        
         if (!isAdmin) {
+            JButton cancelBtn = new JButton("❌ Cancel Booking");
+            styleButton(cancelBtn);
+            cancelBtn.addActionListener(e -> {
+                cancelBooking();
+            });
+
             JButton rescheduleBtn = new JButton("🔄 Reschedule Booking");
             styleButton(rescheduleBtn);
 
@@ -984,9 +973,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             
             toolbar.add(rescheduleBtn);
             toolbar.add(Box.createHorizontalStrut(10));
+            toolbar.add(cancelBtn);
         }
-
-        toolbar.add(cancelBtn);
 
         panel.add(toolbar, BorderLayout.SOUTH);
 
@@ -1004,7 +992,9 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         tableContainer.removeAll();
 
         // Flatten bookings
-        String[] columns = new String[] { "Customer ID", "Customer Name", "Flight No", "Seat", "Class", "Date",
+        String[] columns = isAdmin
+            ? new String[] { "Customer ID", "Customer Name", "Flight No", "Seat", "Class", "Special Requests" }
+            : new String[] { "Customer ID", "Customer Name", "Flight No", "Seat", "Class", "Date",
                 "Special Requests" };
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
@@ -1016,15 +1006,26 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         List<Customer> customers = fbs.getCustomers();
         for (Customer c : customers) {
             for (Booking b : c.getBookings()) {
-                model.addRow(new Object[] {
-                        c.getId(),
-                        c.getName(),
-                        b.getFlight().getFlightNumber(),
-                        b.getSeatNumber(),
-                        b.getBookingClass(),
-                        b.getBookingDate(),
-                        b.getSpecialRequests()
-                });
+                if (isAdmin) {
+                    model.addRow(new Object[] {
+                            c.getId(),
+                            c.getName(),
+                            b.getFlight().getFlightNumber(),
+                            b.getSeatNumber(),
+                            b.getBookingClass(),
+                            b.getSpecialRequests()
+                    });
+                } else {
+                    model.addRow(new Object[] {
+                            c.getId(),
+                            c.getName(),
+                            b.getFlight().getFlightNumber(),
+                            b.getSeatNumber(),
+                            b.getBookingClass(),
+                            b.getBookingDate(),
+                            b.getSpecialRequests()
+                    });
+                }
             }
         }
 
@@ -1064,9 +1065,12 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         details.append("<tr><td><b>Flight Number:</b></td><td>").append(model.getValueAt(row, 2)).append("</td></tr>");
         details.append("<tr><td><b>Seat Number:</b></td><td>").append(model.getValueAt(row, 3)).append("</td></tr>");
         details.append("<tr><td><b>Class:</b></td><td>").append(model.getValueAt(row, 4)).append("</td></tr>");
-        details.append("<tr><td><b>Booking Date:</b></td><td>").append(model.getValueAt(row, 5)).append("</td></tr>");
-        details.append("<tr><td><b>Special Requests:</b></td><td>").append(model.getValueAt(row, 6))
-                .append("</td></tr>");
+        if (!isAdmin) {
+            details.append("<tr><td><b>Booking Date:</b></td><td>").append(model.getValueAt(row, 5)).append("</td></tr>");
+        }
+        int requestsIndex = isAdmin ? 5 : 6;
+        details.append("<tr><td><b>Special Requests:</b></td><td>").append(model.getValueAt(row, requestsIndex))
+            .append("</td></tr>");
         details.append("</table>");
         details.append("</body></html>");
 
@@ -1197,12 +1201,19 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         phonePanel.add(phoneField);
         panel.add(phonePanel);
 
-        // Seat Type
-        JPanel seatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        seatPanel.add(new JLabel("Seat Type:"));
-        JComboBox<String> seatCombo = new JComboBox<>(new String[]{"Economy", "Business", "First Class"});
-        seatPanel.add(seatCombo);
-        panel.add(seatPanel);
+        // Seat Number
+        JPanel seatNumberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        seatNumberPanel.add(new JLabel("Seat Number:"));
+        JTextField seatNumberField = new JTextField(20);
+        seatNumberPanel.add(seatNumberField);
+        panel.add(seatNumberPanel);
+
+        // Class
+        JPanel classPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        classPanel.add(new JLabel("Class:"));
+        JComboBox<String> classCombo = new JComboBox<>(new String[]{"Economy", "Premium Economy", "Business", "First Class"});
+        classPanel.add(classCombo);
+        panel.add(classPanel);
 
         // Food Type
         JPanel foodPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1234,11 +1245,12 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
             String flightIdStr = flightField.getText().trim();
             String email = emailField.getText().trim();
             String phone = phoneField.getText().trim();
-            String seatType = (String) seatCombo.getSelectedItem();
+            String seatNumber = seatNumberField.getText().trim();
+            String bookingClass = (String) classCombo.getSelectedItem();
             String foodType = (String) foodCombo.getSelectedItem();
             String request = requestArea.getText().trim();
 
-            if (name.isEmpty() || flightIdStr.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+            if (name.isEmpty() || flightIdStr.isEmpty() || email.isEmpty() || phone.isEmpty() || seatNumber.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog, "Please fill all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -1265,7 +1277,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
                 // Create booking
                 int bookingId = fbs.getNextBookingId();
-                Booking booking = new Booking(bookingId, customer, flight, fbs.getSystemDate(), "1", seatType, foodType + " - " + request);
+                Booking booking = new Booking(bookingId, customer, flight, fbs.getSystemDate(), seatNumber, bookingClass,
+                    foodType + " - " + request);
                 customer.addBooking(booking);
                 flight.addPassenger(customer);
 
@@ -1332,7 +1345,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         styleButton(closeButton);
         
         cancelBookingButton.setBackground(new Color(239, 68, 68));
-        cancelBookingButton.setForeground(Color.WHITE);
+        cancelBookingButton.setForeground(Color.BLACK);
         
         buttonPanel.add(cancelBookingButton);
         buttonPanel.add(closeButton);
