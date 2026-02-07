@@ -1,5 +1,10 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -16,7 +21,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -26,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -39,6 +44,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+<<<<<<< HEAD
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
@@ -46,13 +52,19 @@ import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
+=======
+>>>>>>> a64682e21958cf54e06495b49a79abfbace553bd
 
 public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow {
+    // Enhanced sidebar color scheme
     private static final Color SIDEBAR_COLOR = new Color(30, 58, 138);
     private static final Color SIDEBAR_TEXT_COLOR = Color.WHITE;
     private static final Color HOVER_BTN_COLOR = new Color(50, 78, 158);
     private static final Color ACTIVE_BTN_COLOR = new Color(60, 98, 178);
     private static final Color AIRLINE_ACCENT = new Color(255, 193, 7);
+    private static final Color ACCENT_BORDER = new Color(255, 193, 7);
+    private static final Color ICON_COLOR = new Color(200, 215, 255);
+    private static final Color ICON_ACTIVE_COLOR = Color.WHITE;
 
     private final FlightBookingSystem fbs;
 
@@ -150,25 +162,40 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         sidebar.add(headerPanel);
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Buttons
-        homeBtn = createSidebarButton("Dashboard", "🏠");
-        flightsBtn = createSidebarButton("Flights", "✈️");
-        customersBtn = createSidebarButton("Customers", "👥");
-        bookingsBtn = createSidebarButton("Bookings", "🎫");
+        // Navigation section label
+        JLabel navLabel = new JLabel("NAVIGATION");
+        navLabel.setForeground(new Color(150, 170, 220));
+        navLabel.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        navLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        navLabel.setBorder(new EmptyBorder(0, 20, 8, 0));
+        sidebar.add(navLabel);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+
+        // Buttons with custom icons
+        homeBtn = createSidebarButton("Dashboard", SidebarIcon.IconType.DASHBOARD);
+        flightsBtn = createSidebarButton("Flights", SidebarIcon.IconType.FLIGHTS);
+        customersBtn = createSidebarButton("Customers", SidebarIcon.IconType.CUSTOMERS);
+        bookingsBtn = createSidebarButton("Bookings", SidebarIcon.IconType.BOOKINGS);
 
         sidebar.add(homeBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(flightsBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
+        sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(customersBtn);
-        sidebar.add(Box.createRigidArea(new Dimension(0, 5)));
-        bookingsBtn = createSidebarButton("Bookings", "🎫");
+        sidebar.add(Box.createRigidArea(new Dimension(0, 2)));
         sidebar.add(bookingsBtn);
 
         // Spacer to push exit button to bottom
         sidebar.add(Box.createVerticalGlue());
 
-        exitBtn = createSidebarButton("Exit", "🚪");
+        // System section divider
+        JSeparator separator = new JSeparator();
+        separator.setMaximumSize(new Dimension(200, 1));
+        separator.setForeground(new Color(60, 88, 168));
+        sidebar.add(separator);
+        sidebar.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        exitBtn = createSidebarButton("Exit", SidebarIcon.IconType.EXIT);
         exitBtn.setBackground(new Color(180, 50, 50));
         sidebar.add(exitBtn);
         sidebar.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -176,45 +203,111 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         return sidebar;
     }
 
-    private JButton createSidebarButton(String text, String icon) {
-        JButton btn = new JButton(icon + " " + text);
-        btn.setMaximumSize(new Dimension(240, 50));
-        btn.setPreferredSize(new Dimension(240, 50));
+    // Enhanced sidebar button with custom icon components
+    private JButton createSidebarButton(String text, SidebarIcon.IconType iconType) {
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BorderLayout());
+        buttonPanel.setMaximumSize(new Dimension(240, 48));
+        buttonPanel.setBackground(SIDEBAR_COLOR);
+        
+        // Left accent border (visible when active)
+        JPanel accentBorder = new JPanel();
+        accentBorder.setPreferredSize(new Dimension(4, 48));
+        accentBorder.setBackground(SIDEBAR_COLOR);
+        accentBorder.setOpaque(true);
+        buttonPanel.add(accentBorder, BorderLayout.WEST);
+        
+        // Create button
+        JButton btn = new JButton();
+        btn.setLayout(new FlowLayout(FlowLayout.LEFT, 16, 12));
+        btn.setPreferredSize(new Dimension(236, 48));
         btn.setForeground(SIDEBAR_TEXT_COLOR);
         btn.setBackground(SIDEBAR_COLOR);
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
-        btn.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        btn.setHorizontalAlignment(SwingConstants.LEFT);
-        btn.setBorder(new EmptyBorder(0, 20, 0, 0));
+        btn.setContentAreaFilled(false);
+        btn.setOpaque(true);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
+        
+        // Add icon
+        SidebarIcon icon = new SidebarIcon(iconType, 20);
+        icon.setIconColor(ICON_COLOR);
+        btn.add(icon);
+        
+        // Add label
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        label.setForeground(SIDEBAR_TEXT_COLOR);
+        btn.add(label);
+        
+        buttonPanel.add(btn, BorderLayout.CENTER);
+        
+        // Store references for later access
+        btn.putClientProperty("panel", buttonPanel);
+        btn.putClientProperty("accentBorder", accentBorder);
+        btn.putClientProperty("icon", icon);
+        btn.putClientProperty("label", label);
+        
+        // Enhanced hover effects with smooth transitions
         btn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn)
+                if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn) {
                     btn.setBackground(HOVER_BTN_COLOR);
+                    icon.setIconColor(Color.WHITE);
+                }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn)
+                if (btn.getBackground() != ACTIVE_BTN_COLOR && btn != exitBtn) {
                     btn.setBackground(SIDEBAR_COLOR);
+                    icon.setIconColor(ICON_COLOR);
+                }
             }
         });
-
+        
         btn.addActionListener(this);
         return btn;
     }
 
+    // Enhanced active state with accent border and icon color
     private void setActiveButton(JButton active) {
         JButton[] btns = { homeBtn, flightsBtn, customersBtn, bookingsBtn };
         for (JButton btn : btns) {
             btn.setBackground(SIDEBAR_COLOR);
-            btn.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            JLabel label = (JLabel) btn.getClientProperty("label");
+            if (label != null) {
+                label.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+            }
+            // Reset accent border
+            JPanel accentBorder = (JPanel) btn.getClientProperty("accentBorder");
+            if (accentBorder != null) {
+                accentBorder.setBackground(SIDEBAR_COLOR);
+            }
+            // Reset icon color
+            SidebarIcon icon = (SidebarIcon) btn.getClientProperty("icon");
+            if (icon != null) {
+                icon.setIconColor(ICON_COLOR);
+            }
         }
+        
+        // Set active state
         active.setBackground(ACTIVE_BTN_COLOR);
-        active.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        JLabel activeLabel = (JLabel) active.getClientProperty("label");
+        if (activeLabel != null) {
+            activeLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        }
+        // Show accent border
+        JPanel accentBorder = (JPanel) active.getClientProperty("accentBorder");
+        if (accentBorder != null) {
+            accentBorder.setBackground(ACCENT_BORDER);
+        }
+        // Highlight icon
+        SidebarIcon icon = (SidebarIcon) active.getClientProperty("icon");
+        if (icon != null) {
+            icon.setIconColor(ICON_ACTIVE_COLOR);
+        }
     }
 
     // --- Content Panels ---
