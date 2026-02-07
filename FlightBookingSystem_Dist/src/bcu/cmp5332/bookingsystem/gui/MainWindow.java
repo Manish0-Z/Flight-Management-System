@@ -44,6 +44,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import bcu.cmp5332.bookingsystem.commands.EditBooking;
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
@@ -606,7 +607,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         tableContainer.removeAll();
 
         List<Flight> flightsList = fbs.getFlights();
-        String[] columns = new String[] { "ID", "Flight No", "Origin", "Destination", "Departure Date", "Passengers" };
+        String[] columns = new String[] { "ID", "Flight ID", "Origin", "Destination", "Departure Date", "Capacity", "Price" };
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -621,7 +622,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                     flight.getOrigin(),
                     flight.getDestination(),
                     flight.getDepartureDate(),
-                    flight.getPassengers().size()
+                    flight.getCapacity(),
+                    "$" + flight.getPrice()
             });
         }
 
@@ -980,24 +982,25 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton cancelBtn = new JButton("❌ Cancel Booking");
-        styleButton(cancelBtn);
+        if (!isAdmin) {
+            JButton cancelBtn = new JButton("❌ Cancel Booking");
+            styleButton(cancelBtn);
 
-        cancelBtn.addActionListener(e -> {
-            cancelBooking();
-        });
-
-        if (isAdmin) {
-            JButton addBtn = new JButton("🎫 Add Booking");
-            styleButton(addBtn);
-            addBtn.addActionListener(e -> {
-                AddBookingWindow addBookingWindow = new AddBookingWindow(this);
-                addBookingWindow.setVisible(true);
+            cancelBtn.addActionListener(e -> {
+                cancelBooking();
             });
-            toolbar.add(addBtn);
+            
+            JButton rescheduleBtn = new JButton("🔄 Reschedule Booking");
+            styleButton(rescheduleBtn);
+
+            rescheduleBtn.addActionListener(e -> {
+                rescheduleBooking();
+            });
+            
+            toolbar.add(cancelBtn);
+            toolbar.add(Box.createHorizontalStrut(10));
+            toolbar.add(rescheduleBtn);
         }
-        
-        toolbar.add(cancelBtn);
 
         panel.add(toolbar, BorderLayout.SOUTH);
 
@@ -1015,7 +1018,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         tableContainer.removeAll();
 
         // Flatten bookings
-        String[] columns = new String[] { "Customer ID", "Customer Name", "Flight No", "Seat", "Class", "Date",
+        String[] columns = new String[] { "Customer ID", "Full Name", "Flight ID", "Seat No", "Class",
                 "Special Requests" };
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
@@ -1033,7 +1036,6 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
                         b.getFlight().getFlightNumber(),
                         b.getSeatNumber(),
                         b.getBookingClass(),
-                        b.getBookingDate(),
                         b.getSpecialRequests()
                 });
             }
@@ -1172,7 +1174,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
     private void bookFlight() {
         JDialog dialog = new JDialog(this, "Book a Flight", true);
-        dialog.setSize(400, 500);
+        dialog.setSize(400, 550);
         dialog.setLocationRelativeTo(this);
         dialog.setLayout(new BorderLayout());
 
@@ -1193,6 +1195,13 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         JTextField flightField = new JTextField(20);
         flightPanel.add(flightField);
         panel.add(flightPanel);
+
+        // Seat Number
+        JPanel seatNoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        seatNoPanel.add(new JLabel("Seat No:"));
+        JTextField seatNoField = new JTextField(20);
+        seatNoPanel.add(seatNoField);
+        panel.add(seatNoPanel);
 
         // Email
         JPanel emailPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1243,13 +1252,14 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         bookButton.addActionListener(e -> {
             String name = nameField.getText().trim();
             String flightIdStr = flightField.getText().trim();
+            String seatNo = seatNoField.getText().trim();
             String email = emailField.getText().trim();
             String phone = phoneField.getText().trim();
             String seatType = (String) seatCombo.getSelectedItem();
             String foodType = (String) foodCombo.getSelectedItem();
             String request = requestArea.getText().trim();
 
-            if (name.isEmpty() || flightIdStr.isEmpty() || email.isEmpty() || phone.isEmpty()) {
+            if (name.isEmpty() || flightIdStr.isEmpty() || seatNo.isEmpty() || email.isEmpty() || phone.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog, "Please fill all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -1276,7 +1286,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
                 // Create booking
                 int bookingId = fbs.getNextBookingId();
-                Booking booking = new Booking(bookingId, customer, flight, fbs.getSystemDate(), "1", seatType, foodType + " - " + request);
+                Booking booking = new Booking(bookingId, customer, flight, fbs.getSystemDate(), seatNo, seatType, foodType + " - " + request);
                 customer.addBooking(booking);
                 flight.addPassenger(customer);
 
@@ -1343,7 +1353,8 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         styleButton(closeButton);
         
         cancelBookingButton.setBackground(new Color(239, 68, 68));
-        cancelBookingButton.setForeground(Color.WHITE);
+        cancelBookingButton.setForeground(Color.BLACK);
+        closeButton.setForeground(Color.BLACK);
         
         buttonPanel.add(cancelBookingButton);
         buttonPanel.add(closeButton);
@@ -1409,6 +1420,103 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
 
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(dialog, "Invalid Flight ID. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (FlightBookingSystemException ex) {
+                JOptionPane.showMessageDialog(dialog, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        closeButton.addActionListener(e -> dialog.dispose());
+
+        dialog.setVisible(true);
+    }
+
+    private void rescheduleBooking() {
+        JDialog dialog = new JDialog(this, "Reschedule Booking", true);
+        dialog.setSize(400, 300);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        // Customer ID
+        JPanel customerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        customerPanel.add(new JLabel("Customer ID:"));
+        JTextField customerField = new JTextField(20);
+        customerPanel.add(customerField);
+        panel.add(customerPanel);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        // Current Flight ID
+        JPanel currentFlightPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        currentFlightPanel.add(new JLabel("Current Flight ID:"));
+        JTextField currentFlightField = new JTextField(20);
+        currentFlightPanel.add(currentFlightField);
+        panel.add(currentFlightPanel);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        // New Flight ID
+        JPanel newFlightPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        newFlightPanel.add(new JLabel("New Flight ID:"));
+        JTextField newFlightField = new JTextField(20);
+        newFlightPanel.add(newFlightField);
+        panel.add(newFlightPanel);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton rescheduleButton = new JButton("Reschedule Booking");
+        JButton closeButton = new JButton("Close");
+        
+        styleButton(rescheduleButton);
+        styleButton(closeButton);
+        
+        rescheduleButton.setBackground(new Color(34, 197, 94));
+        rescheduleButton.setForeground(Color.BLACK);
+        closeButton.setForeground(Color.BLACK);
+        
+        buttonPanel.add(rescheduleButton);
+        buttonPanel.add(closeButton);
+        panel.add(buttonPanel);
+
+        dialog.add(panel, BorderLayout.CENTER);
+
+        rescheduleButton.addActionListener(e -> {
+            String customerIdStr = customerField.getText().trim();
+            String currentFlightIdStr = currentFlightField.getText().trim();
+            String newFlightIdStr = newFlightField.getText().trim();
+
+            if (customerIdStr.isEmpty() || currentFlightIdStr.isEmpty() || newFlightIdStr.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Please enter all required fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                int customerId = Integer.parseInt(customerIdStr);
+                int currentFlightId = Integer.parseInt(currentFlightIdStr);
+                int newFlightId = Integer.parseInt(newFlightIdStr);
+
+                if (currentFlightId == newFlightId) {
+                    JOptionPane.showMessageDialog(dialog, "Current and new flight IDs cannot be the same.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                EditBooking editCommand = new EditBooking(customerId, currentFlightId, newFlightId);
+                editCommand.execute(fbs);
+
+                JOptionPane.showMessageDialog(dialog, 
+                    "Booking rescheduled successfully!\nCustomer " + customerId + " changed from Flight " + currentFlightId + " to " + newFlightId, 
+                    "Success", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                dialog.dispose();
+                
+                // Refresh views
+                refreshBookingsTable(bookingsPanel);
+                refreshFlightsTable(flightsPanel);
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(dialog, "Invalid ID. Please enter valid numbers.", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (FlightBookingSystemException ex) {
                 JOptionPane.showMessageDialog(dialog, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

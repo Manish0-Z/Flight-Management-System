@@ -643,40 +643,6 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         tableContainer.repaint();
     }
 
-    private void updateSelectedFlight(JPanel panel) {
-        JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
-        JTable table = findTableInContainer(tableContainer);
-        
-        if (table == null) return;
-        
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a flight to update.", "No Selection", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Get the flight number from the selected row
-        int modelRow = table.convertRowIndexToModel(selectedRow);
-        String flightNumber = (String) table.getModel().getValueAt(modelRow, 0);
-        
-        try {
-            Flight flight = null;
-            for (Flight f : fbs.getFlights()) {
-                if (f.getFlightNumber().equals(flightNumber)) {
-                    flight = f;
-                    break;
-                }
-            }
-            if (flight == null) {
-                throw new FlightBookingSystemException("Flight not found");
-            }
-            UpdateFlightWindow updateWindow = new UpdateFlightWindow(this, flight);
-            updateWindow.setVisible(true);
-        } catch (FlightBookingSystemException ex) {
-            JOptionPane.showMessageDialog(this, "Error finding flight: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
     private void deleteSelectedFlight(JPanel panel) {
         JPanel tableContainer = (JPanel) panel.getClientProperty("tableContainer");
         JTable table = findTableInContainer(tableContainer);
@@ -829,7 +795,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
 
         tableContainer.removeAll();
 
-        String[] columnNames = {"Booking ID", "Customer", "Flight", "Date Booked", "Status"};
+        String[] columnNames = {"ID", "Customer", "Flight", "Booking Date", "Seat", "Class", "Status"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -845,6 +811,8 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
                     booking.getCustomer().getName(),
                     booking.getFlight().getFlightNumber(),
                     booking.getBookingDate(),
+                    booking.getSeatNumber(),
+                    booking.getBookingClass(),
                     booking.getStatus()
                 };
                 model.addRow(row);
