@@ -1,2 +1,3 @@
+para@gmail.com::manish::customer::Manish Para
 admin::admin::admin::
 cena@gmail.com::0123456::customer::John Cena

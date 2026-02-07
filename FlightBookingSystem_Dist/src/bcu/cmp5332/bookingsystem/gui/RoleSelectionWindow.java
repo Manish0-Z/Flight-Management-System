@@ -1,5 +1,6 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -12,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -21,8 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 
 public class RoleSelectionWindow extends JFrame {
@@ -43,7 +41,7 @@ public class RoleSelectionWindow extends JFrame {
         
         setTitle("Flight Management System - Role Selection");
         // CHANGED: Increased size for better spacing and modern layout
-        setSize(500, 450);
+        setSize(500, 480);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -116,7 +114,9 @@ public class RoleSelectionWindow extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.insets = new Insets(DesignConstants.SPACING_SM, 0, DesignConstants.SPACING_SM, 0);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.0;
         
         // CHANGED: Create card-style buttons
         JPanel adminCard = createRoleCard(
@@ -170,18 +170,20 @@ public class RoleSelectionWindow extends JFrame {
                 DesignConstants.SPACING_LG
             )
         ));
-        card.setPreferredSize(new Dimension(380, 90));
+        card.setPreferredSize(new Dimension(380, 110));
+        card.setMinimumSize(new Dimension(320, 110));
+        card.setMaximumSize(new Dimension(500, 110));
         card.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         // Left: Content
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(DesignConstants.SURFACE);
-        contentPanel.setAlignmentY(CENTER_ALIGNMENT);
         
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         titleLabel.setForeground(DesignConstants.TEXT_PRIMARY);
+        titleLabel.setAlignmentX(LEFT_ALIGNMENT);
         contentPanel.add(titleLabel);
         
         contentPanel.add(Box.createRigidArea(new Dimension(0, 4)));
@@ -189,6 +191,8 @@ public class RoleSelectionWindow extends JFrame {
         JLabel descLabel = new JLabel(description);
         descLabel.setFont(DesignConstants.FONT_SMALL);
         descLabel.setForeground(DesignConstants.TEXT_SECONDARY);
+        descLabel.setAlignmentX(LEFT_ALIGNMENT);
+        descLabel.setPreferredSize(new Dimension(280, 16));
         contentPanel.add(descLabel);
         
         card.add(contentPanel, BorderLayout.CENTER);
