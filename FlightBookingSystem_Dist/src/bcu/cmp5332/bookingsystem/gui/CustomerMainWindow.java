@@ -339,7 +339,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
 
         JButton viewFlightsBtn = new JButton("✈️ View Flights");
         JButton myBookingsBtn = new JButton("🎫 My Bookings");
-        JButton bookFlightBtn = new JButton("📅 Book Flight");
+        JButton bookFlightBtn = new JButton("✍️ Book Flight");
 
         styleButton(viewFlightsBtn);
         styleButton(myBookingsBtn);
@@ -392,7 +392,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         toolbar.setBackground(Color.WHITE);
         toolbar.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        JButton bookBtn = new JButton("📅 Book Flight");
+        JButton bookBtn = new JButton("✍️ Book Flight");
         JButton refreshBtn = new JButton("🔄 Refresh");
 
         styleButton(bookBtn);
