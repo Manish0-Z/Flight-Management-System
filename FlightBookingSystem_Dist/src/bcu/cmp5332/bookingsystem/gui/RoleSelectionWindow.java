@@ -124,8 +124,12 @@ public class RoleSelectionWindow extends JFrame {
             "Full system access and management",
             DesignConstants.PRIMARY,
             e -> {
-                new MainWindow(fbs, true).setVisible(true);
-                dispose();
+                LoginDialog loginDialog = new LoginDialog(this, fbs, "admin");
+                loginDialog.setVisible(true);
+                if (loginDialog.isLoggedIn()) {
+                    new MainWindow(fbs, true).setVisible(true);
+                    dispose();
+                }
             }
         );
         panel.add(adminCard, gbc);
@@ -136,8 +140,12 @@ public class RoleSelectionWindow extends JFrame {
             "Book flights and manage your bookings",
             DesignConstants.ACCENT,
             e -> {
-                new MainWindow(fbs, false).setVisible(true);
-                dispose();
+                LoginDialog loginDialog = new LoginDialog(this, fbs, "customer");
+                loginDialog.setVisible(true);
+                if (loginDialog.isLoggedIn()) {
+                    new MainWindow(fbs, false).setVisible(true);
+                    dispose();
+                }
             }
         );
         panel.add(customerCard, gbc);

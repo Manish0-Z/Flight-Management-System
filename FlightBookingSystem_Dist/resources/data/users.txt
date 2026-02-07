@@ -1,3 +1,2 @@
 admin::admin::admin::
 cena@gmail.com::0123456::customer::John Cena
-johncena@.com::0123456::customer::John Cena
