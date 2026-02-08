@@ -88,6 +88,7 @@ public class CustomerMainWindow extends JFrame implements ActionListener, GuiWin
         DesignConstants.applyDarkThemeDefaults();
 
         setTitle("Flight Booking System - Customer Dashboard");
+        setIconImage(DesignConstants.getAppIconImage());
         setSize(1000, 600);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);

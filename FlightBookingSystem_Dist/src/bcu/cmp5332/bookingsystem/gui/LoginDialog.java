@@ -51,6 +51,7 @@ public class LoginDialog extends JDialog {
 
     private void initialize() {
         setSize(400, 450);
+        setIconImage(DesignConstants.getAppIconImage());
         setLocationRelativeTo(getParent());
         cardLayout = new CardLayout();
         DesignConstants.applyDarkThemeDefaults();

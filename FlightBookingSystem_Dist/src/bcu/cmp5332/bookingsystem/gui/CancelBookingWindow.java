@@ -1,11 +1,13 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.commands.CancelBooking;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,10 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
-
-import bcu.cmp5332.bookingsystem.commands.CancelBooking;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 
 public class CancelBookingWindow extends JFrame implements ActionListener {
 
@@ -41,6 +39,7 @@ public class CancelBookingWindow extends JFrame implements ActionListener {
         }
 
         setTitle("Cancel Booking");
+        setIconImage(DesignConstants.getAppIconImage());
 
         setSize(300, 150);
         JPanel topPanel = new JPanel();

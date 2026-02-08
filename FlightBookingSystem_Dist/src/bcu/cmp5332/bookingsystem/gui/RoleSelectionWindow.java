@@ -41,6 +41,7 @@ public class RoleSelectionWindow extends JFrame {
         DesignConstants.applyDarkThemeDefaults();
         
         setTitle("Flight Management System - Role Selection");
+        setIconImage(DesignConstants.getAppIconImage());
         // CHANGED: Increased size for better spacing and modern layout
         setSize(500, 480);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

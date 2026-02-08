@@ -1,5 +1,8 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.commands.AddCustomer;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -21,10 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-
-import bcu.cmp5332.bookingsystem.commands.AddCustomer;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 
 /**
  * AddCustomerWindow - Modern redesigned dialog for adding customers
@@ -77,6 +75,7 @@ public class AddCustomerWindow extends JFrame implements ActionListener {
         }
 
         setTitle("Add a New Customer");
+        setIconImage(DesignConstants.getAppIconImage());
         // CHANGED: Increased size
         setSize(500, 420);
         setLayout(new BorderLayout());

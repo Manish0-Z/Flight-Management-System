@@ -1,6 +1,7 @@
 package bcu.cmp5332.bookingsystem.gui;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -90,6 +91,8 @@ public class DesignConstants {
     
     public static final int SIDEBAR_WIDTH = 260;
     public static final int SIDEBAR_BUTTON_HEIGHT = 48;
+
+    private static Image appIconImage;
     
     // ==================== UTILITY METHODS ====================
     
@@ -119,6 +122,45 @@ public class DesignConstants {
         });
         
         return button;
+    }
+
+    /**
+     * Returns a shared airplane icon image for window decorations.
+     */
+    public static Image getAppIconImage() {
+        if (appIconImage != null) {
+            return appIconImage;
+        }
+
+        int size = 64;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+        int w = size;
+        int h = size;
+
+        // Airplane body
+        g2d.setColor(ACCENT);
+        g2d.fillRoundRect(w / 6, h / 2 - 7, w * 2 / 3, 14, 10, 10);
+
+        // Wings
+        g2d.fillRoundRect(w / 3, h / 2 - 18, w / 3, 8, 6, 6);
+        g2d.fillRoundRect(w / 3, h / 2 + 10, w / 3, 8, 6, 6);
+
+        // Tail
+        g2d.fillRoundRect(w * 2 / 3, h / 2 - 22, 8, 18, 6, 6);
+
+        // Windows
+        g2d.setColor(TEXT_ON_PRIMARY);
+        for (int i = 0; i < 3; i++) {
+            g2d.fillOval(w / 3 + 8 + i * 10, h / 2 - 4, 6, 6);
+        }
+
+        g2d.dispose();
+        appIconImage = image;
+        return appIconImage;
     }
     
     /**

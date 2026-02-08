@@ -85,6 +85,7 @@ public class AdminMainWindow extends JFrame implements ActionListener, GuiWindow
         DesignConstants.applyDarkThemeDefaults();
 
         setTitle("Flight Booking System - Admin Dashboard");
+        setIconImage(DesignConstants.getAppIconImage());
         setSize(1000, 600);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);

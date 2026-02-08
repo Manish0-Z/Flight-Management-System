@@ -1,5 +1,9 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.commands.AddBooking;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -11,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -27,11 +30,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
-
-import bcu.cmp5332.bookingsystem.commands.AddBooking;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
-import bcu.cmp5332.bookingsystem.model.Booking;
 
 
 public class AddBookingWindow extends JFrame implements ActionListener {
@@ -78,6 +76,7 @@ public class AddBookingWindow extends JFrame implements ActionListener {
         }
 
         setTitle("Issue Booking");
+        setIconImage(DesignConstants.getAppIconImage());
         // CHANGED: Increased size
         setSize(520, 480);
         setLayout(new BorderLayout());

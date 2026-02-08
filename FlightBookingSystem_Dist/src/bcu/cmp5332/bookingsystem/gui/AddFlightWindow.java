@@ -1,5 +1,8 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.commands.AddFlight;
+import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -22,10 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-
-import bcu.cmp5332.bookingsystem.commands.AddFlight;
-import bcu.cmp5332.bookingsystem.commands.Command;
-import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 
 /**
  * AddFlightWindow - Modern redesigned dialog for adding flights
@@ -88,6 +86,7 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         }
 
         setTitle("Add a New Flight");
+        setIconImage(DesignConstants.getAppIconImage());
         // CHANGED: Increased size for better spacing
         setSize(500, 450);
         setLayout(new BorderLayout());
