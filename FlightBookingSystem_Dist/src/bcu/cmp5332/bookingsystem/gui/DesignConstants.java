@@ -2,6 +2,9 @@ package bcu.cmp5332.bookingsystem.gui;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -130,6 +133,27 @@ public class DesignConstants {
     public static Image getAppIconImage() {
         if (appIconImage != null) {
             return appIconImage;
+        }
+
+        // Try to load the custom airplane icon from resources first.
+        try {
+            File iconFile = new File("resources/data/image/plane.png");
+            if (iconFile.exists()) {
+                Image rawImage = ImageIO.read(iconFile);
+                if (rawImage != null) {
+                    int targetSize = 24;
+                    BufferedImage scaled = new BufferedImage(targetSize, targetSize, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = scaled.createGraphics();
+                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    g2d.drawImage(rawImage, 0, 0, targetSize, targetSize, null);
+                    g2d.dispose();
+                    appIconImage = scaled;
+                    return appIconImage;
+                }
+            }
+        } catch (IOException ex) {
+            // Fall back to generated icon below.
         }
 
         int size = 64;
