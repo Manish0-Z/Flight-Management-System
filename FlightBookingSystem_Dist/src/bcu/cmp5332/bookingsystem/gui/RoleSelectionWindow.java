@@ -1,5 +1,6 @@
 package bcu.cmp5332.bookingsystem.gui;
 
+import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -12,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -21,8 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-
-import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 
 public class RoleSelectionWindow extends JFrame {
@@ -75,13 +73,6 @@ public class RoleSelectionWindow extends JFrame {
             DesignConstants.SPACING_LG, 
             DesignConstants.SPACING_MD
         ));
-        
-        // Logo/Icon - Airplane
-        AirlineLogo logo = new AirlineLogo(120, 60);
-        logo.setAlignmentX(CENTER_ALIGNMENT);
-        header.add(logo);
-        
-        header.add(Box.createRigidArea(new Dimension(0, DesignConstants.SPACING_MD)));
         
         // Title
         JLabel titleLabel = new JLabel("Flight Management System");
