@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 public class SidebarIcon extends JPanel {
     
     public enum IconType {
-        DASHBOARD, FLIGHTS, CUSTOMERS, BOOKINGS, PROFILE, EXIT
+        DASHBOARD, FLIGHTS, CUSTOMERS, BOOKINGS, BOOK, PROFILE, EXIT
     }
     
     private final IconType type;
@@ -61,6 +61,9 @@ public class SidebarIcon extends JPanel {
                 break;
             case BOOKINGS:
                 drawBookingsIcon(g2d, width, height, padding);
+                break;
+            case BOOK:
+                drawBookIcon(g2d, width, height, padding);
                 break;
             case PROFILE:
                 drawProfileIcon(g2d, width, height, padding);
@@ -198,6 +201,26 @@ public class SidebarIcon extends JPanel {
                          centerX + shoulderW / 2, centerY + radius / 3,
                          centerX + shoulderW / 2, centerY + radius);
         g2d.draw(shoulders);
+    }
+
+    /* Book Icon - Open Book */
+    private void drawBookIcon(Graphics2D g2d, int w, int h, int pad) {
+        g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+        int left = pad;
+        int right = w - pad;
+        int top = pad + 2;
+        int bottom = h - pad - 2;
+        int center = w / 2;
+
+        // Left page outline
+        g2d.drawRoundRect(left, top, center - left - 2, bottom - top, 4, 4);
+
+        // Right page outline
+        g2d.drawRoundRect(center + 2, top, right - center - 2, bottom - top, 4, 4);
+
+        // Spine
+        g2d.drawLine(center, top + 1, center, bottom - 1);
     }
     
     /* Exit Icon - Door with Arrow */

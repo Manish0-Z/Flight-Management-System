@@ -224,7 +224,7 @@ public class MainWindow extends JFrame implements ActionListener, GuiWindow {
         if (isAdmin) {
             customersBtn = createSidebarButton("Customers", SidebarIcon.IconType.CUSTOMERS);
         } else {
-            bookFlightBtn = createSidebarButton("Book Flight", SidebarIcon.IconType.FLIGHTS);
+            bookFlightBtn = createSidebarButton("Book Flight", SidebarIcon.IconType.BOOK);
         }
         
         bookingsBtn = createSidebarButton("Bookings", SidebarIcon.IconType.BOOKINGS);
